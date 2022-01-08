@@ -1,0 +1,6 @@
+github.com/barweiss/go-tuple v0.0.0-20220101222006-ee01a9510b0b h1:R//jzRU06VZMRo3mfS2JRj6a1BEYCkablGZM8vABVVo=
+github.com/barweiss/go-tuple v0.0.0-20220101222006-ee01a9510b0b/go.mod h1:T1es5bACVg1AF7JmHoY8evrLJWN+6UKg5AeTXLthx1g=
+github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
+github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
+github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5CcY=
+gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c h1:dUUwHk2QECo/6vqA44rthZ8ie2QXMNeKRTHCNY2nXvo=

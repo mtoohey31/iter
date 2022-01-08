@@ -1,6 +1,8 @@
 package iter
 
 import (
+	"github.com/barweiss/go-tuple"
+
 	"reflect"
 	"testing"
 )
@@ -12,11 +14,11 @@ import (
 // 	zipIter := iter.ZipSame(iter)
 //
 // 	actual := zipIter.Collect()
-// 	expected := []Pair[rune, int]{
-// 		Pair[rune, int]{0, 1},
-// 		Pair[rune, int]{2, 3},
-// 		Pair[rune, int]{4, 5},
-// 		Pair[rune, int]{6, 7},
+// 	expected := []tuple.T2[int, int]{
+// 		tuple.New2(0, 1),
+// 		tuple.New2(2, 3),
+// 		tuple.New2(4, 5),
+// 		tuple.New2(6, 7),
 // 	}
 //
 // 	if !reflect.DeepEqual(actual, expected) {
@@ -32,11 +34,11 @@ func TestZip(t *testing.T) {
 
 	actual := zipIter.Collect()
 	// TODO: file a bug report for this warning on the gopls repo
-	expected := []Pair[rune, int]{
-		Pair[rune, int]{'a', 1},
-		Pair[rune, int]{'b', 2},
-		Pair[rune, int]{'c', 3},
-		Pair[rune, int]{'d', 4},
+	expected := []tuple.T2[rune, int]{
+		tuple.New2('a', 1),
+		tuple.New2('b', 2),
+		tuple.New2('c', 3),
+		tuple.New2('d', 4),
 	}
 
 	if !reflect.DeepEqual(actual, expected) {
