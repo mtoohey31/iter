@@ -91,3 +91,19 @@ func (i *Iter[T]) Count() int {
 	}
 	return j
 }
+
+func (i *Iter[T]) Find(f func(T) bool) (T, error) {
+	for {
+		next, err := i.Next()
+
+		if err != nil {
+			break
+		}
+
+		if f(next) {
+			return next, nil
+		}
+	}
+
+	return i.zeroVal(), errors.New("no element found")
+}
