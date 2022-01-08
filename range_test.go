@@ -19,7 +19,7 @@ func TestRangeIter(t *testing.T) {
 func TestInfRangeIter(t *testing.T) {
 	iter := InfRange(7, -2)
 
-	actual := iter.Take(7)
+	actual := iter.Take(7).Collect()
 	expected := []int{7, 5, 3, 1, -1, -3, -5}
 
 	if !reflect.DeepEqual(actual, expected) {
