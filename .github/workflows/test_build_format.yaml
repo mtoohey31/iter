@@ -1,0 +1,26 @@
+name: Test, build, and check format
+on:
+  push:
+    branches: ["**"]
+jobs:
+  test_build_format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.18.0-beta1
+          stable: false
+      - name: Test
+        run: go test
+      - name: Build
+        shell: bash
+        run: |
+          all_platforms=$(go tool dist list)
+
+          for platform in $all_platforms; do
+            echo "building for $platform"
+            GOOS=$(echo "$platform" | awk -F '/' '{ print $1 }') GOARCH=$(echo "$platform" | awk -F '/' '{ print $2 }') go build
+          done
+      - name: Check format
+        run: test -z "$(gofmt -l .)"
