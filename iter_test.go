@@ -92,3 +92,18 @@ func TestLast(t *testing.T) {
 		t.Fatalf("got %v, expected %v", actual, expected)
 	}
 }
+
+func TestPartition(t *testing.T) {
+	iter := Range(0, 4, 1)
+	actualA, actualB := iter.Partition(func(i int) bool { return i%2 == 0 })
+
+	expectedA, expectedB := []int{0, 2}, []int{1, 3}
+
+	if !reflect.DeepEqual(actualA, expectedA) {
+		t.Fatalf("got %v, expected %v", actualA, expectedA)
+	}
+
+	if !reflect.DeepEqual(actualB, expectedB) {
+		t.Fatalf("got %v, expected %v", actualB, expectedB)
+	}
+}

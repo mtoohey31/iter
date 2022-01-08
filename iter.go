@@ -179,3 +179,22 @@ func (i *Iter[T]) Last() (T, error) {
 		}
 	}
 }
+
+func (i *Iter[T]) Partition(f func(T) bool) ([]T, []T) {
+	var a []T
+	var b []T
+	for {
+		next, err := i.Next()
+
+		if err != nil {
+			break
+		}
+
+		if f(next) {
+			a = append(a, next)
+		} else {
+			b = append(b, next)
+		}
+	}
+	return a, b
+}
