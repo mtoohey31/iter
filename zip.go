@@ -30,3 +30,7 @@ func (i *zipInner[T, U]) Next() (tuple.T2[T, U], error) {
 		return Iter[tuple.T2[T, U]]{}.zeroVal(), IteratorExhaustedError
 	}
 }
+
+// func (i *Iter[T]) Enumerate() *Iter[tuple.T2[int, T]] {
+// 	return Zip(InfRange(0, 1), i)
+// }
