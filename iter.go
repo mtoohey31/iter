@@ -1,6 +1,8 @@
 package iter
 
-import "errors"
+import (
+	"errors"
+)
 
 var IteratorExhaustedError = errors.New("iterator exhausted")
 

@@ -6,7 +6,7 @@ type sliceInner[T any] struct {
 	zero  T // TODO: find a less gross way to produce a zero value of a generic type
 }
 
-func FromSlice[T any](s []T) *Iter[T] {
+func Elems[T any](s []T) *Iter[T] {
 	return WithInner[T](&sliceInner[T]{index: 0, slice: s})
 }
 

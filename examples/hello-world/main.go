@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	initial := iter.FromSlice([]string{"hello", "beautiful", "world"})
+	initial := iter.Elems([]string{"hello", "beautiful", "world"})
 	result := initial.Filter(func(s string) bool {
 		return len(s) < 6
 	}).MapSame(strings.ToUpper).Collect()

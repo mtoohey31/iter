@@ -8,7 +8,7 @@ import (
 )
 
 func TestFilterMapSame(t *testing.T) {
-	var iter *Iter[int] = FromSlice([]int{1, 2, 3, 4}).FilterMapSame(func(i int) (int, error) {
+	var iter *Iter[int] = Elems([]int{1, 2, 3, 4}).FilterMapSame(func(i int) (int, error) {
 		if i%2 != 0 {
 			return 0, errors.New("")
 		} else {
@@ -25,7 +25,7 @@ func TestFilterMapSame(t *testing.T) {
 }
 
 func TestFilterMap(t *testing.T) {
-	var iter *Iter[int] = FilterMap(FromSlice([]string{"1", "nope", "2", "un-uh"}), func(s string) (int, error) {
+	var iter *Iter[int] = FilterMap(Elems([]string{"1", "nope", "2", "un-uh"}), func(s string) (int, error) {
 		return strconv.Atoi(s)
 	})
 
