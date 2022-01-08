@@ -1,17 +1,17 @@
 package iter
 
-type filterIter[T any] struct {
-	inner      Iter[T]
+type filterInner[T any] struct {
+	inner      *Iter[T]
 	filterFunc func(T) bool
 	cachedNext *T
 	zero       T // TODO: find a less gross way to produce a zero value of a generic type
 }
 
-func Filter[T any](i Iter[T], f func(T) bool) Iter[T] {
-	return filterIter[T]{inner: i, filterFunc: f}
+func (i *Iter[T]) Filter(f func(T) bool) *Iter[T] {
+	return WithInner[T](filterInner[T]{inner: i, filterFunc: f})
 }
 
-func (i filterIter[T]) findNext() (T, error) {
+func (i filterInner[T]) findNext() (T, error) {
 	for {
 		next, err := i.inner.Next()
 
@@ -26,7 +26,7 @@ func (i filterIter[T]) findNext() (T, error) {
 	return i.zero, IteratorExhaustedError
 }
 
-func (i filterIter[T]) HasNext() bool {
+func (i filterInner[T]) HasNext() bool {
 	if i.cachedNext != nil {
 		return true
 	}
@@ -36,7 +36,7 @@ func (i filterIter[T]) HasNext() bool {
 	return err == nil
 }
 
-func (i filterIter[T]) Next() (T, error) {
+func (i filterInner[T]) Next() (T, error) {
 	if i.cachedNext != nil {
 		defer func() { i.cachedNext = nil }()
 		return *i.cachedNext, nil

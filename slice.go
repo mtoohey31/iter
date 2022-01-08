@@ -1,20 +1,20 @@
 package iter
 
-type sliceIter[T any] struct {
+type sliceInner[T any] struct {
 	index int
 	slice []T
 	zero  T // TODO: find a less gross way to produce a zero value of a generic type
 }
 
-func FromSlice[T any](s []T) Iter[T] {
-	return &sliceIter[T]{index: 0, slice: s}
+func FromSlice[T any](s []T) *Iter[T] {
+	return WithInner[T](&sliceInner[T]{index: 0, slice: s})
 }
 
-func (i *sliceIter[T]) HasNext() bool {
+func (i *sliceInner[T]) HasNext() bool {
 	return i.index < len(i.slice)
 }
 
-func (i *sliceIter[T]) Next() (T, error) {
+func (i *sliceInner[T]) Next() (T, error) {
 	if i.index >= len(i.slice) {
 		return i.zero, IteratorExhaustedError
 	}

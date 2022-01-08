@@ -16,20 +16,21 @@ import (
 
 func main() {
   initial := iter.FromSlice([]string{"hello", "beautiful", "world"})
-  short := iter.Filter(initial, func(s string) bool {
+  result := initial.Filter(func(s string) bool {
     return len(s) < 6
-  })
-  upper := iter.Map(short, func(s string) string {
+  }).MapSame(func(s string) string {
     return strings.ToUpper(s)
-  })
-  fmt.Println(iter.Collect(upper)) // produces: [HELLO WORLD]
+  }).Collect()
+  fmt.Println(result) // produces: [HELLO WORLD]
 }
 ```
+
+See `examples/` for more demonstrations.
 
 ## Notes
 
 - It should go without saying that since `1.18` is still beta, so is this library.
-- Operations commonly seen as methods are defined as standalone functions, since Go does not not support the definition of methods for interface types, and `Iter[T]` is a method.
+- From what I can tell, with my limited understanding of go memory management, `sliceInner` struct is rather inefficient because it duplicates values and leaves past items sitting inside itself.
 
 ## Similar Projects
 
