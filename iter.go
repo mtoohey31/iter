@@ -180,6 +180,24 @@ func (i *Iter[T]) Last() (T, error) {
 	}
 }
 
+func (i *Iter[T]) Nth(n int) (T, error) {
+	for j := 0; j < n-1; j++ {
+		_, err := i.Next()
+
+		if err != nil {
+			return i.zeroVal(), IteratorExhaustedError
+		}
+	}
+
+	res, err := i.Next()
+
+	if err == nil {
+		return res, nil
+	} else {
+		return i.zeroVal(), IteratorExhaustedError
+	}
+}
+
 func (i *Iter[T]) Partition(f func(T) bool) ([]T, []T) {
 	var a []T
 	var b []T

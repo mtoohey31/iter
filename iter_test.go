@@ -93,6 +93,17 @@ func TestLast(t *testing.T) {
 	}
 }
 
+func TestNth(t *testing.T) {
+	iter := Range(1, 11, 1)
+
+	actual, _ := iter.Nth(7)
+	expected := 7
+
+	if actual != expected {
+		t.Fatalf("got %v, expected %v", actual, expected)
+	}
+}
+
 func TestPartition(t *testing.T) {
 	iter := Range(0, 4, 1)
 	actualA, actualB := iter.Partition(func(i int) bool { return i%2 == 0 })
