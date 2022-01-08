@@ -149,3 +149,15 @@ func Fold[T any, U any](i *Iter[T], init U, f func(curr U, next T) U) U {
 
 	return curr
 }
+
+func (i *Iter[T]) ForEach(f func(T)) {
+	for {
+		next, err := i.Next()
+
+		if err != nil {
+			break
+		}
+
+		f(next)
+	}
+}

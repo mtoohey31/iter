@@ -68,3 +68,16 @@ func TestFold(t *testing.T) {
 		t.Fatalf("got %v, expected %v", actual, expected)
 	}
 }
+
+func TestForEach(t *testing.T) {
+	iter := Range(1, 11, 1)
+
+	actual := 0
+	expected := 55
+
+	iter.ForEach(func(n int) { actual = actual + n })
+
+	if actual != expected {
+		t.Fatalf("got %v, expected %v", actual, expected)
+	}
+}
