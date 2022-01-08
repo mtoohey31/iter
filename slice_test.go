@@ -7,7 +7,7 @@ import (
 
 func TestArrIter(t *testing.T) {
 	expected := []string{"item1", "item2"}
-	var iter *Iter[string] = Elems(expected)
+	iter := Elems(expected)
 
 	actual := iter.Collect()
 

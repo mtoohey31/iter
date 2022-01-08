@@ -8,10 +8,10 @@ type filterInner[T any] struct {
 }
 
 func (i *Iter[T]) Filter(f func(T) bool) *Iter[T] {
-	return WithInner[T](filterInner[T]{inner: i, filterFunc: f})
+	return WithInner[T](&filterInner[T]{inner: i, filterFunc: f})
 }
 
-func (i filterInner[T]) findNext() (T, error) {
+func (i *filterInner[T]) findNext() (T, error) {
 	for {
 		next, err := i.inner.Next()
 
@@ -26,7 +26,7 @@ func (i filterInner[T]) findNext() (T, error) {
 	return i.zero, IteratorExhaustedError
 }
 
-func (i filterInner[T]) HasNext() bool {
+func (i *filterInner[T]) HasNext() bool {
 	if i.cachedNext != nil {
 		return true
 	}
@@ -36,7 +36,7 @@ func (i filterInner[T]) HasNext() bool {
 	return err == nil
 }
 
-func (i filterInner[T]) Next() (T, error) {
+func (i *filterInner[T]) Next() (T, error) {
 	if i.cachedNext != nil {
 		defer func() { i.cachedNext = nil }()
 		return *i.cachedNext, nil

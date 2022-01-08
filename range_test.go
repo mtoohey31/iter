@@ -7,7 +7,7 @@ import (
 
 func TestRangeIter(t *testing.T) {
 	expected := []int{1, 3, 5}
-	var iter *Iter[int] = Range(1, 7, 2)
+	iter := Range(1, 7, 2)
 
 	actual := iter.Collect()
 

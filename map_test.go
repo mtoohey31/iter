@@ -8,7 +8,7 @@ import (
 
 func TestMapSame(t *testing.T) {
 	expected := []string{"ITEM1", "ITEM2"}
-	var iter *Iter[string] = Elems([]string{"item1", "item2"}).MapSame(func(s string) string { return strings.ToUpper(s) })
+	iter := Elems([]string{"item1", "item2"}).MapSame(func(s string) string { return strings.ToUpper(s) })
 
 	actual := iter.Collect()
 
@@ -23,7 +23,7 @@ func TestMapSame(t *testing.T) {
 
 func TestMap(t *testing.T) {
 	expected := []int{5, 5}
-	var iter *Iter[int] = Map[string, int](Elems([]string{"item1", "item2"}), func(s string) int { return len(s) })
+	iter := Map[string, int](Elems([]string{"item1", "item2"}), func(s string) int { return len(s) })
 
 	actual := iter.Collect()
 

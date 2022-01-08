@@ -8,14 +8,14 @@ type filterMapInner[T any, U any] struct {
 }
 
 func (i *Iter[T]) FilterMapSame(f func(T) (T, error)) *Iter[T] {
-	return WithInner[T](filterMapInner[T, T]{inner: i, filterMapFunc: f})
+	return WithInner[T](&filterMapInner[T, T]{inner: i, filterMapFunc: f})
 }
 
 func FilterMap[T any, U any](i *Iter[T], f func(T) (U, error)) *Iter[U] {
-	return WithInner[U](filterMapInner[T, U]{inner: i, filterMapFunc: f})
+	return WithInner[U](&filterMapInner[T, U]{inner: i, filterMapFunc: f})
 }
 
-func (i filterMapInner[T, U]) findNext() (U, error) {
+func (i *filterMapInner[T, U]) findNext() (U, error) {
 	for {
 		next, err := i.inner.Next()
 
@@ -30,7 +30,7 @@ func (i filterMapInner[T, U]) findNext() (U, error) {
 	return i.zero, IteratorExhaustedError
 }
 
-func (i filterMapInner[T, U]) HasNext() bool {
+func (i *filterMapInner[T, U]) HasNext() bool {
 	if i.cachedNext != nil {
 		return true
 	}
@@ -40,7 +40,7 @@ func (i filterMapInner[T, U]) HasNext() bool {
 	return err == nil
 }
 
-func (i filterMapInner[T, U]) Next() (U, error) {
+func (i *filterMapInner[T, U]) Next() (U, error) {
 	if i.cachedNext != nil {
 		defer func() { i.cachedNext = nil }()
 		return *i.cachedNext, nil

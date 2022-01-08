@@ -7,7 +7,7 @@ import (
 
 func TestCollect(t *testing.T) {
 	expected := []string{"item1", "item2"}
-	var iter *Iter[string] = Elems(expected)
+	iter := Elems(expected)
 
 	actual := iter.Collect()
 
@@ -17,7 +17,7 @@ func TestCollect(t *testing.T) {
 }
 
 func TestAll(t *testing.T) {
-	var iter *Iter[int] = Elems([]int{1, 2})
+	iter := Elems([]int{1, 2})
 
 	if iter.All(func(i int) bool { return i == 1 }) {
 		t.Fatalf("got %v, expected %v", true, false)
@@ -25,7 +25,7 @@ func TestAll(t *testing.T) {
 }
 
 func TestAny(t *testing.T) {
-	var iter *Iter[int] = Elems([]int{1, 2})
+	iter := Elems([]int{1, 2})
 
 	if !iter.Any(func(i int) bool { return i == 1 }) {
 		t.Fatalf("got %v, expected %v", false, true)
@@ -33,7 +33,7 @@ func TestAny(t *testing.T) {
 }
 
 func TestCount(t *testing.T) {
-	var iter *Iter[int] = Elems([]int{1, 2})
+	iter := Elems([]int{1, 2})
 
 	actual := iter.Count()
 	expected := 2
