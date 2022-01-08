@@ -15,3 +15,19 @@ func TestCollect(t *testing.T) {
 		t.Fatalf("got %v, expected %v", actual, expected)
 	}
 }
+
+func TestAll(t *testing.T) {
+	var iter *Iter[int] = FromSlice([]int{1, 2})
+
+	if iter.All(func(i int) bool { return i == 1 }) {
+		t.Fatalf("got %v, expected %v", true, false)
+	}
+}
+
+func TestAny(t *testing.T) {
+	var iter *Iter[int] = FromSlice([]int{1, 2})
+
+	if !iter.Any(func(i int) bool { return i == 1 }) {
+		t.Fatalf("got %v, expected %v", false, true)
+	}
+}

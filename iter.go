@@ -38,3 +38,33 @@ func (i *Iter[T]) Collect() []T {
 	}
 	return res
 }
+
+func (i *Iter[T]) All(f func(T) bool) bool {
+	for {
+		next, err := i.Next()
+
+		if err != nil {
+			break
+		}
+
+		if !f(next) {
+			return false
+		}
+	}
+	return true
+}
+
+func (i *Iter[T]) Any(f func(T) bool) bool {
+	for {
+		next, err := i.Next()
+
+		if err != nil {
+			break
+		}
+
+		if f(next) {
+			return true
+		}
+	}
+	return false
+}
