@@ -4,7 +4,6 @@ type filterMapInner[T any, U any] struct {
 	inner         *Iter[T]
 	filterMapFunc func(T) (U, error)
 	cachedNext    *U
-	zero          U // TODO: find a less gross way to produce a zero value of a generic type
 }
 
 func (i *Iter[T]) FilterMapSame(f func(T) (T, error)) *Iter[T] {
@@ -27,7 +26,7 @@ func (i *filterMapInner[T, U]) findNext() (U, error) {
 			return mappedNext, nil
 		}
 	}
-	return i.zero, IteratorExhaustedError
+	return Iter[U]{}.zeroVal(), IteratorExhaustedError
 }
 
 func (i *filterMapInner[T, U]) HasNext() bool {

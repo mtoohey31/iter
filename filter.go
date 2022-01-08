@@ -4,7 +4,6 @@ type filterInner[T any] struct {
 	inner      *Iter[T]
 	filterFunc func(T) bool
 	cachedNext *T
-	zero       T // TODO: find a less gross way to produce a zero value of a generic type
 }
 
 func (i *Iter[T]) Filter(f func(T) bool) *Iter[T] {
@@ -23,7 +22,7 @@ func (i *filterInner[T]) findNext() (T, error) {
 			return next, nil
 		}
 	}
-	return i.zero, IteratorExhaustedError
+	return i.inner.zeroVal(), IteratorExhaustedError
 }
 
 func (i *filterInner[T]) HasNext() bool {

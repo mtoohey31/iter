@@ -3,7 +3,6 @@ package iter
 type mapInner[T any, U any] struct {
 	inner   *Iter[T]
 	mapFunc func(T) U
-	zero    U // TODO: find a less gross way to produce a zero value of a generic type
 }
 
 func (i *Iter[T]) MapSame(f func(T) T) *Iter[T] {
@@ -24,6 +23,6 @@ func (i *mapInner[T, U]) Next() (U, error) {
 	if err == nil {
 		return i.mapFunc(next), nil
 	} else {
-		return i.zero, err
+		return Iter[U]{}.zeroVal(), err
 	}
 }

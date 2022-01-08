@@ -8,7 +8,6 @@ type rangeInner[T rangeInt] struct {
 	curr T
 	end  T
 	step T
-	zero T // TODO: find a less gross way to produce a zero value of a generic type
 }
 
 func Range[T rangeInt](start T, end T, step T) *Iter[T] {
@@ -21,7 +20,7 @@ func (i *rangeInner[T]) HasNext() bool {
 
 func (i *rangeInner[T]) Next() (T, error) {
 	if !i.HasNext() {
-		return i.zero, IteratorExhaustedError
+		return Iter[T]{}.zeroVal(), IteratorExhaustedError
 	}
 
 	defer func() { i.curr = i.curr + i.step }()

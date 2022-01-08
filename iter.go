@@ -27,6 +27,13 @@ func WithInner[T any](inner innerIter[T]) *Iter[T] {
 	return &Iter[T]{inner: inner}
 }
 
+// TODO: find a nicer way to fetch zero values of a generic type
+type z[T any] struct{ z T }
+
+func (i Iter[T]) zeroVal() T {
+	return z[T]{}.z
+}
+
 func (i *Iter[T]) Collect() []T {
 	var res []T
 	for {

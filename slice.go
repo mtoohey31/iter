@@ -3,7 +3,6 @@ package iter
 type sliceInner[T any] struct {
 	index int
 	slice []T
-	zero  T // TODO: find a less gross way to produce a zero value of a generic type
 }
 
 func Elems[T any](s []T) *Iter[T] {
@@ -16,7 +15,7 @@ func (i *sliceInner[T]) HasNext() bool {
 
 func (i *sliceInner[T]) Next() (T, error) {
 	if i.index >= len(i.slice) {
-		return i.zero, IteratorExhaustedError
+		return Iter[T]{}.zeroVal(), IteratorExhaustedError
 	}
 
 	defer func() { i.index = i.index + 1 }()
