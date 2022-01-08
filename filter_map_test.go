@@ -2,9 +2,10 @@ package iter
 
 import (
 	"errors"
-	"reflect"
 	"strconv"
 	"testing"
+
+	"mtoohey.com/iter/test"
 )
 
 func TestFilterMapSame(t *testing.T) {
@@ -19,9 +20,7 @@ func TestFilterMapSame(t *testing.T) {
 	actual := iter.Collect()
 	expected := []int{4, 8}
 
-	if !reflect.DeepEqual(actual, expected) {
-		t.Fatalf("got %v, expected %v", actual, expected)
-	}
+	test.AssertDeepEq(actual, expected, t)
 }
 
 func TestFilterMap(t *testing.T) {
@@ -32,7 +31,5 @@ func TestFilterMap(t *testing.T) {
 	actual := iter.Collect()
 	expected := []int{1, 2}
 
-	if !reflect.DeepEqual(actual, expected) {
-		t.Fatalf("got %v, expected %v", actual, expected)
-	}
+	test.AssertDeepEq(actual, expected, t)
 }

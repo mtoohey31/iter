@@ -1,46 +1,26 @@
 package iter
 
 import (
-	"reflect"
 	"testing"
+
+	"mtoohey.com/iter/test"
 )
 
 func TestCollect(t *testing.T) {
 	expected := []string{"item1", "item2"}
-	iter := Elems(expected)
-
-	actual := iter.Collect()
-
-	if !reflect.DeepEqual(actual, expected) {
-		t.Fatalf("got %v, expected %v", actual, expected)
-	}
+	test.AssertDeepEq(Elems(expected).Collect(), expected, t)
 }
 
 func TestAll(t *testing.T) {
-	iter := Elems([]int{1, 2})
-
-	if iter.All(func(i int) bool { return i == 1 }) {
-		t.Fatalf("got %v, expected %v", true, false)
-	}
+	test.Assert(!Elems([]int{1, 2}).All(func(i int) bool { return i == 1 }), t)
 }
 
 func TestAny(t *testing.T) {
-	iter := Elems([]int{1, 2})
-
-	if !iter.Any(func(i int) bool { return i == 1 }) {
-		t.Fatalf("got %v, expected %v", false, true)
-	}
+	test.Assert(Elems([]int{1, 2}).Any(func(i int) bool { return i == 1 }), t)
 }
 
 func TestCount(t *testing.T) {
-	iter := Elems([]int{1, 2})
-
-	actual := iter.Count()
-	expected := 2
-
-	if actual != expected {
-		t.Fatalf("got %v, expected %v", actual, expected)
-	}
+	test.AssertEq(Elems([]int{1, 2}).Count(), 2, t)
 }
 
 func TestFoldSame(t *testing.T) {
@@ -49,11 +29,8 @@ func TestFoldSame(t *testing.T) {
 	actual := iter.FoldSame("the", func(curr string, next string) string {
 		return curr + " " + next
 	})
-	expected := "the quick brown fox"
 
-	if actual != expected {
-		t.Fatalf("got %v, expected %v", actual, expected)
-	}
+	test.AssertEq(actual, "the quick brown fox", t)
 }
 
 func TestFold(t *testing.T) {
@@ -62,59 +39,29 @@ func TestFold(t *testing.T) {
 	actual := Fold(iter, 0, func(curr int, next string) int {
 		return curr + len(next)
 	})
-	expected := 16
 
-	if actual != expected {
-		t.Fatalf("got %v, expected %v", actual, expected)
-	}
+	test.AssertEq(actual, 16, t)
 }
 
 func TestForEach(t *testing.T) {
-	iter := Range(1, 11, 1)
-
 	actual := 0
-	expected := 55
-
-	iter.ForEach(func(n int) { actual = actual + n })
-
-	if actual != expected {
-		t.Fatalf("got %v, expected %v", actual, expected)
-	}
+	Range(1, 11, 1).ForEach(func(n int) { actual = actual + n })
+	test.AssertEq(actual, 55, t)
 }
 
 func TestLast(t *testing.T) {
-	iter := Range(1, 11, 1)
-
-	actual, _ := iter.Last()
-	expected := 10
-
-	if actual != expected {
-		t.Fatalf("got %v, expected %v", actual, expected)
-	}
+	actual, _ := Range(1, 11, 1).Last()
+	test.AssertEq(actual, 10, t)
 }
 
 func TestNth(t *testing.T) {
-	iter := Range(1, 11, 1)
-
-	actual, _ := iter.Nth(7)
-	expected := 7
-
-	if actual != expected {
-		t.Fatalf("got %v, expected %v", actual, expected)
-	}
+	actual, _ := Range(1, 11, 1).Nth(7)
+	test.AssertEq(actual, 7, t)
 }
 
 func TestPartition(t *testing.T) {
-	iter := Range(0, 4, 1)
-	actualA, actualB := iter.Partition(func(i int) bool { return i%2 == 0 })
+	actualA, actualB := Range(0, 4, 1).Partition(func(i int) bool { return i%2 == 0 })
 
-	expectedA, expectedB := []int{0, 2}, []int{1, 3}
-
-	if !reflect.DeepEqual(actualA, expectedA) {
-		t.Fatalf("got %v, expected %v", actualA, expectedA)
-	}
-
-	if !reflect.DeepEqual(actualB, expectedB) {
-		t.Fatalf("got %v, expected %v", actualB, expectedB)
-	}
+	test.AssertDeepEq(actualA, []int{0, 2}, t)
+	test.AssertDeepEq(actualB, []int{1, 3}, t)
 }

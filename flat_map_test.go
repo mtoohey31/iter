@@ -1,9 +1,10 @@
 package iter
 
 import (
-	"reflect"
 	"strings"
 	"testing"
+
+	"mtoohey.com/iter/test"
 )
 
 func TestFlatMapSame(t *testing.T) {
@@ -15,9 +16,7 @@ func TestFlatMapSame(t *testing.T) {
 	actual := iter.Collect()
 	expected := []int{1, 2, 2, 3, 3, 4}
 
-	if !reflect.DeepEqual(actual, expected) {
-		t.Fatalf("got %v, expected %v", actual, expected)
-	}
+	test.AssertDeepEq(actual, expected, t)
 }
 
 func TestFlatMap(t *testing.T) {
@@ -29,7 +28,5 @@ func TestFlatMap(t *testing.T) {
 	actual := string(iter.Collect())
 	expected := strings.Join(initial, "")
 
-	if !reflect.DeepEqual(actual, expected) {
-		t.Fatalf("got %v, expected %v", actual, expected)
-	}
+	test.AssertDeepEq(actual, expected, t)
 }

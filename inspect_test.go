@@ -1,8 +1,9 @@
 package iter
 
 import (
-	"reflect"
 	"testing"
+
+	"mtoohey.com/iter/test"
 )
 
 func TestInspect(t *testing.T) {
@@ -16,18 +17,12 @@ func TestInspect(t *testing.T) {
 		actualNum = actualNum + n
 	})
 
-	if actualNum != expectedNumBefore {
-		t.Fatalf("got %v, expected %v", actualNum, expectedNumBefore)
-	}
+	test.AssertEq(actualNum, expectedNumBefore, t)
 
 	actualSlice := newIter.Collect()
 	expectedSlice := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
-	if actualNum != expectedNumAfter {
-		t.Fatalf("got %v, expected %v", actualNum, expectedNumAfter)
-	}
+	test.AssertEq(actualNum, expectedNumAfter, t)
 
-	if !reflect.DeepEqual(actualSlice, expectedSlice) {
-		t.Fatalf("got %v, expected %v", actualSlice, expectedSlice)
-	}
+	test.AssertDeepEq(actualSlice, expectedSlice, t)
 }

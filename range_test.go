@@ -1,28 +1,16 @@
 package iter
 
 import (
-	"reflect"
 	"testing"
+
+	"mtoohey.com/iter/test"
 )
 
 func TestRangeIter(t *testing.T) {
-	iter := Range(1, 7, 2)
-
-	actual := iter.Collect()
-	expected := []int{1, 3, 5}
-
-	if !reflect.DeepEqual(actual, expected) {
-		t.Fatalf("got %v, expected %v", actual, expected)
-	}
+	test.AssertDeepEq(Range(1, 7, 2).Collect(), []int{1, 3, 5}, t)
 }
 
 func TestInfRangeIter(t *testing.T) {
-	iter := InfRange(7, -2)
-
-	actual := iter.Take(7).Collect()
-	expected := []int{7, 5, 3, 1, -1, -3, -5}
-
-	if !reflect.DeepEqual(actual, expected) {
-		t.Fatalf("got %v, expected %v", actual, expected)
-	}
+	test.AssertDeepEq(InfRange(7, -2).Take(7).Collect(),
+		[]int{7, 5, 3, 1, -1, -3, -5}, t)
 }

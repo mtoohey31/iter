@@ -3,7 +3,8 @@ package iter
 import (
 	"github.com/barweiss/go-tuple"
 
-	"reflect"
+	"mtoohey.com/iter/test"
+
 	"testing"
 )
 
@@ -13,7 +14,6 @@ import (
 //
 // 	zipIter := iter.ZipSame(iter)
 //
-// 	actual := zipIter.Collect()
 // 	expected := []tuple.T2[int, int]{
 // 		tuple.New2(0, 1),
 // 		tuple.New2(2, 3),
@@ -21,19 +21,12 @@ import (
 // 		tuple.New2(6, 7),
 // 	}
 //
-// 	if !reflect.DeepEqual(actual, expected) {
-// 		t.Fatalf("got %v, expected %v", actual, expected)
-// 	}
+// 	test.AssertDeepEq(zipIter.Collect(), expected, t)
 // }
 
 func TestZip(t *testing.T) {
-	runeIter := Elems([]rune{'a', 'b', 'c', 'd'})
-	intIter := Range(1, 1000000000000000, 1)
+	iter := Zip(Elems([]rune{'a', 'b', 'c', 'd'}), InfRange(1, 1))
 
-	zipIter := Zip(runeIter, intIter)
-
-	actual := zipIter.Collect()
-	// TODO: file a bug report for this warning on the gopls repo
 	expected := []tuple.T2[rune, int]{
 		tuple.New2('a', 1),
 		tuple.New2('b', 2),
@@ -41,7 +34,5 @@ func TestZip(t *testing.T) {
 		tuple.New2('d', 4),
 	}
 
-	if !reflect.DeepEqual(actual, expected) {
-		t.Fatalf("got %v, expected %v", actual, expected)
-	}
+	test.AssertDeepEq(iter.Collect(), expected, t)
 }

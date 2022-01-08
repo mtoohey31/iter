@@ -1,8 +1,9 @@
 package iter
 
 import (
-	"reflect"
 	"testing"
+
+	"mtoohey.com/iter/test"
 )
 
 func TestFilter(t *testing.T) {
@@ -11,7 +12,5 @@ func TestFilter(t *testing.T) {
 	actual := iter.Collect()
 	expected := []int{2, 4}
 
-	if !reflect.DeepEqual(actual, expected) {
-		t.Fatalf("got %v, expected %v", actual, expected)
-	}
+	test.AssertDeepEq(actual, expected, t)
 }

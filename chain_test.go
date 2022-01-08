@@ -1,8 +1,9 @@
 package iter
 
 import (
-	"reflect"
 	"testing"
+
+	"mtoohey.com/iter/test"
 )
 
 func TestChain(t *testing.T) {
@@ -12,7 +13,5 @@ func TestChain(t *testing.T) {
 	actual := iter1.Chain(iter2).Collect()
 	expected := []int{1, 2, 3, 4}
 
-	if !reflect.DeepEqual(actual, expected) {
-		t.Fatalf("got %v, expected %v", actual, expected)
-	}
+	test.AssertDeepEq(actual, expected, t)
 }

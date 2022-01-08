@@ -1,30 +1,19 @@
 package iter
 
 import (
-	"reflect"
 	"testing"
+
+	"mtoohey.com/iter/test"
 )
 
 func TestRunes(t *testing.T) {
-	iter := Runes("asdf")
-
-	actual := iter.Collect()
-	expected := []rune{'a', 's', 'd', 'f'}
-
-	if !reflect.DeepEqual(actual, expected) {
-		t.Fatalf("got %v, expected %v", actual, expected)
-	}
+	test.AssertDeepEq(Runes("asdf").Collect(),
+		[]rune{'a', 's', 'd', 'f'}, t)
 }
 
 func TestSplitByRune(t *testing.T) {
-	iter := SplitByRune("/usr/bin/ls", '/')
-
-	actual := iter.Collect()
-	expected := []string{"", "usr", "bin", "ls"}
-
-	if !reflect.DeepEqual(actual, expected) {
-		t.Fatalf("got %v, expected %v", actual, expected)
-	}
+	test.AssertDeepEq(SplitByRune("/usr/bin/ls", '/').Collect(),
+		[]string{"", "usr", "bin", "ls"}, t)
 }
 
 func TestSplitByString(t *testing.T) {
@@ -33,7 +22,5 @@ func TestSplitByString(t *testing.T) {
 	actual := iter.Collect()
 	expected := []string{"", "quick brown fox jumped over ", "lazy dogs"}
 
-	if !reflect.DeepEqual(actual, expected) {
-		t.Fatalf("got %v, expected %v", actual, expected)
-	}
+	test.AssertDeepEq(actual, expected, t)
 }

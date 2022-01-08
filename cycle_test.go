@@ -1,8 +1,9 @@
 package iter
 
 import (
-	"reflect"
 	"testing"
+
+	"mtoohey.com/iter/test"
 )
 
 func TestCycle(t *testing.T) {
@@ -17,7 +18,5 @@ func TestCycle(t *testing.T) {
 
 	expected := []int{1, 2, 1, 2, 1, 2}
 
-	if !reflect.DeepEqual(actual, expected) {
-		t.Fatalf("got %v, expected %v", actual, expected)
-	}
+	test.AssertDeepEq(actual, expected, t)
 }

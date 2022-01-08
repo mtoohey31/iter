@@ -2,9 +2,10 @@ package iter
 
 import (
 	"errors"
-	"reflect"
 	"strings"
 	"testing"
+
+	"mtoohey.com/iter/test"
 )
 
 func TestMapWhileSame(t *testing.T) {
@@ -17,19 +18,8 @@ func TestMapWhileSame(t *testing.T) {
 		}
 	})
 
-	actualMappedWhile := mappedWhileIter.Collect()
-	expectedMappedWhile := []string{"GOOD"}
-
-	if !reflect.DeepEqual(actualMappedWhile, expectedMappedWhile) {
-		t.Fatalf("got %v, expected %v", actualMappedWhile, expectedMappedWhile)
-	}
-
-	actualInitial := initialIter.Collect()
-	expectedInitial := []string{"good", "good"}
-
-	if !reflect.DeepEqual(actualInitial, expectedInitial) {
-		t.Fatalf("got %v, expected %v", actualInitial, expectedInitial)
-	}
+	test.AssertDeepEq(mappedWhileIter.Collect(), []string{"GOOD"}, t)
+	test.AssertDeepEq(initialIter.Collect(), []string{"good", "good"}, t)
 }
 
 func TestMapwhile(t *testing.T) {
@@ -43,17 +33,6 @@ func TestMapwhile(t *testing.T) {
 		}
 	})
 
-	actualMappedWhile := mappedWhileIter.Collect()
-	expectedMappedWhile := []int{11, 13}
-
-	if !reflect.DeepEqual(actualMappedWhile, expectedMappedWhile) {
-		t.Fatalf("got %v, expected %v", actualMappedWhile, expectedMappedWhile)
-	}
-
-	actualInitial := initialIter.Collect()
-	expectedInitial := []string{"long string again"}
-
-	if !reflect.DeepEqual(actualInitial, expectedInitial) {
-		t.Fatalf("got %v, expected %v", actualInitial, expectedInitial)
-	}
+	test.AssertDeepEq(mappedWhileIter.Collect(), []int{11, 13}, t)
+	test.AssertDeepEq(initialIter.Collect(), []string{"long string again"}, t)
 }
