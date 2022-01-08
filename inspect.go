@@ -20,6 +20,6 @@ func (i *inspectInner[T]) Next() (T, error) {
 		i.inspectFunc(next)
 		return next, nil
 	} else {
-		return Iter[T]{}.zeroVal(), err
+		return i.inner.zeroVal(), err
 	}
 }
