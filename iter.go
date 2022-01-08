@@ -34,6 +34,16 @@ func (i Iter[T]) zeroVal() T {
 	return z[T]{}.z
 }
 
+type emptyInner[T any] struct{}
+
+func (i *emptyInner[T]) HasNext() bool {
+	return false
+}
+
+func (i *emptyInner[T]) Next() (T, error) {
+	return Iter[T]{}.zeroVal(), IteratorExhaustedError
+}
+
 func (i *Iter[T]) Collect() []T {
 	var res []T
 	for {
