@@ -134,7 +134,7 @@ func (i *Iter[T]) FoldSame(init T, f func(curr T, next T) T) T {
 	return curr
 }
 
-func Fold[T any, U any](i *Iter[T], init U, f func(curr U, next T) U) U {
+func Fold[T, U any](i *Iter[T], init U, f func(curr U, next T) U) U {
 	curr := init
 
 	for {

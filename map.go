@@ -1,6 +1,6 @@
 package iter
 
-type mapInner[T any, U any] struct {
+type mapInner[T, U any] struct {
 	inner   *Iter[T]
 	mapFunc func(T) U
 }
@@ -9,7 +9,7 @@ func (i *Iter[T]) MapSame(f func(T) T) *Iter[T] {
 	return WithInner[T](&mapInner[T, T]{inner: i, mapFunc: f})
 }
 
-func Map[T any, U any](i *Iter[T], f func(T) U) *Iter[U] {
+func Map[T, U any](i *Iter[T], f func(T) U) *Iter[U] {
 	return WithInner[U](&mapInner[T, U]{inner: i, mapFunc: f})
 }
 

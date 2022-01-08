@@ -1,6 +1,6 @@
 package iter
 
-type flatMapInner[T any, U any] struct {
+type flatMapInner[T, U any] struct {
 	inner   *Iter[T]
 	mapFunc func(T) *Iter[U]
 	curr    *Iter[U]
@@ -14,7 +14,7 @@ func (i *Iter[T]) FlatMapSame(f func(T) *Iter[T]) *Iter[T] {
 	})
 }
 
-func FlatMap[T any, U any](i *Iter[T], f func(T) *Iter[U]) *Iter[U] {
+func FlatMap[T, U any](i *Iter[T], f func(T) *Iter[U]) *Iter[U] {
 	return WithInner[U](&flatMapInner[T, U]{
 		inner:   i,
 		mapFunc: f,

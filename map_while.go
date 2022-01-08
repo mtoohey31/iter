@@ -1,6 +1,6 @@
 package iter
 
-type mapWhileInner[T any, U any] struct {
+type mapWhileInner[T, U any] struct {
 	inner        *Iter[T]
 	mapWhileFunc func(T) (U, error)
 	cachedNext   *U
@@ -11,7 +11,7 @@ func (i *Iter[T]) MapWhileSame(f func(T) (T, error)) *Iter[T] {
 	return WithInner[T](&mapWhileInner[T, T]{inner: i, mapWhileFunc: f})
 }
 
-func MapWhile[T any, U any](i *Iter[T], f func(T) (U, error)) *Iter[U] {
+func MapWhile[T, U any](i *Iter[T], f func(T) (U, error)) *Iter[U] {
 	return WithInner[U](&mapWhileInner[T, U]{inner: i, mapWhileFunc: f})
 }
 

@@ -1,6 +1,6 @@
 package iter
 
-type filterMapInner[T any, U any] struct {
+type filterMapInner[T, U any] struct {
 	inner         *Iter[T]
 	filterMapFunc func(T) (U, error)
 	cachedNext    *U
@@ -10,7 +10,7 @@ func (i *Iter[T]) FilterMapSame(f func(T) (T, error)) *Iter[T] {
 	return WithInner[T](&filterMapInner[T, T]{inner: i, filterMapFunc: f})
 }
 
-func FilterMap[T any, U any](i *Iter[T], f func(T) (U, error)) *Iter[U] {
+func FilterMap[T, U any](i *Iter[T], f func(T) (U, error)) *Iter[U] {
 	return WithInner[U](&filterMapInner[T, U]{inner: i, filterMapFunc: f})
 }
 
