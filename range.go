@@ -22,3 +22,19 @@ func (i *rangeInner[T]) Next() (T, error) {
 	defer func() { i.curr = i.curr + i.step }()
 	return i.curr, nil
 }
+
+type infRangeInner[T integer] struct {
+	curr T
+	step T
+}
+
+func InfRange[T integer](start T, step T) *Iter[T] {
+	return WithInner[T](&infRangeInner[T]{curr: start, step: step})
+}
+
+func (i *infRangeInner[T]) HasNext() bool { return true }
+
+func (i *infRangeInner[T]) Next() (T, error) {
+	defer func() { i.curr = i.curr + i.step }()
+	return i.curr, nil
+}
