@@ -161,3 +161,21 @@ func (i *Iter[T]) ForEach(f func(T)) {
 		f(next)
 	}
 }
+
+func (i *Iter[T]) Last() (T, error) {
+	curr, err := i.Next()
+
+	if err != nil {
+		return i.zeroVal(), IteratorExhaustedError
+	}
+
+	for {
+		next, err := i.Next()
+
+		if err == nil {
+			curr = next
+		} else {
+			return curr, nil
+		}
+	}
+}
