@@ -31,3 +31,14 @@ func TestAny(t *testing.T) {
 		t.Fatalf("got %v, expected %v", false, true)
 	}
 }
+
+func TestCount(t *testing.T) {
+	var iter *Iter[int] = FromSlice([]int{1, 2})
+
+	actual := iter.Count()
+	expected := 2
+
+	if actual != expected {
+		t.Fatalf("got %v, expected %v", actual, expected)
+	}
+}

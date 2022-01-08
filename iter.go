@@ -68,3 +68,17 @@ func (i *Iter[T]) Any(f func(T) bool) bool {
 	}
 	return false
 }
+
+func (i *Iter[T]) Count() int {
+	j := 0
+	for {
+		_, err := i.Next()
+
+		if err != nil {
+			break
+		}
+
+		j++
+	}
+	return j
+}
