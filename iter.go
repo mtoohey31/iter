@@ -2,6 +2,8 @@ package iter
 
 import "errors"
 
+var IteratorExhaustedError = errors.New("iterator exhausted")
+
 type innerIter[T any] interface {
 	HasNext() bool
 	Next() (T, error)
@@ -9,10 +11,6 @@ type innerIter[T any] interface {
 
 type Iter[T any] struct {
 	inner innerIter[T]
-}
-
-func WithInner[T any](inner innerIter[T]) *Iter[T] {
-	return &Iter[T]{inner: inner}
 }
 
 func (i *Iter[T]) HasNext() bool {
@@ -23,4 +21,20 @@ func (i *Iter[T]) Next() (T, error) {
 	return i.inner.Next()
 }
 
-var IteratorExhaustedError = errors.New("iterator exhausted")
+func WithInner[T any](inner innerIter[T]) *Iter[T] {
+	return &Iter[T]{inner: inner}
+}
+
+func (i *Iter[T]) Collect() []T {
+	var res []T
+	for {
+		next, err := i.Next()
+
+		if err != nil {
+			break
+		}
+
+		res = append(res, next)
+	}
+	return res
+}
