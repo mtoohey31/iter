@@ -42,3 +42,29 @@ func TestCount(t *testing.T) {
 		t.Fatalf("got %v, expected %v", actual, expected)
 	}
 }
+
+func TestFoldSame(t *testing.T) {
+	iter := Elems([]string{"quick", "brown", "fox"})
+
+	actual := iter.FoldSame("the", func(curr string, next string) string {
+		return curr + " " + next
+	})
+	expected := "the quick brown fox"
+
+	if actual != expected {
+		t.Fatalf("got %v, expected %v", actual, expected)
+	}
+}
+
+func TestFold(t *testing.T) {
+	iter := Elems([]string{"the", "quick", "brown", "fox"})
+
+	actual := Fold(iter, 0, func(curr int, next string) int {
+		return curr + len(next)
+	})
+	expected := 16
+
+	if actual != expected {
+		t.Fatalf("got %v, expected %v", actual, expected)
+	}
+}

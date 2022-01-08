@@ -117,3 +117,35 @@ func (i *Iter[T]) Find(f func(T) bool) (T, error) {
 
 	return i.zeroVal(), errors.New("no element found")
 }
+
+func (i *Iter[T]) FoldSame(init T, f func(curr T, next T) T) T {
+	curr := init
+
+	for {
+		next, err := i.Next()
+
+		if err != nil {
+			break
+		}
+
+		curr = f(curr, next)
+	}
+
+	return curr
+}
+
+func Fold[T any, U any](i *Iter[T], init U, f func(curr U, next T) U) U {
+	curr := init
+
+	for {
+		next, err := i.Next()
+
+		if err != nil {
+			break
+		}
+
+		curr = f(curr, next)
+	}
+
+	return curr
+}
