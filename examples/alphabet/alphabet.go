@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/mtoohey31/iter"
+	"mtoohey.com/iter"
 )
 
 type alphebetInner struct {

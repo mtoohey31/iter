@@ -1,3 +1,3 @@
-module github.com/mtoohey31/iter
+module mtoohey.com/iter
 
 go 1.18
