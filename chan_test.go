@@ -17,7 +17,7 @@ func TestMsgs(t *testing.T) {
 		close(ch)
 	}()
 
-	test.AssertDeepEq(Msgs(ch).Collect(), expected, t)
+	test.AssertDeepEq(Msgs(&ch).Collect(), expected, t)
 }
 
 func BenchmarkMsgs(b *testing.B) {
@@ -30,5 +30,5 @@ func BenchmarkMsgs(b *testing.B) {
 		close(ch)
 	}()
 
-	Msgs(ch).Consume()
+	Msgs(&ch).Consume()
 }

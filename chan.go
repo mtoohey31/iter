@@ -1,16 +1,16 @@
 package iter
 
 type chanInner[T any] struct {
-	ch         chan T
+	ch         *chan T
 	cachedNext *T
 }
 
-func Msgs[T any](ch chan T) *Iter[T] {
+func Msgs[T any](ch *chan T) *Iter[T] {
 	return WithInner[T](&chanInner[T]{ch: ch})
 }
 
 func (i *chanInner[T]) getNext() (T, error) {
-	next, ok := <-i.ch
+	next, ok := <-*i.ch
 
 	if ok {
 		return next, nil
