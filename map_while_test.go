@@ -25,7 +25,7 @@ func TestMapWhileEndo(t *testing.T) {
 func BenchmarkMapWhileEndo(b *testing.B) {
 	Ints[int]().Take(b.N).MapWhileEndo(func(i int) (int, error) {
 		return 0, nil
-	})
+	}).Consume()
 }
 
 func TestMapWhile(t *testing.T) {
@@ -46,5 +46,5 @@ func TestMapWhile(t *testing.T) {
 func BenchmarkMapWhile(b *testing.B) {
 	MapWhile(Ints[int]().Take(b.N), func(i int) (int, error) {
 		return 0, nil
-	})
+	}).Consume()
 }
