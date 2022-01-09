@@ -315,6 +315,15 @@ func (i *Iter[T]) Reduce(f func(curr T, next T) T) (T, error) {
 	return i.FoldEndo(curr, f), nil
 }
 
+// func (i *Iter[T]) Position(f func(T) bool) int {
+// 	tup, err := Enumerate(i).Find(func(tup tuple.T2[int, T]) bool { return f(tup.V2) })
+// 	if err == nil {
+// 		return tup.V1
+// 	} else {
+// 		return -1
+// 	}
+// }
+
 func (i *Iter[T]) Rev() *Iter[T] {
 	collected := i.Collect()
 	for j, k := 0, len(collected)-1; j < k; j, k = j+1, k-1 {
