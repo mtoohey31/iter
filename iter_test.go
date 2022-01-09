@@ -115,3 +115,33 @@ func TestTryFold(t *testing.T) {
 
 	test.AssertNonNil(err, t)
 }
+
+func TestTryForEach(t *testing.T) {
+	actual := 0
+	err := Elems([]string{"1", "2", "3", "4"}).TryForEach(func(s string) error {
+		v, err := strconv.Atoi(s)
+		if err == nil {
+			actual += v
+			return nil
+		} else {
+			return err
+		}
+	})
+
+	test.AssertNil(err, t)
+	test.AssertEq(actual, 10, t)
+
+	actual = 0
+	err = Elems([]string{"1", "2", "not a number", "4"}).TryForEach(func(s string) error {
+		v, err := strconv.Atoi(s)
+		if err == nil {
+			actual += v
+			return nil
+		} else {
+			return err
+		}
+	})
+
+	test.AssertNonNil(err, t)
+	test.AssertEq(actual, 3, t)
+}

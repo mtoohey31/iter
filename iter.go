@@ -256,3 +256,21 @@ func TryFold[T, U any](i *Iter[T], init U, f func(curr U, next T) (U, error)) (U
 
 	return curr, nil
 }
+
+func (i *Iter[T]) TryForEach(f func(T) error) error {
+	for {
+		next, err := i.Next()
+
+		if err != nil {
+			break
+		}
+
+		err = f(next)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
