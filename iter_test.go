@@ -1,6 +1,7 @@
 package iter
 
 import (
+	"errors"
 	"strconv"
 	"testing"
 
@@ -68,7 +69,26 @@ func TestPartition(t *testing.T) {
 }
 
 func TestTryFoldEndo(t *testing.T) {
+	actual, err := Range(0, 5, 2).TryFoldEndo(0, func(curr int, next int) (int, error) {
+		if next%2 == 0 {
+			return curr + next, nil
+		} else {
+			return 0, errors.New("")
+		}
+	})
 
+	test.AssertNil(err, t)
+	test.AssertEq(actual, 6, t)
+
+	_, err = Range(0, 5, 1).TryFoldEndo(0, func(curr int, next int) (int, error) {
+		if next%2 == 0 {
+			return curr + next, nil
+		} else {
+			return 0, errors.New("")
+		}
+	})
+
+	test.AssertNonNil(err, t)
 }
 
 func TestTryFold(t *testing.T) {
