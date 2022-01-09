@@ -274,3 +274,13 @@ func (i *Iter[T]) TryForEach(f func(T) error) error {
 
 	return nil
 }
+
+func (i *Iter[T]) Reduce(f func(curr T, next T) T) (T, error) {
+	curr, err := i.Next()
+
+	if err != nil {
+		return i.zeroVal(), err
+	}
+
+	return i.FoldEndo(curr, f), nil
+}

@@ -145,3 +145,16 @@ func TestTryForEach(t *testing.T) {
 	test.AssertNonNil(err, t)
 	test.AssertEq(actual, 3, t)
 }
+
+func TestReduce(t *testing.T) {
+	actual, err := Range(0, 5, 1).Reduce(func(curr int, next int) int {
+		if next > curr {
+			return next
+		} else {
+			return curr
+		}
+	})
+
+	test.AssertNil(err, t)
+	test.AssertEq(actual, 4, t)
+}
