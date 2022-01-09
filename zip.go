@@ -8,7 +8,7 @@ type zipInner[T, U any] struct {
 }
 
 // TODO: figure out why this is an issue, or file a bug report
-// func (i *Iter[T]) ZipSame(o *Iter[T]) *Iter[tuple.T2[T, T]] {
+// func (i *Iter[T]) ZipEndo(o *Iter[T]) *Iter[tuple.T2[T, T]] {
 // 	return WithInner[tuple.T2[T, T]](&zipInner[T, T]{innerA: i, innerB: o})
 // }
 

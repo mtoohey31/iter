@@ -118,7 +118,7 @@ func (i *Iter[T]) Find(f func(T) bool) (T, error) {
 	return i.zeroVal(), errors.New("no element found")
 }
 
-func (i *Iter[T]) FoldSame(init T, f func(curr T, next T) T) T {
+func (i *Iter[T]) FoldEndo(init T, f func(curr T, next T) T) T {
 	curr := init
 
 	for {

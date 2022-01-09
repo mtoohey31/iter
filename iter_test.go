@@ -23,10 +23,10 @@ func TestCount(t *testing.T) {
 	test.AssertEq(Elems([]int{1, 2}).Count(), 2, t)
 }
 
-func TestFoldSame(t *testing.T) {
+func TestFoldEndo(t *testing.T) {
 	iter := Elems([]string{"quick", "brown", "fox"})
 
-	actual := iter.FoldSame("the", func(curr string, next string) string {
+	actual := iter.FoldEndo("the", func(curr string, next string) string {
 		return curr + " " + next
 	})
 

@@ -8,9 +8,9 @@ import (
 	"mtoohey.com/iter/test"
 )
 
-func TestMapWhileSame(t *testing.T) {
+func TestMapWhileEndo(t *testing.T) {
 	initialIter := Elems([]string{"good", "bad", "good", "good"})
-	mappedWhileIter := initialIter.MapWhileSame(func(s string) (string, error) {
+	mappedWhileIter := initialIter.MapWhileEndo(func(s string) (string, error) {
 		if s == "bad" {
 			return "", errors.New("")
 		} else {

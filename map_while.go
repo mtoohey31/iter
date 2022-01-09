@@ -7,7 +7,7 @@ type mapWhileInner[T, U any] struct {
 	failed       bool
 }
 
-func (i *Iter[T]) MapWhileSame(f func(T) (T, error)) *Iter[T] {
+func (i *Iter[T]) MapWhileEndo(f func(T) (T, error)) *Iter[T] {
 	return WithInner[T](&mapWhileInner[T, T]{inner: i, mapWhileFunc: f})
 }
 

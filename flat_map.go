@@ -6,7 +6,7 @@ type flatMapInner[T, U any] struct {
 	curr    *Iter[U]
 }
 
-func (i *Iter[T]) FlatMapSame(f func(T) *Iter[T]) *Iter[T] {
+func (i *Iter[T]) FlatMapEndo(f func(T) *Iter[T]) *Iter[T] {
 	return WithInner[T](&flatMapInner[T, T]{
 		inner:   i,
 		mapFunc: f,

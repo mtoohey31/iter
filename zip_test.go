@@ -8,11 +8,11 @@ import (
 	"testing"
 )
 
-// TODO: uncomment this once ZipSame is fixed
-// func TestZipSame(t *testing.T) {
+// TODO: uncomment this once ZipEndo is fixed
+// func TestZipEndo(t *testing.T) {
 // 	iter := Range(0, 9, 1)
 //
-// 	zipIter := iter.ZipSame(iter)
+// 	zipIter := iter.ZipEndo(iter)
 //
 // 	expected := []tuple.T2[int, int]{
 // 		tuple.New2(0, 1),

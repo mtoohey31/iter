@@ -36,7 +36,7 @@ type mapFuncInner[T, U any] struct {
 	mapFunc func(T) U
 }
 
-func (i *Iter[T]) MapSame(f func(T) T) *Iter[T] {
+func (i *Iter[T]) MapEndo(f func(T) T) *Iter[T] {
 	return WithInner[T](&mapFuncInner[T, T]{inner: i, mapFunc: f})
 }
 

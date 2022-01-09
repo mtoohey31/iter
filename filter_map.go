@@ -6,7 +6,7 @@ type filterMapInner[T, U any] struct {
 	cachedNext    *U
 }
 
-func (i *Iter[T]) FilterMapSame(f func(T) (T, error)) *Iter[T] {
+func (i *Iter[T]) FilterMapEndo(f func(T) (T, error)) *Iter[T] {
 	return WithInner[T](&filterMapInner[T, T]{inner: i, filterMapFunc: f})
 }
 

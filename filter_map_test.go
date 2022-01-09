@@ -8,8 +8,8 @@ import (
 	"mtoohey.com/iter/test"
 )
 
-func TestFilterMapSame(t *testing.T) {
-	iter := Elems([]int{1, 2, 3, 4}).FilterMapSame(func(i int) (int, error) {
+func TestFilterMapEndo(t *testing.T) {
+	iter := Elems([]int{1, 2, 3, 4}).FilterMapEndo(func(i int) (int, error) {
 		if i%2 != 0 {
 			return 0, errors.New("")
 		} else {
