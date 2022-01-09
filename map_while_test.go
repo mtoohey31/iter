@@ -22,7 +22,13 @@ func TestMapWhileEndo(t *testing.T) {
 	test.AssertDeepEq(initialIter.Collect(), []string{"good", "good"}, t)
 }
 
-func TestMapwhile(t *testing.T) {
+func BenchmarkMapWhileEndo(b *testing.B) {
+	InfRange(0, 1).Take(b.N).MapWhileEndo(func(i int) (int, error) {
+		return 0, nil
+	})
+}
+
+func TestMapWhile(t *testing.T) {
 	initialIter := Elems([]string{"long string", "longer string", "short", "long string again"})
 	mappedWhileIter := MapWhile(initialIter, func(s string) (int, error) {
 		l := len(s)
@@ -35,4 +41,10 @@ func TestMapwhile(t *testing.T) {
 
 	test.AssertDeepEq(mappedWhileIter.Collect(), []int{11, 13}, t)
 	test.AssertDeepEq(initialIter.Collect(), []string{"long string again"}, t)
+}
+
+func BenchmarkMapWhile(b *testing.B) {
+	MapWhile(InfRange(0, 1).Take(b.N), func(i int) (int, error) {
+		return 0, nil
+	})
 }

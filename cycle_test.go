@@ -9,14 +9,25 @@ import (
 func TestCycle(t *testing.T) {
 	iter := Elems([]int{1, 2}).Cycle()
 
-	var actual []int
+	test.AssertDeepEq(iter.Take(6).Collect(), []int{1, 2, 1, 2, 1, 2}, t)
+}
 
-	for i := 0; i < 6; i++ {
-		next, _ := iter.Next()
-		actual = append(actual, next)
-	}
+func BenchmarkCycle1(b *testing.B) {
+	InfRange(0, 1).Take(1).Cycle().Take(b.N).Consume()
+}
 
-	expected := []int{1, 2, 1, 2, 1, 2}
+func BenchmarkCycle100(b *testing.B) {
+	InfRange(0, 1).Take(100).Cycle().Take(b.N).Consume()
+}
 
-	test.AssertDeepEq(actual, expected, t)
+func BenchmarkCycleQuarter(b *testing.B) {
+	InfRange(0, 1).Take(1 + b.N/4).Cycle().Take(b.N).Consume()
+}
+
+func BenchmarkCycleHalf(b *testing.B) {
+	InfRange(0, 1).Take(1 + b.N/2).Cycle().Take(b.N).Consume()
+}
+
+func BenchmarkCycleFull(b *testing.B) {
+	InfRange(0, 1).Take(1 + b.N).Cycle().Take(b.N).Consume()
 }

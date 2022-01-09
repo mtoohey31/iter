@@ -14,3 +14,9 @@ func TestFilter(t *testing.T) {
 
 	test.AssertDeepEq(actual, expected, t)
 }
+
+func BenchmarkFilter(b *testing.B) {
+	InfRange(0, 1).Filter(func(i int) bool {
+		return i%2 == 0
+	}).Take(b.N).Consume()
+}

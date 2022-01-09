@@ -11,9 +11,33 @@ func TestRunes(t *testing.T) {
 		[]rune{'a', 's', 'd', 'f'}, t)
 }
 
+func BenchmarkRunes(b *testing.B) {
+	buf := make([]rune, b.N)
+
+	for i := 0; i < b.N; i++ {
+		buf[i] = 'a'
+	}
+
+	str := string(buf)
+
+	Runes(str).Consume()
+}
+
 func TestSplitByRune(t *testing.T) {
 	test.AssertDeepEq(SplitByRune("/usr/bin/ls", '/').Collect(),
 		[]string{"", "usr", "bin", "ls"}, t)
+}
+
+func BenchmarkSplitByRune(b *testing.B) {
+	buf := make([]rune, b.N)
+
+	for i := 0; i < b.N; i++ {
+		buf[i] = 'a'
+	}
+
+	str := string(buf)
+
+	SplitByRune(str, 'a').Consume()
 }
 
 func TestSplitByString(t *testing.T) {
@@ -23,4 +47,16 @@ func TestSplitByString(t *testing.T) {
 	expected := []string{"", "quick brown fox jumped over ", "lazy dogs"}
 
 	test.AssertDeepEq(actual, expected, t)
+}
+
+func BenchmarkSplitByString(b *testing.B) {
+	buf := make([]rune, b.N)
+
+	for i := 0; i < b.N; i++ {
+		buf[i] = 'a'
+	}
+
+	str := string(buf)
+
+	SplitByString(str, "a").Consume()
 }

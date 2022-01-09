@@ -24,6 +24,14 @@ func TestMapData(t *testing.T) {
 	test.AssertElemsDeepEq(KVZip(m).Collect(), expected, t)
 }
 
+func BenchmarkMapData(b *testing.B) {
+	m := make(map[int]int)
+	for i := 0; i < b.N; i++ {
+		m[i] = i
+	}
+	KVZip(m).Consume()
+}
+
 func TestMapEndoFunc(t *testing.T) {
 	iter := Elems([]string{"item1", "item2"}).MapEndo(func(s string) string { return strings.ToUpper(s) })
 
@@ -31,9 +39,21 @@ func TestMapEndoFunc(t *testing.T) {
 	test.Assert(!iter.HasNext(), t)
 }
 
+func BenchmarkMapEndoFunc(b *testing.B) {
+	InfRange(0, 1).Take(b.N).MapEndo(func(i int) int {
+		return i
+	}).Consume()
+}
+
 func TestMapFunc(t *testing.T) {
 	iter := Map(Elems([]string{"item1", "item2"}), func(s string) int { return len(s) })
 
 	test.AssertDeepEq(iter.Collect(), []int{5, 5}, t)
 	test.Assert(!iter.HasNext(), t)
+}
+
+func BenchmarkMapFunc(b *testing.B) {
+	Map(InfRange(0, 1).Take(b.N), func(i int) int {
+		return i
+	}).Consume()
 }

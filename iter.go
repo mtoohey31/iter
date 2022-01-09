@@ -42,6 +42,16 @@ func (i *emptyInner[T]) Next() (T, error) {
 	return Iter[T]{}.zeroVal(), IteratorExhaustedError
 }
 
+func (i *Iter[T]) Consume() {
+	for {
+		_, err := i.Next()
+
+		if err != nil {
+			break
+		}
+	}
+}
+
 func (i *Iter[T]) Collect() []T {
 	var res []T
 	for {

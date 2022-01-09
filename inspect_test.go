@@ -26,3 +26,7 @@ func TestInspect(t *testing.T) {
 
 	test.AssertDeepEq(actualSlice, expectedSlice, t)
 }
+
+func BenchmarkInspect(b *testing.B) {
+	InfRange(0, 1).Inspect(func(i int) {}).Take(b.N).Consume()
+}
