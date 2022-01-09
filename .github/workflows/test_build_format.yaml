@@ -16,9 +16,9 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          all_platforms=$(go tool dist list)
+          platforms=$(go tool dist list | shuf -n 5)
 
-          for platform in $all_platforms; do
+          for platform in $platforms; do
             echo "building for $platform"
             GOOS=$(echo "$platform" | awk -F '/' '{ print $1 }') GOARCH=$(echo "$platform" | awk -F '/' '{ print $2 }') go build
           done
