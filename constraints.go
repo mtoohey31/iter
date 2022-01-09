@@ -1,50 +1,15 @@
-// Copyright 2021 The Go Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
-// Package constraints defines a set of useful constraints to be used
-// with type parameters.
 package iter
 
-// Signed is a constraint that permits any signed integer type.
-// If future releases of Go add new predeclared signed integer types,
-// this constraint will be modified to include them.
-type signed interface {
-	~int | ~int8 | ~int16 | ~int32 | ~int64
-}
+// TODO: replace with official constraints package's version once I can get it working
 
-// Unsigned is a constraint that permits any unsigned integer type.
-// If future releases of Go add new predeclared unsigned integer types,
-// this constraint will be modified to include them.
-type unsigned interface {
-	~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr
-}
-
-// Integer is a constraint that permits any integer type.
-// If future releases of Go add new predeclared integer types,
-// this constraint will be modified to include them.
 type integer interface {
-	signed | unsigned
+	~int | ~int8 | ~int16 | ~int32 | ~int64 | ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr
 }
 
-// Float is a constraint that permits any floating-point type.
-// If future releases of Go add new predeclared floating-point types,
-// this constraint will be modified to include them.
-type float interface {
-	~float32 | ~float64
+type number interface {
+	integer | ~float32 | ~float64
 }
 
-// Complex is a constraint that permits any complex numeric type.
-// If future releases of Go add new predeclared complex numeric types,
-// this constraint will be modified to include them.
-type complex interface {
-	~complex64 | ~complex128
-}
-
-// Ordered is a constraint that permits any ordered type: any type
-// that supports the operators < <= >= >.
-// If future releases of Go add new ordered types,
-// this constraint will be modified to include them.
 type ordered interface {
-	integer | float | ~string
+	number | ~string
 }
