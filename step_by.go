@@ -1,11 +1,17 @@
 package iter
 
+import "fmt"
+
 type stepByInner[T any] struct {
 	inner *Iter[T]
 	step  int
 }
 
 func (i *Iter[T]) StepBy(step int) *Iter[T] {
+	if step < 1 {
+		panic(fmt.Sprintf("invalid StepBy step: %d", step))
+	}
+
 	return WithInner[T](&stepByInner[T]{inner: i, step: step})
 }
 
