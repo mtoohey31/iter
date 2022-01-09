@@ -33,3 +33,27 @@ func TestFilterMap(t *testing.T) {
 
 	test.AssertDeepEq(actual, expected, t)
 }
+
+func BenchmarkFilterMapEndo(b *testing.B) {
+	var dummyErr error
+
+	InfRange(0, 1).FilterMapEndo(func(i int) (int, error) {
+		if i%2 == 0 {
+			return i * 2, nil
+		} else {
+			return 0, dummyErr
+		}
+	}).Take(b.N).Consume()
+}
+
+func BenchmarkFilterMap(b *testing.B) {
+	var dummyErr error
+
+	FilterMap(InfRange(0, 1), func(i int) (int, error) {
+		if i%2 == 0 {
+			return i * 2, nil
+		} else {
+			return 0, dummyErr
+		}
+	}).Take(b.N).Consume()
+}

@@ -12,3 +12,9 @@ func TestTakeWhile(t *testing.T) {
 		Range(0, 10, 1).Collect(),
 		t)
 }
+
+func BenchmarkTakeWhile(b *testing.B) {
+	InfRange(0, 1).TakeWhile(func(i int) bool {
+		return i < b.N
+	}).Consume()
+}

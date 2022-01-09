@@ -19,3 +19,11 @@ func TestStepByPanic(t *testing.T) {
 
 	Elems([]bool{}).StepBy(0)
 }
+
+func BenchmarkStepBy1(b *testing.B) {
+	InfRange(0, 1).StepBy(1).Take(b.N).Consume()
+}
+
+func BenchmarkStepBy100(b *testing.B) {
+	InfRange(0, 1).StepBy(100).Take(b.N).Consume()
+}

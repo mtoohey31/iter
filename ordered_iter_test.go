@@ -19,6 +19,11 @@ func TestMin(t *testing.T) {
 	test.AssertNonNil(err, t)
 }
 
+func BenchmarkMin(b *testing.B) {
+	ordered := OrderedIter[int](*InfRange(0, 1).Take(b.N))
+	ordered.Min()
+}
+
 func TestMinByKey(t *testing.T) {
 	ordered := OrderedIter[int](*Range(0, 10, 1))
 
@@ -36,6 +41,13 @@ func TestMinByKey(t *testing.T) {
 	test.AssertNonNil(err, t)
 }
 
+func BenchmarkMinByKey(b *testing.B) {
+	ordered := OrderedIter[int](*InfRange(0, 1).Take(b.N))
+	MinByKey(&ordered, func(n int) int {
+		return n
+	})
+}
+
 func TestMax(t *testing.T) {
 	ordered := OrderedIter[int](*Range(0, 10, 1))
 
@@ -47,6 +59,11 @@ func TestMax(t *testing.T) {
 	_, err = ordered.Max()
 
 	test.AssertNonNil(err, t)
+}
+
+func BenchmarkMax(b *testing.B) {
+	ordered := OrderedIter[int](*InfRange(0, 1).Take(b.N))
+	ordered.Max()
 }
 
 func TestMaxByKey(t *testing.T) {
@@ -66,7 +83,19 @@ func TestMaxByKey(t *testing.T) {
 	test.AssertNonNil(err, t)
 }
 
+func BenchmarkMaxByKey(b *testing.B) {
+	ordered := OrderedIter[int](*InfRange(0, 1).Take(b.N))
+	MaxByKey(&ordered, func(n int) int {
+		return n
+	})
+}
+
 func TestSum(t *testing.T) {
 	ordered := OrderedIter[int](*Range(0, 10, 1))
 	test.AssertEq(ordered.Sum(), 45, t)
+}
+
+func BenchmarkSum(b *testing.B) {
+	ordered := OrderedIter[int](*InfRange(0, 1).Take(b.N))
+	ordered.Sum()
 }
