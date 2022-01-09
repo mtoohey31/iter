@@ -11,6 +11,18 @@ func Assert(v bool, t *testing.T) {
 	}
 }
 
+func AssertNil(actual interface{}, t *testing.T) {
+	if actual != nil {
+		t.Fatalf("got %v, expected nil", actual)
+	}
+}
+
+func AssertNonNil(actual interface{}, t *testing.T) {
+	if actual == nil {
+		t.Fatal("got nil, expected non-nil")
+	}
+}
+
 func AssertEq(actual, expected interface{}, t *testing.T) {
 	if actual != expected {
 		t.Fatalf("got %v, expected %v", actual, expected)

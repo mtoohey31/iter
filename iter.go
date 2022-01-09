@@ -216,3 +216,43 @@ func (i *Iter[T]) Partition(f func(T) bool) ([]T, []T) {
 	}
 	return a, b
 }
+
+func (i *Iter[T]) TryFoldEndo(init T, f func(curr T, next T) (T, error)) (T, error) {
+	curr := init
+
+	for {
+		next, err := i.Next()
+
+		if err != nil {
+			break
+		}
+
+		curr, err = f(curr, next)
+
+		if err != nil {
+			return i.zeroVal(), err
+		}
+	}
+
+	return curr, nil
+}
+
+func TryFold[T, U any](i *Iter[T], init U, f func(curr U, next T) (U, error)) (U, error) {
+	curr := init
+
+	for {
+		next, err := i.Next()
+
+		if err != nil {
+			break
+		}
+
+		curr, err = f(curr, next)
+
+		if err != nil {
+			return Iter[U]{}.zeroVal(), err
+		}
+	}
+
+	return curr, nil
+}

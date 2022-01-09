@@ -1,6 +1,7 @@
 package iter
 
 import (
+	"strconv"
 	"testing"
 
 	"mtoohey.com/iter/test"
@@ -64,4 +65,33 @@ func TestPartition(t *testing.T) {
 
 	test.AssertDeepEq(actualA, []int{0, 2}, t)
 	test.AssertDeepEq(actualB, []int{1, 3}, t)
+}
+
+func TestTryFoldEndo(t *testing.T) {
+
+}
+
+func TestTryFold(t *testing.T) {
+	actual, err := TryFold(Elems([]string{"1", "2", "3", "4"}), 0, func(curr int, next string) (int, error) {
+		v, err := strconv.Atoi(next)
+		if err == nil {
+			return curr + v, nil
+		} else {
+			return 0, err
+		}
+	})
+
+	test.AssertNil(err, t)
+	test.AssertEq(actual, 10, t)
+
+	_, err = TryFold(Elems([]string{"1", "2", "not a number", "4"}), 0, func(curr int, next string) (int, error) {
+		v, err := strconv.Atoi(next)
+		if err == nil {
+			return curr + v, nil
+		} else {
+			return 0, err
+		}
+	})
+
+	test.AssertNonNil(err, t)
 }
