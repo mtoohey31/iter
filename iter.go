@@ -1,8 +1,6 @@
 package iter
 
-import (
-	"errors"
-)
+import "errors"
 
 var IteratorExhaustedError = errors.New("iterator exhausted")
 
@@ -116,6 +114,38 @@ func (i *Iter[T]) Find(f func(T) bool) (T, error) {
 	}
 
 	return i.zeroVal(), errors.New("no element found")
+}
+
+func (i *Iter[T]) FindMapEndo(f func(T) (T, error)) (T, error) {
+	for {
+		next, err := i.Next()
+
+		if err != nil {
+			break
+		}
+
+		if mappedNext, err := f(next); err == nil {
+			return mappedNext, nil
+		}
+	}
+
+	return i.zeroVal(), errors.New("no element found")
+}
+
+func FindMap[T, U any](i *Iter[T], f func(T) (U, error)) (U, error) {
+	for {
+		next, err := i.Next()
+
+		if err != nil {
+			break
+		}
+
+		if mappedNext, err := f(next); err == nil {
+			return mappedNext, nil
+		}
+	}
+
+	return Iter[U]{}.zeroVal(), errors.New("no element found")
 }
 
 func (i *Iter[T]) FoldEndo(init T, f func(curr T, next T) T) T {
