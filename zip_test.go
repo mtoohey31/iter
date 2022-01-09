@@ -47,3 +47,12 @@ func TestEnumerate(t *testing.T) {
 
 	test.AssertDeepEq(Enumerate(Range(7, 0, -2)).Collect(), expected, t)
 }
+
+func TestUnzip(t *testing.T) {
+	expected := tuple.New2(Range(0, 10, 1).Collect(), Range(10, 0, -1).Collect())
+	v1, v2 := Unzip(Zip(Elems(expected.V1), Elems(expected.V2)))
+	test.AssertDeepEq(
+		tuple.New2(v1.Collect(), v2.Collect()),
+		expected,
+		t)
+}
