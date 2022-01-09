@@ -21,7 +21,7 @@ func TestMapData(t *testing.T) {
 		m[v.V1] = v.V2
 	}
 
-	test.AssertDeepEq(KVZip(m).Collect(), expected, t)
+	test.AssertElemsDeepEq(KVZip(m).Collect(), expected, t)
 }
 
 func TestMapSameFunc(t *testing.T) {
