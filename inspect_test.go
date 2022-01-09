@@ -7,7 +7,7 @@ import (
 )
 
 func TestInspect(t *testing.T) {
-	iter := Range(1, 11, 1)
+	iter := IntsFrom(1).Take(10)
 
 	actualNum := 0
 	expectedNumBefore := 0
@@ -28,5 +28,5 @@ func TestInspect(t *testing.T) {
 }
 
 func BenchmarkInspect(b *testing.B) {
-	InfRange(0, 1).Inspect(func(i int) {}).Take(b.N).Consume()
+	Ints[int]().Inspect(func(i int) {}).Take(b.N).Consume()
 }

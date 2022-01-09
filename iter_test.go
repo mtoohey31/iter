@@ -14,7 +14,7 @@ func TestCollect(t *testing.T) {
 }
 
 func BenchmarkCollect(b *testing.B) {
-	InfRange(0, 1).Take(b.N).Collect()
+	Ints[int]().Take(b.N).Collect()
 }
 
 func TestAll(t *testing.T) {
@@ -22,7 +22,7 @@ func TestAll(t *testing.T) {
 }
 
 func BenchmarkAll(b *testing.B) {
-	InfRange(0, 1).Take(b.N).All(func(i int) bool {
+	Ints[int]().Take(b.N).All(func(i int) bool {
 		return i >= 0
 	})
 }
@@ -32,7 +32,7 @@ func TestAny(t *testing.T) {
 }
 
 func BenchmarkAny(b *testing.B) {
-	InfRange(0, 1).Take(b.N).Any(func(i int) bool {
+	Ints[int]().Take(b.N).Any(func(i int) bool {
 		return i < 0
 	})
 }
@@ -42,7 +42,7 @@ func TestCount(t *testing.T) {
 }
 
 func BenchmarkCount(b *testing.B) {
-	InfRange(0, 1).Take(b.N).Count()
+	Ints[int]().Take(b.N).Count()
 }
 
 func TestFoldEndo(t *testing.T) {
@@ -56,7 +56,7 @@ func TestFoldEndo(t *testing.T) {
 }
 
 func BenchmarkFoldEndo(b *testing.B) {
-	InfRange(0, 1).Take(b.N).FoldEndo(0, func(p, n int) int {
+	Ints[int]().Take(b.N).FoldEndo(0, func(p, n int) int {
 		return p + n
 	})
 }
@@ -72,54 +72,54 @@ func TestFold(t *testing.T) {
 }
 
 func BenchmarkFold(b *testing.B) {
-	Fold(InfRange(0, 1).Take(b.N), 0, func(p, n int) int {
+	Fold(Ints[int]().Take(b.N), 0, func(p, n int) int {
 		return p + n
 	})
 }
 
 func TestForEach(t *testing.T) {
 	actual := 0
-	Range(1, 11, 1).ForEach(func(n int) { actual = actual + n })
+	IntsFrom(1).Take(10).ForEach(func(n int) { actual = actual + n })
 	test.AssertEq(actual, 55, t)
 }
 
 func BenchmarkForEach(b *testing.B) {
-	InfRange(0, 1).Take(b.N).ForEach(func(i int) {})
+	Ints[int]().Take(b.N).ForEach(func(i int) {})
 }
 
 func TestLast(t *testing.T) {
-	actual, _ := Range(1, 11, 1).Last()
+	actual, _ := IntsFrom(1).Take(10).Last()
 	test.AssertEq(actual, 10, t)
 }
 
 func BenchmarkLast(b *testing.B) {
-	InfRange(0, 1).Take(b.N).Last()
+	Ints[int]().Take(b.N).Last()
 }
 
 func TestNth(t *testing.T) {
-	actual, _ := Range(1, 11, 1).Nth(7)
+	actual, _ := IntsFrom(1).Take(10).Nth(7)
 	test.AssertEq(actual, 7, t)
 }
 
 func BenchmarkNth(b *testing.B) {
-	InfRange(0, 1).Nth(b.N)
+	Ints[int]().Nth(b.N)
 }
 
 func TestPartition(t *testing.T) {
-	actualA, actualB := Range(0, 4, 1).Partition(func(i int) bool { return i%2 == 0 })
+	actualA, actualB := Ints[int]().Take(4).Partition(func(i int) bool { return i%2 == 0 })
 
 	test.AssertDeepEq(actualA, []int{0, 2}, t)
 	test.AssertDeepEq(actualB, []int{1, 3}, t)
 }
 
 func BenchmarkPartition(b *testing.B) {
-	InfRange(0, 1).Take(b.N).Partition(func(i int) bool {
+	Ints[int]().Take(b.N).Partition(func(i int) bool {
 		return i%2 == 0
 	})
 }
 
 func TestTryFoldEndo(t *testing.T) {
-	actual, err := Range(0, 5, 2).TryFoldEndo(0, func(curr int, next int) (int, error) {
+	actual, err := IntsBy(2).Take(3).TryFoldEndo(0, func(curr int, next int) (int, error) {
 		if next%2 == 0 {
 			return curr + next, nil
 		} else {
@@ -130,7 +130,7 @@ func TestTryFoldEndo(t *testing.T) {
 	test.AssertNil(err, t)
 	test.AssertEq(actual, 6, t)
 
-	_, err = Range(0, 5, 1).TryFoldEndo(0, func(curr int, next int) (int, error) {
+	_, err = Ints[int]().Take(5).TryFoldEndo(0, func(curr int, next int) (int, error) {
 		if next%2 == 0 {
 			return curr + next, nil
 		} else {
@@ -142,7 +142,7 @@ func TestTryFoldEndo(t *testing.T) {
 }
 
 func BenchmarkTryFoldEndo(b *testing.B) {
-	InfRange(0, 1).Take(b.N).TryFoldEndo(0, func(curr, next int) (int, error) {
+	Ints[int]().Take(b.N).TryFoldEndo(0, func(curr, next int) (int, error) {
 		return 0, nil
 	})
 }
@@ -173,7 +173,7 @@ func TestTryFold(t *testing.T) {
 }
 
 func BenchmarkTryFold(b *testing.B) {
-	TryFold(InfRange(0, 1).Take(b.N), 0, func(curr, next int) (int, error) {
+	TryFold(Ints[int]().Take(b.N), 0, func(curr, next int) (int, error) {
 		return 0, nil
 	})
 }
@@ -209,11 +209,11 @@ func TestTryForEach(t *testing.T) {
 }
 
 func BenchmarkTryForEach(b *testing.B) {
-	InfRange(0, 1).Take(b.N).TryForEach(func(i int) error { return nil })
+	Ints[int]().Take(b.N).TryForEach(func(i int) error { return nil })
 }
 
 func TestReduce(t *testing.T) {
-	actual, err := Range(0, 5, 1).Reduce(func(curr int, next int) int {
+	actual, err := Ints[int]().Take(5).Reduce(func(curr int, next int) int {
 		if next > curr {
 			return next
 		} else {
@@ -226,7 +226,7 @@ func TestReduce(t *testing.T) {
 }
 
 func BenchmarkReduce(b *testing.B) {
-	InfRange(0, 1).Take(b.N).Reduce(func(p, n int) int {
+	Ints[int]().Take(b.N).Reduce(func(p, n int) int {
 		return 0
 	})
 }

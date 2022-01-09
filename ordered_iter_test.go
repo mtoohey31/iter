@@ -7,7 +7,7 @@ import (
 )
 
 func TestMin(t *testing.T) {
-	ordered := OrderedIter[int](*Range(0, 10, 1))
+	ordered := OrderedIter[int](*Ints[int]().Take(10))
 
 	actual, err := ordered.Min()
 
@@ -20,12 +20,12 @@ func TestMin(t *testing.T) {
 }
 
 func BenchmarkMin(b *testing.B) {
-	ordered := OrderedIter[int](*InfRange(0, 1).Take(b.N))
+	ordered := OrderedIter[int](*Ints[int]().Take(b.N))
 	ordered.Min()
 }
 
 func TestMinByKey(t *testing.T) {
-	ordered := OrderedIter[int](*Range(0, 10, 1))
+	ordered := OrderedIter[int](*Ints[int]().Take(10))
 
 	actual, err := MinByKey(&ordered, func(n int) int {
 		return n * -1
@@ -42,14 +42,14 @@ func TestMinByKey(t *testing.T) {
 }
 
 func BenchmarkMinByKey(b *testing.B) {
-	ordered := OrderedIter[int](*InfRange(0, 1).Take(b.N))
+	ordered := OrderedIter[int](*Ints[int]().Take(b.N))
 	MinByKey(&ordered, func(n int) int {
 		return n
 	})
 }
 
 func TestMax(t *testing.T) {
-	ordered := OrderedIter[int](*Range(0, 10, 1))
+	ordered := OrderedIter[int](*Ints[int]().Take(10))
 
 	actual, err := ordered.Max()
 
@@ -62,12 +62,12 @@ func TestMax(t *testing.T) {
 }
 
 func BenchmarkMax(b *testing.B) {
-	ordered := OrderedIter[int](*InfRange(0, 1).Take(b.N))
+	ordered := OrderedIter[int](*Ints[int]().Take(b.N))
 	ordered.Max()
 }
 
 func TestMaxByKey(t *testing.T) {
-	ordered := OrderedIter[int](*Range(0, 10, 1))
+	ordered := OrderedIter[int](*Ints[int]().Take(10))
 
 	actual, err := MaxByKey(&ordered, func(n int) int {
 		return n * -1
@@ -84,18 +84,18 @@ func TestMaxByKey(t *testing.T) {
 }
 
 func BenchmarkMaxByKey(b *testing.B) {
-	ordered := OrderedIter[int](*InfRange(0, 1).Take(b.N))
+	ordered := OrderedIter[int](*Ints[int]().Take(b.N))
 	MaxByKey(&ordered, func(n int) int {
 		return n
 	})
 }
 
 func TestSum(t *testing.T) {
-	ordered := OrderedIter[int](*Range(0, 10, 1))
+	ordered := OrderedIter[int](*Ints[int]().Take(10))
 	test.AssertEq(ordered.Sum(), 45, t)
 }
 
 func BenchmarkSum(b *testing.B) {
-	ordered := OrderedIter[int](*InfRange(0, 1).Take(b.N))
+	ordered := OrderedIter[int](*Ints[int]().Take(b.N))
 	ordered.Sum()
 }

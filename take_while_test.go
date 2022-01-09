@@ -8,13 +8,13 @@ import (
 
 func TestTakeWhile(t *testing.T) {
 	test.AssertDeepEq(
-		InfRange(0, 1).TakeWhile(func(i int) bool { return i < 10 }).Collect(),
-		Range(0, 10, 1).Collect(),
+		Ints[int]().TakeWhile(func(i int) bool { return i < 10 }).Collect(),
+		Ints[int]().Take(10).Collect(),
 		t)
 }
 
 func BenchmarkTakeWhile(b *testing.B) {
-	InfRange(0, 1).TakeWhile(func(i int) bool {
+	Ints[int]().TakeWhile(func(i int) bool {
 		return i < b.N
 	}).Consume()
 }

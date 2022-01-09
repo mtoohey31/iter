@@ -37,7 +37,7 @@ func TestFilterMap(t *testing.T) {
 func BenchmarkFilterMapEndo(b *testing.B) {
 	var dummyErr error
 
-	InfRange(0, 1).FilterMapEndo(func(i int) (int, error) {
+	Ints[int]().FilterMapEndo(func(i int) (int, error) {
 		if i%2 == 0 {
 			return i * 2, nil
 		} else {
@@ -49,7 +49,7 @@ func BenchmarkFilterMapEndo(b *testing.B) {
 func BenchmarkFilterMap(b *testing.B) {
 	var dummyErr error
 
-	FilterMap(InfRange(0, 1), func(i int) (int, error) {
+	FilterMap(Ints[int](), func(i int) (int, error) {
 		if i%2 == 0 {
 			return i * 2, nil
 		} else {

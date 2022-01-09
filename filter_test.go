@@ -16,7 +16,7 @@ func TestFilter(t *testing.T) {
 }
 
 func BenchmarkFilter(b *testing.B) {
-	InfRange(0, 1).Filter(func(i int) bool {
+	Ints[int]().Filter(func(i int) bool {
 		return i%2 == 0
 	}).Take(b.N).Consume()
 }

@@ -13,5 +13,5 @@ func TestChain(t *testing.T) {
 
 // operations should not take much longer than that of the range iterator
 func BenchmarkChain(b *testing.B) {
-	InfRange(0, 1).Take(b.N / 2).Chain(Range(b.N/2, b.N/2, 1)).Consume()
+	Ints[int]().Take(b.N / 2).Chain(IntsFrom(b.N / 2).Take(b.N / 2)).Consume()
 }

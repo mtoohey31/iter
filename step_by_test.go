@@ -7,7 +7,7 @@ import (
 )
 
 func TestStepBy(t *testing.T) {
-	test.AssertDeepEq(Range(0, 10, 1).StepBy(3).Collect(), []int{0, 3, 6, 9}, t)
+	test.AssertDeepEq(Ints[int]().Take(10).StepBy(3).Collect(), []int{0, 3, 6, 9}, t)
 }
 
 func TestStepByPanic(t *testing.T) {
@@ -21,9 +21,9 @@ func TestStepByPanic(t *testing.T) {
 }
 
 func BenchmarkStepBy1(b *testing.B) {
-	InfRange(0, 1).StepBy(1).Take(b.N).Consume()
+	Ints[int]().StepBy(1).Take(b.N).Consume()
 }
 
 func BenchmarkStepBy100(b *testing.B) {
-	InfRange(0, 1).StepBy(100).Take(b.N).Consume()
+	Ints[int]().StepBy(100).Take(b.N).Consume()
 }

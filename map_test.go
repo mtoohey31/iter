@@ -40,7 +40,7 @@ func TestMapEndoFunc(t *testing.T) {
 }
 
 func BenchmarkMapEndoFunc(b *testing.B) {
-	InfRange(0, 1).Take(b.N).MapEndo(func(i int) int {
+	Ints[int]().Take(b.N).MapEndo(func(i int) int {
 		return i
 	}).Consume()
 }
@@ -53,7 +53,7 @@ func TestMapFunc(t *testing.T) {
 }
 
 func BenchmarkMapFunc(b *testing.B) {
-	Map(InfRange(0, 1).Take(b.N), func(i int) int {
+	Map(Ints[int]().Take(b.N), func(i int) int {
 		return i
 	}).Consume()
 }
