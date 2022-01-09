@@ -2,12 +2,8 @@ package iter
 
 import "github.com/barweiss/go-tuple"
 
-type OrderedIter[T ordered] Iter[T]
-
-func (oi *OrderedIter[T]) Min() (T, error) {
-	real := Iter[T](*oi)
-
-	return real.Reduce(func(curr T, next T) T {
+func Min[T ordered](oi *Iter[T]) (T, error) {
+	return oi.Reduce(func(curr T, next T) T {
 		if curr < next {
 			return curr
 		} else {
@@ -16,16 +12,14 @@ func (oi *OrderedIter[T]) Min() (T, error) {
 	})
 }
 
-func MinByKey[T, U ordered](oi *OrderedIter[T], key func(T) U) (T, error) {
-	real := Iter[T](*oi)
-
-	init, err := real.Next()
+func MinByKey[T, U ordered](oi *Iter[T], key func(T) U) (T, error) {
+	init, err := oi.Next()
 
 	if err != nil {
-		return real.zeroVal(), IteratorExhaustedError
+		return oi.zeroVal(), IteratorExhaustedError
 	}
 
-	return Fold(&real, tuple.New2(init, key(init)), func(curr tuple.T2[T, U], next T) tuple.T2[T, U] {
+	return Fold(oi, tuple.New2(init, key(init)), func(curr tuple.T2[T, U], next T) tuple.T2[T, U] {
 		keyNext := key(next)
 		if curr.V2 < keyNext {
 			return curr
@@ -35,10 +29,8 @@ func MinByKey[T, U ordered](oi *OrderedIter[T], key func(T) U) (T, error) {
 	}).V1, nil
 }
 
-func (oi *OrderedIter[T]) Max() (T, error) {
-	real := Iter[T](*oi)
-
-	return real.Reduce(func(curr T, next T) T {
+func Max[T ordered](oi *Iter[T]) (T, error) {
+	return oi.Reduce(func(curr T, next T) T {
 		if curr > next {
 			return curr
 		} else {
@@ -47,16 +39,14 @@ func (oi *OrderedIter[T]) Max() (T, error) {
 	})
 }
 
-func MaxByKey[T, U ordered](oi *OrderedIter[T], key func(T) U) (T, error) {
-	real := Iter[T](*oi)
-
-	init, err := real.Next()
+func MaxByKey[T, U ordered](oi *Iter[T], key func(T) U) (T, error) {
+	init, err := oi.Next()
 
 	if err != nil {
-		return real.zeroVal(), IteratorExhaustedError
+		return oi.zeroVal(), IteratorExhaustedError
 	}
 
-	return Fold(&real, tuple.New2(init, key(init)), func(curr tuple.T2[T, U], next T) tuple.T2[T, U] {
+	return Fold(oi, tuple.New2(init, key(init)), func(curr tuple.T2[T, U], next T) tuple.T2[T, U] {
 		keyNext := key(next)
 		if curr.V2 > keyNext {
 			return curr
@@ -66,8 +56,6 @@ func MaxByKey[T, U ordered](oi *OrderedIter[T], key func(T) U) (T, error) {
 	}).V1, nil
 }
 
-func (oi *OrderedIter[T]) Sum() T {
-	real := Iter[T](*oi)
-
-	return real.FoldEndo(real.zeroVal(), func(curr, next T) T { return curr + next })
+func Sum[T ordered](oi *Iter[T]) T {
+	return oi.FoldEndo(oi.zeroVal(), func(curr, next T) T { return curr + next })
 }

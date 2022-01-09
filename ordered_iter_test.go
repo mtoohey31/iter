@@ -7,34 +7,33 @@ import (
 )
 
 func TestMin(t *testing.T) {
-	ordered := OrderedIter[int](*Ints[int]().Take(10))
+	ordered := Ints[int]().Take(10)
 
-	actual, err := ordered.Min()
+	actual, err := Min(ordered)
 
 	test.AssertNil(err, t)
 	test.AssertEq(actual, 0, t)
 
-	_, err = ordered.Min()
+	_, err = Min(ordered)
 
 	test.AssertNonNil(err, t)
 }
 
 func BenchmarkMin(b *testing.B) {
-	ordered := OrderedIter[int](*Ints[int]().Take(b.N))
-	ordered.Min()
+	Min(Ints[int]().Take(b.N))
 }
 
 func TestMinByKey(t *testing.T) {
-	ordered := OrderedIter[int](*Ints[int]().Take(10))
+	ordered := Ints[int]().Take(10)
 
-	actual, err := MinByKey(&ordered, func(n int) int {
+	actual, err := MinByKey(ordered, func(n int) int {
 		return n * -1
 	})
 
 	test.AssertNil(err, t)
 	test.AssertEq(actual, 9, t)
 
-	_, err = MinByKey(&ordered, func(n int) int {
+	_, err = MinByKey(ordered, func(n int) int {
 		return n * -1
 	})
 
@@ -42,41 +41,39 @@ func TestMinByKey(t *testing.T) {
 }
 
 func BenchmarkMinByKey(b *testing.B) {
-	ordered := OrderedIter[int](*Ints[int]().Take(b.N))
-	MinByKey(&ordered, func(n int) int {
+	MinByKey(Ints[int]().Take(b.N), func(n int) int {
 		return n
 	})
 }
 
 func TestMax(t *testing.T) {
-	ordered := OrderedIter[int](*Ints[int]().Take(10))
+	ordered := Ints[int]().Take(10)
 
-	actual, err := ordered.Max()
+	actual, err := Max(ordered)
 
 	test.AssertNil(err, t)
 	test.AssertEq(actual, 9, t)
 
-	_, err = ordered.Max()
+	_, err = Max(ordered)
 
 	test.AssertNonNil(err, t)
 }
 
 func BenchmarkMax(b *testing.B) {
-	ordered := OrderedIter[int](*Ints[int]().Take(b.N))
-	ordered.Max()
+	Max(Ints[int]().Take(b.N))
 }
 
 func TestMaxByKey(t *testing.T) {
-	ordered := OrderedIter[int](*Ints[int]().Take(10))
+	ordered := Ints[int]().Take(10)
 
-	actual, err := MaxByKey(&ordered, func(n int) int {
+	actual, err := MaxByKey(ordered, func(n int) int {
 		return n * -1
 	})
 
 	test.AssertNil(err, t)
 	test.AssertEq(actual, 0, t)
 
-	_, err = MaxByKey(&ordered, func(n int) int {
+	_, err = MaxByKey(ordered, func(n int) int {
 		return n * -1
 	})
 
@@ -84,18 +81,15 @@ func TestMaxByKey(t *testing.T) {
 }
 
 func BenchmarkMaxByKey(b *testing.B) {
-	ordered := OrderedIter[int](*Ints[int]().Take(b.N))
-	MaxByKey(&ordered, func(n int) int {
+	MaxByKey(Ints[int]().Take(b.N), func(n int) int {
 		return n
 	})
 }
 
 func TestSum(t *testing.T) {
-	ordered := OrderedIter[int](*Ints[int]().Take(10))
-	test.AssertEq(ordered.Sum(), 45, t)
+	test.AssertEq(Sum(Ints[int]().Take(10)), 45, t)
 }
 
 func BenchmarkSum(b *testing.B) {
-	ordered := OrderedIter[int](*Ints[int]().Take(b.N))
-	ordered.Sum()
+	Sum(Ints[int]().Take(b.N))
 }
