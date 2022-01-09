@@ -314,3 +314,11 @@ func (i *Iter[T]) Reduce(f func(curr T, next T) T) (T, error) {
 
 	return i.FoldEndo(curr, f), nil
 }
+
+func (i *Iter[T]) Rev() *Iter[T] {
+	collected := i.Collect()
+	for j, k := 0, len(collected)-1; j < k; j, k = j+1, k-1 {
+		collected[j], collected[k] = collected[k], collected[j]
+	}
+	return Elems(collected)
+}
