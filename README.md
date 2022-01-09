@@ -28,7 +28,6 @@ See `examples/` for more demonstrations.
 ## Notes
 
 - It should go without saying that since `1.18` is still beta, so is this library.
-- From what I can tell, with my limited understanding of go memory management, `sliceInner` struct is rather inefficient because it duplicates values and leaves past items sitting inside itself.
 
 ## Similar Projects
 
