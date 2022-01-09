@@ -20,6 +20,7 @@ func (i *stepByInner[T]) HasNext() bool {
 }
 
 func (i *stepByInner[T]) Next() (T, error) {
-	defer func() { i.inner.Take(i.step - 1).Collect() }()
-	return i.inner.Next()
+	res, err := i.inner.Next()
+	i.inner.Take(i.step - 1).Consume()
+	return res, err
 }

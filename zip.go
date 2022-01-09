@@ -70,8 +70,9 @@ func (i *unzipInner2[T, U]) HasNext() bool {
 
 func (i *unzipInner1[T, U]) Next() (T, error) {
 	if i.index < len(i.cached) {
-		defer func() { i.index = i.index + 1 }()
-		return i.cached[i.index], nil
+		res := i.cached[i.index]
+		i.index = i.index + 1
+		return res, nil
 	}
 
 	tup, err := i.inner.Next()
@@ -86,8 +87,9 @@ func (i *unzipInner1[T, U]) Next() (T, error) {
 
 func (i *unzipInner2[T, U]) Next() (U, error) {
 	if i.index < len(i.cached) {
-		defer func() { i.index = i.index + 1 }()
-		return i.cached[i.index], nil
+		res := i.cached[i.index]
+		i.index = i.index + 1
+		return res, nil
 	}
 
 	tup, err := i.inner.Next()

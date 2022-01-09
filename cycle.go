@@ -26,7 +26,8 @@ func (i *cycleInner[T]) Next() (T, error) {
 			return i.Next()
 		}
 	} else {
-		defer func() { i.index = (i.index + 1) % len(i.memory) }()
-		return i.memory[i.index], nil
+		res := i.memory[i.index]
+		i.index = (i.index + 1) % len(i.memory)
+		return res, nil
 	}
 }

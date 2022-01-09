@@ -32,11 +32,13 @@ func (i *splitByRuneInner) Next() (string, error) {
 	runeIndex := strings.IndexRune(i.string[i.index:], i.rune)
 
 	if runeIndex == -1 {
-		defer func() { i.index = len(i.string) }()
-		return i.string[i.index:], nil
+		res := i.string[i.index:]
+		i.index = len(i.string)
+		return res, nil
 	} else {
-		defer func() { i.index = i.index + runeIndex + 1 }()
-		return i.string[i.index : i.index+runeIndex], nil
+		res := i.string[i.index : i.index+runeIndex]
+		i.index = i.index + runeIndex + 1
+		return res, nil
 	}
 }
 
@@ -62,10 +64,12 @@ func (i *splitByStringInner) Next() (string, error) {
 	sepIndex := strings.Index(i.string[i.index:], i.sep)
 
 	if sepIndex == -1 {
-		defer func() { i.index = len(i.string) }()
-		return i.string[i.index:], nil
+		res := i.string[i.index:]
+		i.index = len(i.string)
+		return res, nil
 	} else {
-		defer func() { i.index = i.index + sepIndex + len(i.sep) }()
-		return i.string[i.index : i.index+sepIndex], nil
+		res := i.string[i.index : i.index+sepIndex]
+		i.index = i.index + sepIndex + len(i.sep)
+		return res, nil
 	}
 }

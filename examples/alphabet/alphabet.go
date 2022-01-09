@@ -18,8 +18,9 @@ func (a *alphebetInner) Next() (rune, error) {
 	if !a.HasNext() {
 		return ' ', iter.IteratorExhaustedError
 	} else {
-		defer func() { a.curr = a.curr + 1 }()
-		return rune(a.curr), nil
+		res := rune(a.curr)
+		a.curr = a.curr + 1
+		return res, nil
 	}
 }
 

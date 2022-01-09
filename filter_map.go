@@ -41,8 +41,9 @@ func (i *filterMapInner[T, U]) HasNext() bool {
 
 func (i *filterMapInner[T, U]) Next() (U, error) {
 	if i.cachedNext != nil {
-		defer func() { i.cachedNext = nil }()
-		return *i.cachedNext, nil
+		res := *i.cachedNext
+		i.cachedNext = nil
+		return res, nil
 	} else {
 		return i.findNext()
 	}

@@ -24,6 +24,7 @@ func IntsFromBy[T integer](start T, by T) *Iter[T] {
 func (i *intsInner[T]) HasNext() bool { return true }
 
 func (i *intsInner[T]) Next() (T, error) {
-	defer func() { i.curr = i.curr + i.by }()
-	return i.curr, nil
+	res := i.curr
+	i.curr = i.curr + i.by
+	return res, nil
 }

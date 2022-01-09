@@ -18,6 +18,7 @@ func (i *sliceInner[T]) Next() (T, error) {
 		return Iter[T]{}.zeroVal(), IteratorExhaustedError
 	}
 
-	defer func() { i.index = i.index + 1 }()
-	return i.slice[i.index], nil
+	res := i.slice[i.index]
+	i.index = i.index + 1
+	return res, nil
 }
