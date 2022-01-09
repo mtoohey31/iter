@@ -34,3 +34,7 @@ func (i *zipInner[T, U]) Next() (tuple.T2[T, U], error) {
 // func (i *Iter[T]) Enumerate() *Iter[tuple.T2[int, T]] {
 // 	return Zip(InfRange(0, 1), i)
 // }
+
+func Enumerate[T any](i *Iter[T]) *Iter[tuple.T2[int, T]] {
+	return Zip(InfRange(0, 1), i)
+}

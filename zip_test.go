@@ -36,3 +36,14 @@ func TestZip(t *testing.T) {
 
 	test.AssertDeepEq(iter.Collect(), expected, t)
 }
+
+func TestEnumerate(t *testing.T) {
+	expected := []tuple.T2[int, int]{
+		tuple.New2(0, 7),
+		tuple.New2(1, 5),
+		tuple.New2(2, 3),
+		tuple.New2(3, 1),
+	}
+
+	test.AssertDeepEq(Enumerate(Range(7, 0, -2)).Collect(), expected, t)
+}
