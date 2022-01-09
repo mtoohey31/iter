@@ -11,7 +11,13 @@ func Range[T integer](start T, end T, step T) *Iter[T] {
 }
 
 func (i *rangeInner[T]) HasNext() bool {
-	return i.curr < i.end
+	if i.step > 0 {
+		return i.curr < i.end
+	} else if i.step < 0 {
+		return i.curr > i.end
+	} else {
+		return true
+	}
 }
 
 func (i *rangeInner[T]) Next() (T, error) {
