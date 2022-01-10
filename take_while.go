@@ -62,14 +62,14 @@ func (i *takeWhileInner[T]) Next() (T, error) {
 		res := *i.cachedNext
 		i.cachedNext = nil
 		return res, nil
-	} else {
-		next, err := i.findNext()
-
-		if err != nil {
-			i.failed = true
-			return Iter[T]{}.zeroVal(), IteratorExhaustedError
-		}
-
-		return next, nil
 	}
+
+	next, err := i.findNext()
+
+	if err != nil {
+		i.failed = true
+		return Iter[T]{}.zeroVal(), IteratorExhaustedError
+	}
+
+	return next, nil
 }
