@@ -6,6 +6,9 @@ type flatMapInner[T, U any] struct {
 	curr    *Iter[U]
 }
 
+// FlatMapEndo returns a new iterator that yields the values produced by
+// iterators returned by the provided function when it is applied to values
+// from the input iterator.
 func (i *Iter[T]) FlatMapEndo(f func(T) *Iter[T]) *Iter[T] {
 	return WithInner[T](&flatMapInner[T, T]{
 		inner:   i,
@@ -14,6 +17,9 @@ func (i *Iter[T]) FlatMapEndo(f func(T) *Iter[T]) *Iter[T] {
 	})
 }
 
+// FlatMap returns a new iterator that yields the values produced by iterators
+// returned by the provided function when it is applied to values from the
+// input iterator.
 func FlatMap[T, U any](i *Iter[T], f func(T) *Iter[U]) *Iter[U] {
 	return WithInner[U](&flatMapInner[T, U]{
 		inner:   i,

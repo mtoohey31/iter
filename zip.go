@@ -12,6 +12,8 @@ type zipInner[T, U any] struct {
 // 	return WithInner[tuple.T2[T, T]](&zipInner[T, T]{innerA: i, innerB: o})
 // }
 
+// Zip returns an iterator that yields tuples of the two provided input
+// iterators.
 func Zip[T, U any](a *Iter[T], b *Iter[U]) *Iter[tuple.T2[T, U]] {
 	return WithInner[tuple.T2[T, U]](&zipInner[T, U]{innerA: a, innerB: b})
 }
@@ -35,6 +37,8 @@ func (i *zipInner[T, U]) Next() (tuple.T2[T, U], error) {
 // 	return Zip(InfRange(0, 1), i)
 // }
 
+// Enumerate returns an iterator of tuples indices and values from the input
+// iterator.
 func Enumerate[T any](i *Iter[T]) *Iter[tuple.T2[int, T]] {
 	return Zip(Ints[int](), i)
 }
@@ -53,6 +57,11 @@ type unzipInner2[T, U any] struct {
 	index  int
 }
 
+// Unzip returns two iterators, one yielding the left values of the tuples
+// yielded by the input iterator, the other yielding the right values of the
+// tuples. Note that, while the input iterator is evaluated lazily,
+// exceptionally inequal consumption of the left vs the right iterator can lead
+// to high memory consumption by values cached for the other iterator.
 func Unzip[T, U any](i *Iter[tuple.T2[T, U]]) (*Iter[T], *Iter[U]) {
 	inner1 := unzipInner1[T, U]{inner: i}
 	inner2 := unzipInner2[T, U]{inner: i}

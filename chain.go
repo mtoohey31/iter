@@ -5,6 +5,8 @@ type chainInner[T any] struct {
 	secondInner *Iter[T]
 }
 
+// Chain returns a new iterator that first consumes the first iterator, then
+// the second.
 func (i *Iter[T]) Chain(o *Iter[T]) *Iter[T] {
 	return WithInner[T](&chainInner[T]{firstInner: i, secondInner: o})
 }

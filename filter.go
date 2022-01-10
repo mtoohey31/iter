@@ -6,6 +6,8 @@ type filterInner[T any] struct {
 	cachedNext *T
 }
 
+// Filter returns a new iterator that only yields the values in the input
+// iterator that satisfy the provided function.
 func (i *Iter[T]) Filter(f func(T) bool) *Iter[T] {
 	return WithInner[T](&filterInner[T]{inner: i, filterFunc: f})
 }

@@ -5,6 +5,10 @@ type inspectInner[T any] struct {
 	inspectFunc func(T)
 }
 
+// Inspect produces an iterator with identical values as the input iterator,
+// but it applies the provided function to values of the iterator as they are
+// requested. This methodh differs from ForEach in that it is lazy, whereas
+// ForEach is not.
 func (i *Iter[T]) Inspect(f func(T)) *Iter[T] {
 	return WithInner[T](&inspectInner[T]{inner: i, inspectFunc: f})
 }

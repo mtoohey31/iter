@@ -2,6 +2,7 @@ package iter
 
 import "github.com/barweiss/go-tuple"
 
+// Min returns the minimum value in the provided iterator.
 func Min[T ordered](oi *Iter[T]) (T, error) {
 	return oi.Reduce(func(curr T, next T) T {
 		if curr < next {
@@ -12,7 +13,9 @@ func Min[T ordered](oi *Iter[T]) (T, error) {
 	})
 }
 
-func MinByKey[T, U ordered](oi *Iter[T], key func(T) U) (T, error) {
+// MinByKey returns the value with the minimum result after the application of
+// the provided function.
+func MinByKey[T any, U ordered](oi *Iter[T], key func(T) U) (T, error) {
 	init, err := oi.Next()
 
 	if err != nil {
@@ -29,6 +32,7 @@ func MinByKey[T, U ordered](oi *Iter[T], key func(T) U) (T, error) {
 	}).V1, nil
 }
 
+// Max returns the maximum value in the provided iterator.
 func Max[T ordered](oi *Iter[T]) (T, error) {
 	return oi.Reduce(func(curr T, next T) T {
 		if curr > next {
@@ -39,7 +43,9 @@ func Max[T ordered](oi *Iter[T]) (T, error) {
 	})
 }
 
-func MaxByKey[T, U ordered](oi *Iter[T], key func(T) U) (T, error) {
+// MaxByKey returns the value with the maximum result after the application of
+// the provided function.
+func MaxByKey[T any, U ordered](oi *Iter[T], key func(T) U) (T, error) {
 	init, err := oi.Next()
 
 	if err != nil {
@@ -56,6 +62,7 @@ func MaxByKey[T, U ordered](oi *Iter[T], key func(T) U) (T, error) {
 	}).V1, nil
 }
 
+// Sum returns the sum of all the values in the provided iterator.
 func Sum[T ordered](oi *Iter[T]) T {
 	return oi.FoldEndo(oi.zeroVal(), func(curr, next T) T { return curr + next })
 }

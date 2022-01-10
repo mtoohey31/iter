@@ -2,6 +2,7 @@ package iter
 
 import "strings"
 
+// Runes returns an iterator over the runes of the input string.
 func Runes(s string) *Iter[rune] {
 	runes := make([]rune, len(s))
 	for i, rune := range s {
@@ -16,6 +17,8 @@ type splitByRuneInner struct {
 	index  int
 }
 
+// SplitByRune returns an iterator over the substrings of the input string
+// between occurences of the provided rune.
 func SplitByRune(s string, r rune) *Iter[string] {
 	return WithInner[string](&splitByRuneInner{s, r, 0})
 }
@@ -48,6 +51,8 @@ type splitByStringInner struct {
 	index  int
 }
 
+// SplitByString returns an iterator over the substrings of the input string
+// between occurences of the provided separator string.
 func SplitByString(s string, sep string) *Iter[string] {
 	return WithInner[string](&splitByStringInner{s, sep, 0})
 }
