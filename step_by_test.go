@@ -7,7 +7,11 @@ import (
 )
 
 func TestStepBy(t *testing.T) {
-	test.AssertDeepEq(Ints[int]().Take(10).StepBy(3).Collect(), []int{0, 3, 6, 9}, t)
+	iter := Ints[int]().Take(10).StepBy(3)
+
+	test.Assert(iter.HasNext(), t)
+	test.AssertDeepEq(iter.Collect(), []int{0, 3, 6, 9}, t)
+	test.Assert(!iter.HasNext(), t)
 }
 
 func TestStepByPanic(t *testing.T) {

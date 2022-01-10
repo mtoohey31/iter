@@ -25,10 +25,14 @@ func TestFlatMap(t *testing.T) {
 		return Runes(s)
 	})
 
-	actual := string(iter.Collect())
+	test.Assert(iter.HasNext(), t)
+
+	actualStart := iter.Take(5).Collect()
 	expected := strings.Join(initial, "")
 
-	test.AssertDeepEq(actual, expected, t)
+	test.Assert(iter.HasNext(), t)
+	test.AssertDeepEq(string(append(actualStart, iter.Collect()...)), expected, t)
+	test.Assert(!iter.HasNext(), t)
 }
 
 //

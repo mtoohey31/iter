@@ -17,6 +17,8 @@ func TestMin(t *testing.T) {
 	_, err = Min(ordered)
 
 	test.AssertNonNil(err, t)
+
+	Min(IntsBy(-1).Take(2))
 }
 
 func BenchmarkMin(b *testing.B) {
@@ -38,6 +40,15 @@ func TestMinByKey(t *testing.T) {
 	})
 
 	test.AssertNonNil(err, t)
+
+	ordered = IntsBy(-1).Take(10)
+
+	actual, err = MinByKey(ordered, func(n int) int {
+		return n * -1
+	})
+
+	test.AssertNil(err, t)
+	test.AssertEq(actual, 0, t)
 }
 
 func BenchmarkMinByKey(b *testing.B) {
@@ -57,6 +68,8 @@ func TestMax(t *testing.T) {
 	_, err = Max(ordered)
 
 	test.AssertNonNil(err, t)
+
+	Max(IntsBy(-1).Take(2))
 }
 
 func BenchmarkMax(b *testing.B) {
@@ -78,6 +91,15 @@ func TestMaxByKey(t *testing.T) {
 	})
 
 	test.AssertNonNil(err, t)
+
+	ordered = IntsBy(-1).Take(10)
+
+	actual, err = MaxByKey(ordered, func(n int) int {
+		return n * -1
+	})
+
+	test.AssertNil(err, t)
+	test.AssertEq(actual, -9, t)
 }
 
 func BenchmarkMaxByKey(b *testing.B) {

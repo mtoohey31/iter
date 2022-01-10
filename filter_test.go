@@ -9,10 +9,13 @@ import (
 func TestFilter(t *testing.T) {
 	iter := Elems([]int{1, 2, 3, 4}).Filter(func(i int) bool { return i%2 == 0 })
 
-	actual := iter.Collect()
+	actualFirst, _ := iter.Next()
 	expected := []int{2, 4}
 
-	test.AssertDeepEq(actual, expected, t)
+	test.Assert(iter.HasNext(), t)
+	test.Assert(iter.HasNext(), t)
+	test.AssertDeepEq(append([]int{actualFirst}, iter.Collect()...), expected, t)
+	test.Assert(!iter.HasNext(), t)
 }
 
 func BenchmarkFilter(b *testing.B) {

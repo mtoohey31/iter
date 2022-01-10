@@ -21,7 +21,11 @@ func TestMapData(t *testing.T) {
 		m[v.V1] = v.V2
 	}
 
-	test.AssertElemsDeepEq(KVZip(m).Collect(), expected, t)
+	iter := KVZip(m)
+
+	test.Assert(iter.HasNext(), t)
+	test.AssertElemsDeepEq(iter.Collect(), expected, t)
+	test.Assert(!iter.HasNext(), t)
 }
 
 func BenchmarkMapData(b *testing.B) {

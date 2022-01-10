@@ -7,8 +7,10 @@ import (
 )
 
 func TestChain(t *testing.T) {
-	actual := Elems([]int{1, 2}).Chain(Elems([]int{3, 4})).Collect()
+	iter := Elems([]int{1, 2}).Chain(Elems([]int{3, 4}))
+	actual := iter.Collect()
 	test.AssertDeepEq(actual, []int{1, 2, 3, 4}, t)
+	test.Assert(!iter.HasNext(), t)
 }
 
 // operations should not take much longer than that of the range iterator
