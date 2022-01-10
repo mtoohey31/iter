@@ -1,27 +1,54 @@
+/*
+Package iter provides generic, lazy iterators, functions for producing them
+from primitive types, as well as functions and methods for transforming
+and consuming them.
+
+When reading the documentation of the functions contained in this package, you
+should assume that any function which accepts an iterator, but does not return
+one, consumes it unless otherwise stated, meaning that the values contained
+within cannot be used again.
+
+Methods with names suffixed by Endo indicate that the method transforms
+iterators of generic type T to some type in terms of T, such as T or *Iter[T].
+Transformation between types is possible, but only through the corresponding
+function whose name is identical to the method, without the Endo prefix.
+Functions are required for these operations because Go does not support the
+definition of type parameters on methods. The nomenclature comes from the term
+endomorphism, though it is a bit of a misuse of the term in that some *Endo
+methods take extra parameters or return types derived from T other than
+*Iter[T].
+*/
 package iter
 
 import "errors"
 
+// Indicates an error resulting from an iterator with no more values.
 var IteratorExhaustedError = errors.New("iterator exhausted")
 
-type innerIter[T any] interface {
+type InnerIter[T any] interface {
 	HasNext() bool
 	Next() (T, error)
 }
 
+// Iter is a generic iterator struct, the basis of this whole package.
 type Iter[T any] struct {
-	inner innerIter[T]
+	inner InnerIter[T]
 }
 
+// HasNext returns whether the struct contains a next element.
 func (i *Iter[T]) HasNext() bool {
 	return i.inner.HasNext()
 }
 
+// Next returns the iterator's next element, if it has one. Otherwise, it
+// produces an error.
 func (i *Iter[T]) Next() (T, error) {
 	return i.inner.Next()
 }
 
-func WithInner[T any](inner innerIter[T]) *Iter[T] {
+// WithInner produces a result of type *Iter[T], given a struct implementing
+// the InnerIter interface.
+func WithInner[T any](inner InnerIter[T]) *Iter[T] {
 	return &Iter[T]{inner: inner}
 }
 
@@ -42,6 +69,9 @@ func (i *emptyInner[T]) Next() (T, error) {
 	return Iter[T]{}.zeroVal(), IteratorExhaustedError
 }
 
+// Consume fetches the next value of the iterator until no more values are
+// found. Note that it doesn't do anything with the values that are produced,
+// but it can be useful in certain cases, such as benchmarking.
 func (i *Iter[T]) Consume() {
 	for {
 		_, err := i.Next()
@@ -52,6 +82,8 @@ func (i *Iter[T]) Consume() {
 	}
 }
 
+// Collect fetches the next value of the iterator until no more values are
+// found, places these values in a slice, and returns it.
 func (i *Iter[T]) Collect() []T {
 	var res []T
 	for {
@@ -66,6 +98,8 @@ func (i *Iter[T]) Collect() []T {
 	return res
 }
 
+// All returns whether all values of the iterator satisfy the provided
+// predicate function.
 func (i *Iter[T]) All(f func(T) bool) bool {
 	for {
 		next, err := i.Next()
@@ -81,6 +115,8 @@ func (i *Iter[T]) All(f func(T) bool) bool {
 	return true
 }
 
+// Any returns whether any of the values of the iterator satisfy the provided
+// predicate function.
 func (i *Iter[T]) Any(f func(T) bool) bool {
 	for {
 		next, err := i.Next()
@@ -96,6 +132,7 @@ func (i *Iter[T]) Any(f func(T) bool) bool {
 	return false
 }
 
+// Count returns the number of remaining values in the iterator.
 func (i *Iter[T]) Count() int {
 	j := 0
 	for {
@@ -110,6 +147,10 @@ func (i *Iter[T]) Count() int {
 	return j
 }
 
+// Find returns the first value in the iterator that satisfies the provided
+// predicate function, or returns an error if no satisfactory values were
+// found. It consumes all values up to the first satisfactory value, or the
+// whole iterator if no values satisfy the predicate.
 func (i *Iter[T]) Find(f func(T) bool) (T, error) {
 	for {
 		next, err := i.Next()
@@ -126,6 +167,9 @@ func (i *Iter[T]) Find(f func(T) bool) (T, error) {
 	return i.zeroVal(), errors.New("no element found")
 }
 
+// FindMapEndo returns the first transformed value in the iterator for which
+// the provided function does not return an error. As with Find, it consumes
+// all values up to the first passing one.
 func (i *Iter[T]) FindMapEndo(f func(T) (T, error)) (T, error) {
 	for {
 		next, err := i.Next()
@@ -142,6 +186,9 @@ func (i *Iter[T]) FindMapEndo(f func(T) (T, error)) (T, error) {
 	return i.zeroVal(), errors.New("no element found")
 }
 
+// FindMap returns the first transformed value in the iterator for which the
+// provided function does not return an error. As with Find, it consumes all
+// values up to the first passing one.
 func FindMap[T, U any](i *Iter[T], f func(T) (U, error)) (U, error) {
 	for {
 		next, err := i.Next()
@@ -158,6 +205,9 @@ func FindMap[T, U any](i *Iter[T], f func(T) (U, error)) (U, error) {
 	return Iter[U]{}.zeroVal(), errors.New("no element found")
 }
 
+// FoldEndo repeatedly applies the provided function to the current value
+// (starting with `init`) and the next value of the iterator, until the whole
+// iterator is consumed.
 func (i *Iter[T]) FoldEndo(init T, f func(curr T, next T) T) T {
 	curr := init
 
@@ -174,6 +224,9 @@ func (i *Iter[T]) FoldEndo(init T, f func(curr T, next T) T) T {
 	return curr
 }
 
+// Fold repeatedly applies the provided function to the current value (starting
+// with `init`) and the next value of the iterator, until the whole iterator is
+// consumed.
 func Fold[T, U any](i *Iter[T], init U, f func(curr U, next T) U) U {
 	curr := init
 
@@ -190,6 +243,8 @@ func Fold[T, U any](i *Iter[T], init U, f func(curr U, next T) U) U {
 	return curr
 }
 
+// ForEach applies the provided function to all remaining values in the current
+// iterator.
 func (i *Iter[T]) ForEach(f func(T)) {
 	for {
 		next, err := i.Next()
@@ -202,6 +257,8 @@ func (i *Iter[T]) ForEach(f func(T)) {
 	}
 }
 
+// Last returns the final value of the iterator, or an error if the iterator is
+// already empty.
 func (i *Iter[T]) Last() (T, error) {
 	curr, err := i.Next()
 
@@ -220,6 +277,8 @@ func (i *Iter[T]) Last() (T, error) {
 	}
 }
 
+// Nth returns the nth value in the iterator, or an error if the iterator is
+// too short. The provided value of `n` should be non-negative.
 func (i *Iter[T]) Nth(n int) (T, error) {
 	for j := 0; j < n-1; j++ {
 		_, err := i.Next()
@@ -238,6 +297,10 @@ func (i *Iter[T]) Nth(n int) (T, error) {
 	}
 }
 
+// TODO: refactor to return two iterators
+
+// Partition returns two slices, one containing the values of the iterator that
+// satisfy the provided function, the other containing the values that do not.
 func (i *Iter[T]) Partition(f func(T) bool) ([]T, []T) {
 	var a []T
 	var b []T
@@ -257,6 +320,10 @@ func (i *Iter[T]) Partition(f func(T) bool) ([]T, []T) {
 	return a, b
 }
 
+// TryFoldEndo applies the provided fallible function to the current value
+// (starting with `init`) and the next value of the iterator, until the whole
+// iterator is consumed. If at any point an error is returned, the operation
+// stops and that error is returned.
 func (i *Iter[T]) TryFoldEndo(init T, f func(curr T, next T) (T, error)) (T, error) {
 	curr := init
 
@@ -277,6 +344,10 @@ func (i *Iter[T]) TryFoldEndo(init T, f func(curr T, next T) (T, error)) (T, err
 	return curr, nil
 }
 
+// TryFold applies the provided fallible function to the current value
+// (starting with `init`) and the next value of the iterator, until the whole
+// iterator is consumed. If at any point an error is returned, the operation
+// stops and that error is returned.
 func TryFold[T, U any](i *Iter[T], init U, f func(curr U, next T) (U, error)) (U, error) {
 	curr := init
 
@@ -297,6 +368,8 @@ func TryFold[T, U any](i *Iter[T], init U, f func(curr U, next T) (U, error)) (U
 	return curr, nil
 }
 
+// TryForEach applies the provided fallible function to all remaining values in
+// the current iterator, but stops if an error is returned at any point.
 func (i *Iter[T]) TryForEach(f func(T) error) error {
 	for {
 		next, err := i.Next()
@@ -315,11 +388,14 @@ func (i *Iter[T]) TryForEach(f func(T) error) error {
 	return nil
 }
 
+// Reduce repeatedly applies the provided function to the current value
+// (starting with iterator's first value) and the next value of the iterator,
+// until the whole iterator is consumed.
 func (i *Iter[T]) Reduce(f func(curr T, next T) T) (T, error) {
 	curr, err := i.Next()
 
 	if err != nil {
-		return i.zeroVal(), err
+		return i.zeroVal(), IteratorExhaustedError
 	}
 
 	return i.FoldEndo(curr, f), nil
@@ -334,6 +410,9 @@ func (i *Iter[T]) Reduce(f func(curr T, next T) T) (T, error) {
 // 	}
 // }
 
+// Rev produces a new iterator whose values are reversed from those of the
+// input iterator. Note that this method is not lazy, it must consume the whole
+// input iterator immediately to produce the reversed result.
 func (i *Iter[T]) Rev() *Iter[T] {
 	collected := i.Collect()
 	for j, k := 0, len(collected)-1; j < k; j, k = j+1, k-1 {

@@ -7,10 +7,16 @@ type mapWhileInner[T, U any] struct {
 	failed       bool
 }
 
+// MapWhileEndo returns a new iterator that yields the values produced by
+// applying the provided function to the values of the input iterator, until
+// the first error occurs. At that point, no further values are returned.
 func (i *Iter[T]) MapWhileEndo(f func(T) (T, error)) *Iter[T] {
 	return WithInner[T](&mapWhileInner[T, T]{inner: i, mapWhileFunc: f})
 }
 
+// MapWhile returns a new iterator that yields the values produced by applying
+// the provided function to the values of the input iterator, until the first
+// error occurs. At that point, no further values are returned.
 func MapWhile[T, U any](i *Iter[T], f func(T) (U, error)) *Iter[U] {
 	return WithInner[U](&mapWhileInner[T, U]{inner: i, mapWhileFunc: f})
 }

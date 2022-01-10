@@ -6,7 +6,15 @@ type cycleInner[T any] struct {
 	index  int
 }
 
+// Cycle returns an iterator that first consumes the provided input iterator,
+// then repeatedly returns the previous values. This method will panic if the
+// provided iterator is empty, to ensure this doesn't happen, check if your
+// iterator `.HasNext()` before passing it to Cycle.
 func (i *Iter[T]) Cycle() *Iter[T] {
+	if !i.HasNext() {
+		panic("Cycle iterator contained no values")
+	}
+
 	return WithInner[T](&cycleInner[T]{inner: i, index: -1})
 }
 
