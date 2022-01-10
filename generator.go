@@ -4,6 +4,8 @@ type generatorInner[T any] struct {
 	generatorFunc func() T
 }
 
+// Gen returns an iterator that yields return values from the provided
+// function.
 func Gen[T any](f func() T) *Iter[T] {
 	return WithInner[T](&generatorInner[T]{generatorFunc: f})
 }
@@ -22,6 +24,9 @@ type generatorWhileInner[T any] struct {
 	failed        bool
 }
 
+// GenWhile returns an iterator that yields return values from the provided
+// function while it does not produce errors. After the first error, no more
+// values are yielded.
 func GenWhile[T any](f func() (T, error)) *Iter[T] {
 	return WithInner[T](&generatorWhileInner[T]{generatorFunc: f})
 }
