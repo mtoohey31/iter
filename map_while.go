@@ -48,8 +48,13 @@ func (i *mapWhileInner[T, U]) HasNext() bool {
 	}
 
 	next, err := i.findNext()
-	i.cachedNext = &next
-	return err == nil
+
+	if err == nil {
+		i.cachedNext = &next
+		return true
+	} else {
+		return false
+	}
 }
 
 func (i *mapWhileInner[T, U]) Next() (U, error) {
