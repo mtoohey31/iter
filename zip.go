@@ -39,83 +39,65 @@ func Enumerate[T any](i *Iter[T]) *Iter[tuple.T2[int, T]] {
 	return Zip(Ints[int](), i)
 }
 
-type unzipInner[T, U any] struct {
-	inner       *Iter[tuple.T2[T, U]]
-	leftCached  []*T
-	leftIndex   int
-	rightCached []*U
-	rightIndex  int
+type unzipInner1[T, U any] struct {
+	inner  *Iter[tuple.T2[T, U]]
+	other  *unzipInner2[T, U]
+	cached []T
+	index  int
 }
 
-func (ui *unzipInner[T, U]) HasNextLeft() bool {
-	return ui.leftIndex < len(ui.leftCached) || ui.inner.HasNext()
-}
-
-func (ui *unzipInner[T, U]) HasNextRight() bool {
-	return ui.rightIndex < len(ui.rightCached) || ui.inner.HasNext()
-}
-
-func (ui *unzipInner[T, U]) NextLeft() (T, error) {
-	if ui.leftIndex < len(ui.leftCached) {
-		res := *ui.leftCached[ui.leftIndex]
-		ui.leftIndex++
-		return res, nil
-	}
-
-	next, err := ui.inner.Next()
-
-	if err == nil {
-		ui.rightCached = append(ui.rightCached, &next.V2)
-		return next.V1, nil
-	} else {
-		return Iter[T]{}.zeroVal(), IteratorExhaustedError
-	}
-}
-
-func (ui *unzipInner[T, U]) NextRight() (U, error) {
-	if ui.rightIndex < len(ui.rightCached) {
-		res := *ui.rightCached[ui.rightIndex]
-		ui.rightIndex++
-		return res, nil
-	}
-
-	next, err := ui.inner.Next()
-
-	if err == nil {
-		ui.leftCached = append(ui.leftCached, &next.V1)
-		return next.V2, nil
-	} else {
-		return Iter[U]{}.zeroVal(), IteratorExhaustedError
-	}
-}
-
-type unzipInnerLeft[T, U any] struct {
-	inner *unzipInner[T, U]
-}
-
-type unzipInnerRight[T, U any] struct {
-	inner *unzipInner[T, U]
-}
-
-func (i *unzipInnerLeft[T, U]) HasNext() bool {
-	return i.inner.HasNextLeft()
-}
-
-func (i *unzipInnerRight[T, U]) HasNext() bool {
-	return i.inner.HasNextRight()
-}
-
-func (i *unzipInnerLeft[T, U]) Next() (T, error) {
-	return i.inner.NextLeft()
-}
-
-func (i *unzipInnerRight[T, U]) Next() (U, error) {
-	return i.inner.NextRight()
+type unzipInner2[T, U any] struct {
+	inner  *Iter[tuple.T2[T, U]]
+	other  *unzipInner1[T, U]
+	cached []U
+	index  int
 }
 
 func Unzip[T, U any](i *Iter[tuple.T2[T, U]]) (*Iter[T], *Iter[U]) {
-	inner := unzipInner[T, U]{inner: i}
-	innerLeft := unzipInnerLeft[T, U]{inner: &inner}
-	innerRight := unzipInnerRight[T, U]{inner: &inner}
-	return WithInner[T](&innerLeft), WithInner[U](&innerRight)
+	inner1 := unzipInner1[T, U]{inner: i}
+	inner2 := unzipInner2[T, U]{inner: i}
+	inner1.other, inner2.other = &inner2, &inner1
+	return WithInner[T](&inner1), WithInner[U](&inner2)
+}
+
+func (i *unzipInner1[T, U]) HasNext() bool {
+	return i.index < len(i.cached) || i.inner.HasNext()
+}
+
+func (i *unzipInner2[T, U]) HasNext() bool {
+	return i.index < len(i.cached) || i.inner.HasNext()
+}
+
+func (i *unzipInner1[T, U]) Next() (T, error) {
+	if i.index < len(i.cached) {
+		res := i.cached[i.index]
+		i.index = i.index + 1
+		return res, nil
+	}
+
+	tup, err := i.inner.Next()
+
+	if err != nil {
+		return Iter[T]{}.zeroVal(), IteratorExhaustedError
+	}
+
+	i.other.cached = append(i.other.cached, tup.V2)
+	return tup.V1, nil
+}
+
+func (i *unzipInner2[T, U]) Next() (U, error) {
+	if i.index < len(i.cached) {
+		res := i.cached[i.index]
+		i.index = i.index + 1
+		return res, nil
+	}
+
+	tup, err := i.inner.Next()
+
+	if err != nil {
+		return Iter[U]{}.zeroVal(), IteratorExhaustedError
+	}
+
+	i.other.cached = append(i.other.cached, tup.V1)
+	return tup.V2, nil
 }
