@@ -19,6 +19,7 @@ func BenchmarkCollect(b *testing.B) {
 
 func TestAll(t *testing.T) {
 	test.Assert(!Elems([]int{1, 2}).All(func(i int) bool { return i == 1 }), t)
+	test.Assert(Elems([]int{1, 2}).All(func(i int) bool { return i != 0 }), t)
 }
 
 func BenchmarkAll(b *testing.B) {
@@ -29,6 +30,7 @@ func BenchmarkAll(b *testing.B) {
 
 func TestAny(t *testing.T) {
 	test.Assert(Elems([]int{1, 2}).Any(func(i int) bool { return i == 1 }), t)
+	test.Assert(!Elems([]int{1, 2}).Any(func(i int) bool { return i == 0 }), t)
 }
 
 func BenchmarkAny(b *testing.B) {
@@ -43,6 +45,56 @@ func TestCount(t *testing.T) {
 
 func BenchmarkCount(b *testing.B) {
 	Ints[int]().Take(b.N).Count()
+}
+
+func TestFind(t *testing.T) {
+	actual, _ := Ints[int]().Find(func(i int) bool {
+		return i == 7
+	})
+
+	test.AssertEq(actual, 7, t)
+
+	_, err := Elems([]bool{}).Find(func(b bool) bool {
+		return true
+	})
+
+	test.AssertNonNil(err, t)
+}
+
+func TestFindMapEndo(t *testing.T) {
+	actual, _ := Ints[int]().FindMapEndo(func(i int) (int, error) {
+		if i == 7 {
+			return i, nil
+		} else {
+			return 0, errors.New("")
+		}
+	})
+
+	test.AssertEq(actual, 7, t)
+
+	_, err := Elems([]bool{}).FindMapEndo(func(b bool) (bool, error) {
+		return true, nil
+	})
+
+	test.AssertNonNil(err, t)
+}
+
+func TestFindMap(t *testing.T) {
+	actual, _ := FindMap(Ints[int](), func(i int) (int, error) {
+		if i == 7 {
+			return i, nil
+		} else {
+			return 0, errors.New("")
+		}
+	})
+
+	test.AssertEq(actual, 7, t)
+
+	_, err := FindMap(Elems([]bool{}), func(b bool) (bool, error) {
+		return true, nil
+	})
+
+	test.AssertNonNil(err, t)
 }
 
 func TestFoldEndo(t *testing.T) {
@@ -89,7 +141,12 @@ func BenchmarkForEach(b *testing.B) {
 
 func TestLast(t *testing.T) {
 	actual, _ := IntsFrom(1).Take(10).Last()
+
 	test.AssertEq(actual, 10, t)
+
+	_, err := Elems([]bool{}).Last()
+
+	test.AssertNonNil(err, t)
 }
 
 func BenchmarkLast(b *testing.B) {
@@ -98,7 +155,16 @@ func BenchmarkLast(b *testing.B) {
 
 func TestNth(t *testing.T) {
 	actual, _ := IntsFrom(1).Take(10).Nth(7)
+
 	test.AssertEq(actual, 7, t)
+
+	_, err := IntsFrom(1).Take(10).Nth(17)
+
+	test.AssertNonNil(err, t)
+
+	_, err = IntsFrom(1).Take(10).Nth(11)
+
+	test.AssertNonNil(err, t)
 }
 
 func BenchmarkNth(b *testing.B) {
@@ -229,4 +295,8 @@ func BenchmarkReduce(b *testing.B) {
 	Ints[int]().Take(b.N).Reduce(func(p, n int) int {
 		return 0
 	})
+}
+
+func TestRev(t *testing.T) {
+	test.AssertDeepEq(Ints[int]().Take(5).Rev().Collect(), []int{4, 3, 2, 1, 0}, t)
 }

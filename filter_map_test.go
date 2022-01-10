@@ -28,10 +28,13 @@ func TestFilterMap(t *testing.T) {
 		return strconv.Atoi(s)
 	})
 
-	actual := iter.Collect()
+	actualFirst, _ := iter.Next()
 	expected := []int{1, 2}
 
-	test.AssertDeepEq(actual, expected, t)
+	test.Assert(iter.HasNext(), t)
+	test.Assert(iter.HasNext(), t)
+	test.AssertDeepEq(append([]int{actualFirst}, iter.Collect()...), expected, t)
+	test.Assert(!iter.HasNext(), t)
 }
 
 func BenchmarkFilterMapEndo(b *testing.B) {

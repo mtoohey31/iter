@@ -41,7 +41,9 @@ func (i *chanInner[T]) HasNext() bool {
 
 func (i *chanInner[T]) Next() (T, error) {
 	if i.cachedNext != nil {
-		return *i.cachedNext, nil
+		err := *i.cachedNext
+		i.cachedNext = nil
+		return err, nil
 	} else {
 		next, err := i.getNext()
 

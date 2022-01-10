@@ -43,8 +43,13 @@ func (i *takeWhileInner[T]) HasNext() bool {
 	}
 
 	next, err := i.findNext()
-	i.cachedNext = &next
-	return err == nil
+
+	if err == nil {
+		i.cachedNext = &next
+		return true
+	} else {
+		return false
+	}
 }
 
 func (i *takeWhileInner[T]) Next() (T, error) {
@@ -57,6 +62,13 @@ func (i *takeWhileInner[T]) Next() (T, error) {
 		i.cachedNext = nil
 		return res, nil
 	} else {
-		return i.findNext()
+		next, err := i.findNext()
+
+		if err != nil {
+			i.failed = true
+			return Iter[T]{}.zeroVal(), IteratorExhaustedError
+		}
+
+		return next, nil
 	}
 }

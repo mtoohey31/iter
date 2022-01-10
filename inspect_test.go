@@ -18,13 +18,14 @@ func TestInspect(t *testing.T) {
 	})
 
 	test.AssertEq(actualNum, expectedNumBefore, t)
+	test.Assert(newIter.HasNext(), t)
 
 	actualSlice := newIter.Collect()
 	expectedSlice := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
 	test.AssertEq(actualNum, expectedNumAfter, t)
-
 	test.AssertDeepEq(actualSlice, expectedSlice, t)
+	test.Assert(!newIter.HasNext(), t)
 }
 
 func BenchmarkInspect(b *testing.B) {

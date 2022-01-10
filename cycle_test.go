@@ -9,7 +9,19 @@ import (
 func TestCycle(t *testing.T) {
 	iter := Elems([]int{1, 2}).Cycle()
 
+	test.Assert(iter.HasNext(), t)
+
 	test.AssertDeepEq(iter.Take(6).Collect(), []int{1, 2, 1, 2, 1, 2}, t)
+}
+
+func TestCyclePanic(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatalf("Cycle should've panicked")
+		}
+	}()
+
+	Elems([]bool{}).Cycle()
 }
 
 func BenchmarkCycle1(b *testing.B) {
