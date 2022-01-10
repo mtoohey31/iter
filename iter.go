@@ -83,7 +83,10 @@ func (i *Iter[T]) Consume() {
 }
 
 // Collect fetches the next value of the iterator until no more values are
-// found, places these values in a slice, and returns it.
+// found, places these values in a slice, and returns it. Note that since
+// Collect does not know how many values it will find, it must resize the slice
+// multiple times during the collection process. This can result in poor
+// performance, so CollectInto should be used when possible.
 func (i *Iter[T]) Collect() []T {
 	var res []T
 	for {
@@ -96,6 +99,23 @@ func (i *Iter[T]) Collect() []T {
 		res = append(res, next)
 	}
 	return res
+}
+
+// CollectInto inserts values yielded by the input iterator into the provided
+// slice, and returns the number of values it was able to add before the
+// iterator was exhausted or the slice was full.
+func (i *Iter[T]) CollectInto(buf []T) int {
+	for j := 0; j < len(buf); j++ {
+		next, err := i.Next()
+
+		if err != nil {
+			return j
+		}
+
+		buf[j] = next
+	}
+
+	return len(buf)
 }
 
 // All returns whether all values of the iterator satisfy the provided

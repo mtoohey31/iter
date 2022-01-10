@@ -17,6 +17,21 @@ func BenchmarkCollect(b *testing.B) {
 	Ints[int]().Take(b.N).Collect()
 }
 
+func TestCollectInto(t *testing.T) {
+	actual := make([]int, 6)
+	expected := []int{0, 1, 2, 3, 4, 5}
+
+	test.AssertEq(Ints[int]().Take(6).CollectInto(actual), 6, t)
+	test.AssertDeepEq(actual, expected, t)
+
+	test.AssertEq(Ints[int]().Take(5).CollectInto(actual), 5, t)
+}
+
+func BenchmarkCollectInto(b *testing.B) {
+	slice := make([]int, b.N)
+	Ints[int]().CollectInto(slice)
+}
+
 func TestAll(t *testing.T) {
 	test.Assert(!Elems([]int{1, 2}).All(func(i int) bool { return i == 1 }), t)
 	test.Assert(Elems([]int{1, 2}).All(func(i int) bool { return i != 0 }), t)
