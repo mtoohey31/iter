@@ -53,6 +53,7 @@ func (i *mapWhileInner[T, U]) HasNext() bool {
 		i.cachedNext = &next
 		return true
 	} else {
+		i.failed = true
 		return false
 	}
 }

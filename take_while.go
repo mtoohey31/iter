@@ -48,6 +48,7 @@ func (i *takeWhileInner[T]) HasNext() bool {
 		i.cachedNext = &next
 		return true
 	} else {
+		i.failed = true
 		return false
 	}
 }
