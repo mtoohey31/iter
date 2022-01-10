@@ -1,6 +1,6 @@
 # iter
 
-Iterators for Go using `1.18beta1` generics.
+Package iter provides generic, lazy iterators, functions for producing them from primitive types, as well as functions and methods for transforming and consuming them.
 
 ## Usage
 
