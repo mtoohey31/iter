@@ -37,7 +37,8 @@ func (i *generatorWhileInner[T]) findNext() (T, error) {
 	if err == nil {
 		return next, nil
 	} else {
-		return Iter[T]{}.zeroVal(), err
+		var z T
+		return z, err
 	}
 }
 
@@ -63,7 +64,8 @@ func (i *generatorWhileInner[T]) HasNext() bool {
 
 func (i *generatorWhileInner[T]) Next() (T, error) {
 	if i.failed {
-		return Iter[T]{}.zeroVal(), IteratorExhaustedError
+		var z T
+		return z, IteratorExhaustedError
 	}
 
 	if i.cachedNext != nil {
@@ -76,7 +78,8 @@ func (i *generatorWhileInner[T]) Next() (T, error) {
 
 	if err != nil {
 		i.failed = true
-		return Iter[T]{}.zeroVal(), IteratorExhaustedError
+		var z T
+		return z, IteratorExhaustedError
 	}
 
 	return next, nil

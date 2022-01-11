@@ -30,7 +30,8 @@ func (i *takeWhileInner[T]) findNext() (T, error) {
 			break
 		}
 	}
-	return Iter[T]{}.zeroVal(), IteratorExhaustedError
+	var z T
+	return z, IteratorExhaustedError
 }
 
 func (i *takeWhileInner[T]) HasNext() bool {
@@ -55,7 +56,8 @@ func (i *takeWhileInner[T]) HasNext() bool {
 
 func (i *takeWhileInner[T]) Next() (T, error) {
 	if i.failed {
-		return Iter[T]{}.zeroVal(), IteratorExhaustedError
+		var z T
+		return z, IteratorExhaustedError
 	}
 
 	if i.cachedNext != nil {
@@ -68,7 +70,8 @@ func (i *takeWhileInner[T]) Next() (T, error) {
 
 	if err != nil {
 		i.failed = true
-		return Iter[T]{}.zeroVal(), IteratorExhaustedError
+		var z T
+		return z, IteratorExhaustedError
 	}
 
 	return next, nil

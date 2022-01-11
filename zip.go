@@ -29,7 +29,8 @@ func (i *zipInner[T, U]) Next() (tuple.T2[T, U], error) {
 	if errA == nil && errB == nil {
 		return tuple.New2(nextA, nextB), nil
 	} else {
-		return Iter[tuple.T2[T, U]]{}.zeroVal(), IteratorExhaustedError
+		var z tuple.T2[T, U]
+		return z, IteratorExhaustedError
 	}
 }
 
@@ -87,7 +88,8 @@ func (i *unzipInner1[T, U]) Next() (T, error) {
 	tup, err := i.inner.Next()
 
 	if err != nil {
-		return Iter[T]{}.zeroVal(), IteratorExhaustedError
+		var z T
+		return z, IteratorExhaustedError
 	}
 
 	i.other.cached = append(i.other.cached, tup.V2)
@@ -104,7 +106,8 @@ func (i *unzipInner2[T, U]) Next() (U, error) {
 	tup, err := i.inner.Next()
 
 	if err != nil {
-		return Iter[U]{}.zeroVal(), IteratorExhaustedError
+		var z U
+		return z, IteratorExhaustedError
 	}
 
 	i.other.cached = append(i.other.cached, tup.V1)

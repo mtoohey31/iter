@@ -62,7 +62,8 @@ func (i *flatMapInner[T, U]) Next() (U, error) {
 		next, err := i.findNext()
 
 		if err != nil {
-			return Iter[U]{}.zeroVal(), err
+			var z U
+			return z, err
 		}
 
 		i.curr = next

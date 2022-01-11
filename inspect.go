@@ -24,6 +24,7 @@ func (i *inspectInner[T]) Next() (T, error) {
 		i.inspectFunc(next)
 		return next, nil
 	} else {
-		return i.inner.zeroVal(), err
+		var z T
+		return z, err
 	}
 }

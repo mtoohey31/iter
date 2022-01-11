@@ -19,7 +19,8 @@ func MinByKey[T any, U ordered](oi *Iter[T], key func(T) U) (T, error) {
 	init, err := oi.Next()
 
 	if err != nil {
-		return oi.zeroVal(), IteratorExhaustedError
+		var z T
+		return z, IteratorExhaustedError
 	}
 
 	return Fold(oi, tuple.New2(init, key(init)), func(curr tuple.T2[T, U], next T) tuple.T2[T, U] {
@@ -49,7 +50,8 @@ func MaxByKey[T any, U ordered](oi *Iter[T], key func(T) U) (T, error) {
 	init, err := oi.Next()
 
 	if err != nil {
-		return oi.zeroVal(), IteratorExhaustedError
+		var z T
+		return z, IteratorExhaustedError
 	}
 
 	return Fold(oi, tuple.New2(init, key(init)), func(curr tuple.T2[T, U], next T) tuple.T2[T, U] {
@@ -64,5 +66,6 @@ func MaxByKey[T any, U ordered](oi *Iter[T], key func(T) U) (T, error) {
 
 // Sum returns the sum of all the values in the provided iterator.
 func Sum[T ordered](oi *Iter[T]) T {
-	return oi.FoldEndo(oi.zeroVal(), func(curr, next T) T { return curr + next })
+	var z T
+	return oi.FoldEndo(z, func(curr, next T) T { return curr + next })
 }

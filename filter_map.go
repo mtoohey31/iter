@@ -30,7 +30,9 @@ func (i *filterMapInner[T, U]) findNext() (U, error) {
 			return mappedNext, nil
 		}
 	}
-	return Iter[U]{}.zeroVal(), IteratorExhaustedError
+
+	var z U
+	return z, IteratorExhaustedError
 }
 
 func (i *filterMapInner[T, U]) HasNext() bool {

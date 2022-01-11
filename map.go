@@ -62,6 +62,7 @@ func (i *mapFuncInner[T, U]) Next() (U, error) {
 	if err == nil {
 		return i.mapFunc(next), nil
 	} else {
-		return Iter[U]{}.zeroVal(), err
+		var z U
+		return z, err
 	}
 }

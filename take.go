@@ -21,6 +21,7 @@ func (i *takeInner[T]) Next() (T, error) {
 		i.curr++
 		return i.inner.Next()
 	} else {
-		return i.inner.zeroVal(), IteratorExhaustedError
+		var z T
+		return z, IteratorExhaustedError
 	}
 }

@@ -24,7 +24,9 @@ func (i *filterInner[T]) findNext() (T, error) {
 			return next, nil
 		}
 	}
-	return i.inner.zeroVal(), IteratorExhaustedError
+
+	var z T
+	return z, IteratorExhaustedError
 }
 
 func (i *filterInner[T]) HasNext() bool {

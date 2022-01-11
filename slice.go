@@ -16,7 +16,8 @@ func (i *sliceInner[T]) HasNext() bool {
 
 func (i *sliceInner[T]) Next() (T, error) {
 	if i.index >= len(i.slice) {
-		return Iter[T]{}.zeroVal(), IteratorExhaustedError
+		var z T
+		return z, IteratorExhaustedError
 	}
 
 	res := i.slice[i.index]

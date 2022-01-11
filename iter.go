@@ -20,7 +20,10 @@ methods take extra parameters or return types derived from T other than
 */
 package iter
 
-import "errors"
+import (
+	"errors"
+	"sync"
+)
 
 // Indicates an error resulting from an iterator with no more values.
 var IteratorExhaustedError = errors.New("iterator exhausted")
@@ -52,13 +55,6 @@ func WithInner[T any](inner InnerIter[T]) *Iter[T] {
 	return &Iter[T]{inner: inner}
 }
 
-// TODO: find a nicer way to fetch zero values of a generic type
-type z[T any] struct{ z T }
-
-func (i Iter[T]) zeroVal() T {
-	return z[T]{}.z
-}
-
 type emptyInner[T any] struct{}
 
 func (i *emptyInner[T]) HasNext() bool {
@@ -66,7 +62,8 @@ func (i *emptyInner[T]) HasNext() bool {
 }
 
 func (i *emptyInner[T]) Next() (T, error) {
-	return Iter[T]{}.zeroVal(), IteratorExhaustedError
+	var z T
+	return z, IteratorExhaustedError
 }
 
 // Consume fetches the next value of the iterator until no more values are
@@ -184,7 +181,8 @@ func (i *Iter[T]) Find(f func(T) bool) (T, error) {
 		}
 	}
 
-	return i.zeroVal(), errors.New("no element found")
+	var z T
+	return z, errors.New("no element found")
 }
 
 // FindMapEndo returns the first transformed value in the iterator for which
@@ -203,7 +201,8 @@ func (i *Iter[T]) FindMapEndo(f func(T) (T, error)) (T, error) {
 		}
 	}
 
-	return i.zeroVal(), errors.New("no element found")
+	var z T
+	return z, errors.New("no element found")
 }
 
 // FindMap returns the first transformed value in the iterator for which the
@@ -222,7 +221,8 @@ func FindMap[T, U any](i *Iter[T], f func(T) (U, error)) (U, error) {
 		}
 	}
 
-	return Iter[U]{}.zeroVal(), errors.New("no element found")
+	var z U
+	return z, errors.New("no element found")
 }
 
 // FoldEndo repeatedly applies the provided function to the current value
@@ -277,13 +277,41 @@ func (i *Iter[T]) ForEach(f func(T)) {
 	}
 }
 
+// ForEachParallel applies the provided function to all remaining values in the
+// current iterator. It differs from ForEach in that, where ForEach runs on a
+// single thread and waits for each execution of the function to complete
+// before fetching the next value and calling the function again,
+// ForEachParallel performs executions of the function on different threads and
+// only waits for all executions at the end. When the function to be executed
+// is expensive and the order in which values of the iterator are operated upon
+// does not matter, this method can result in better performance than ForEach.
+func (i *Iter[T]) ForEachParallel(f func(T)) {
+	var wg sync.WaitGroup
+	for {
+		next, err := i.Next()
+
+		if err != nil {
+			break
+		}
+
+		wg.Add(1)
+
+		go func() {
+			defer wg.Done()
+			f(next)
+		}()
+	}
+	wg.Wait()
+}
+
 // Last returns the final value of the iterator, or an error if the iterator is
 // already empty.
 func (i *Iter[T]) Last() (T, error) {
 	curr, err := i.Next()
 
 	if err != nil {
-		return i.zeroVal(), IteratorExhaustedError
+		var z T
+		return z, IteratorExhaustedError
 	}
 
 	for {
@@ -304,7 +332,8 @@ func (i *Iter[T]) Nth(n int) (T, error) {
 		_, err := i.Next()
 
 		if err != nil {
-			return i.zeroVal(), IteratorExhaustedError
+			var z T
+			return z, IteratorExhaustedError
 		}
 	}
 
@@ -313,7 +342,8 @@ func (i *Iter[T]) Nth(n int) (T, error) {
 	if err == nil {
 		return res, nil
 	} else {
-		return i.zeroVal(), IteratorExhaustedError
+		var z T
+		return z, IteratorExhaustedError
 	}
 }
 
@@ -357,7 +387,8 @@ func (i *Iter[T]) TryFoldEndo(init T, f func(curr T, next T) (T, error)) (T, err
 		curr, err = f(curr, next)
 
 		if err != nil {
-			return i.zeroVal(), err
+			var z T
+			return z, err
 		}
 	}
 
@@ -381,7 +412,8 @@ func TryFold[T, U any](i *Iter[T], init U, f func(curr U, next T) (U, error)) (U
 		curr, err = f(curr, next)
 
 		if err != nil {
-			return Iter[U]{}.zeroVal(), err
+			var z U
+			return z, err
 		}
 	}
 
@@ -415,7 +447,8 @@ func (i *Iter[T]) Reduce(f func(curr T, next T) T) (T, error) {
 	curr, err := i.Next()
 
 	if err != nil {
-		return i.zeroVal(), IteratorExhaustedError
+		var z T
+		return z, IteratorExhaustedError
 	}
 
 	return i.FoldEndo(curr, f), nil

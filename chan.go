@@ -20,7 +20,8 @@ func (i *chanInner[T]) getNext() (T, error) {
 	if ok {
 		return next, nil
 	} else {
-		return Iter[T]{}.zeroVal(), IteratorExhaustedError
+		var z T
+		return z, IteratorExhaustedError
 	}
 }
 
@@ -48,7 +49,8 @@ func (i *chanInner[T]) Next() (T, error) {
 		next, err := i.getNext()
 
 		if err != nil {
-			return Iter[T]{}.zeroVal(), IteratorExhaustedError
+			var z T
+			return z, IteratorExhaustedError
 		}
 
 		return next, nil
