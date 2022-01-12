@@ -6,9 +6,9 @@ import (
 	"mtoohey.com/iter/test"
 )
 
-func TestMsgs(t *testing.T) {
+func TestReceive(t *testing.T) {
 	ch := make(chan int)
-	iter := Msgs(&ch)
+	iter := Receive(&ch)
 	expected := []int{2, 7, 31, 645}
 
 	go func() {
@@ -27,7 +27,7 @@ func TestMsgs(t *testing.T) {
 	test.Assert(!iter.HasNext(), t)
 }
 
-func BenchmarkMsgs(b *testing.B) {
+func BenchmarkReceive(b *testing.B) {
 	ch := make(chan int)
 
 	go func() {
@@ -37,5 +37,5 @@ func BenchmarkMsgs(b *testing.B) {
 		close(ch)
 	}()
 
-	Msgs(&ch).Consume()
+	Receive(&ch).Consume()
 }
