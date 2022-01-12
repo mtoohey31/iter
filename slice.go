@@ -7,7 +7,7 @@ type sliceInner[T any] struct {
 
 // Elems returns an iterator over the values of the provided slice.
 func Elems[T any](s []T) *Iter[T] {
-	return WithInner[T](&sliceInner[T]{index: 0, slice: s})
+	return Wrap[T](&sliceInner[T]{index: 0, slice: s})
 }
 
 func (i *sliceInner[T]) HasNext() bool {

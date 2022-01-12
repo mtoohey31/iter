@@ -8,7 +8,7 @@ type chainInner[T any] struct {
 // Chain returns a new iterator that first consumes the first iterator, then
 // the second.
 func (i *Iter[T]) Chain(o *Iter[T]) *Iter[T] {
-	return WithInner[T](&chainInner[T]{firstInner: i, secondInner: o})
+	return Wrap[T](&chainInner[T]{firstInner: i, secondInner: o})
 }
 
 func (i *chainInner[T]) HasNext() bool {

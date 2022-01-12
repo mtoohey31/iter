@@ -15,7 +15,7 @@ func (i *Iter[T]) Cycle() *Iter[T] {
 		panic("Cycle iterator contained no values")
 	}
 
-	return WithInner[T](&cycleInner[T]{inner: i, index: -1})
+	return Wrap[T](&cycleInner[T]{inner: i, index: -1})
 }
 
 func (i *cycleInner[T]) HasNext() bool {

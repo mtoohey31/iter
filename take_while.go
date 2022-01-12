@@ -13,7 +13,7 @@ type takeWhileInner[T any] struct {
 // values, as well as the first failing value, are consumed from the input
 // iterator.
 func (i *Iter[T]) TakeWhile(f func(T) bool) *Iter[T] {
-	return WithInner[T](&takeWhileInner[T]{inner: i, takeWhileFunc: f})
+	return Wrap[T](&takeWhileInner[T]{inner: i, takeWhileFunc: f})
 }
 
 func (i *takeWhileInner[T]) findNext() (T, error) {

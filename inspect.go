@@ -10,7 +10,7 @@ type inspectInner[T any] struct {
 // requested. This methodh differs from ForEach in that it is lazy, whereas
 // ForEach is not.
 func (i *Iter[T]) Inspect(f func(T)) *Iter[T] {
-	return WithInner[T](&inspectInner[T]{inner: i, inspectFunc: f})
+	return Wrap[T](&inspectInner[T]{inner: i, inspectFunc: f})
 }
 
 func (i *inspectInner[T]) HasNext() bool {

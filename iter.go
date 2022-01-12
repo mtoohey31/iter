@@ -49,9 +49,9 @@ func (i *Iter[T]) Next() (T, error) {
 	return i.inner.Next()
 }
 
-// WithInner produces a result of type *Iter[T], given a struct implementing
+// Wrap produces a result of type *Iter[T], given a struct implementing
 // the InnerIter interface.
-func WithInner[T any](inner InnerIter[T]) *Iter[T] {
+func Wrap[T any](inner InnerIter[T]) *Iter[T] {
 	return &Iter[T]{inner: inner}
 }
 

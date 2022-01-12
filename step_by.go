@@ -15,7 +15,7 @@ func (i *Iter[T]) StepBy(step int) *Iter[T] {
 		panic(fmt.Sprintf("invalid StepBy step: %d", step))
 	}
 
-	return WithInner[T](&stepByInner[T]{inner: i, step: step})
+	return Wrap[T](&stepByInner[T]{inner: i, step: step})
 }
 
 func (i *stepByInner[T]) HasNext() bool {

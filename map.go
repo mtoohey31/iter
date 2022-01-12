@@ -18,7 +18,7 @@ func KVZip[T comparable, U any](m map[T]U) *Iter[tuple.T2[T, U]] {
 		keys = append(keys, key)
 	}
 
-	return WithInner[tuple.T2[T, U]](&mapDataInner[T, U]{innerKeys: Elems(keys), mapping: m})
+	return Wrap[tuple.T2[T, U]](&mapDataInner[T, U]{innerKeys: Elems(keys), mapping: m})
 }
 
 func (i *mapDataInner[T, U]) HasNext() bool {
@@ -43,13 +43,13 @@ type mapFuncInner[T, U any] struct {
 // MapEndo returns a new iterator that yields the results of applying the
 // provided function to the input iterator.
 func (i *Iter[T]) MapEndo(f func(T) T) *Iter[T] {
-	return WithInner[T](&mapFuncInner[T, T]{inner: i, mapFunc: f})
+	return Wrap[T](&mapFuncInner[T, T]{inner: i, mapFunc: f})
 }
 
 // Map returns a new iterator that yields the results of applying the provided
 // function to the input iterator.
 func Map[T, U any](i *Iter[T], f func(T) U) *Iter[U] {
-	return WithInner[U](&mapFuncInner[T, U]{inner: i, mapFunc: f})
+	return Wrap[U](&mapFuncInner[T, U]{inner: i, mapFunc: f})
 }
 
 func (i *mapFuncInner[T, U]) HasNext() bool {

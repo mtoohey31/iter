@@ -20,7 +20,7 @@ type splitByRuneInner struct {
 // SplitByRune returns an iterator over the substrings of the input string
 // between occurences of the provided rune.
 func SplitByRune(s string, r rune) *Iter[string] {
-	return WithInner[string](&splitByRuneInner{s, r, 0})
+	return Wrap[string](&splitByRuneInner{s, r, 0})
 }
 
 func (i *splitByRuneInner) HasNext() bool {
@@ -54,7 +54,7 @@ type splitByStringInner struct {
 // SplitByString returns an iterator over the substrings of the input string
 // between occurences of the provided separator string.
 func SplitByString(s string, sep string) *Iter[string] {
-	return WithInner[string](&splitByStringInner{s, sep, 0})
+	return Wrap[string](&splitByStringInner{s, sep, 0})
 }
 
 func (i *splitByStringInner) HasNext() bool {

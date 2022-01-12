@@ -9,13 +9,13 @@ type filterMapInner[T, U any] struct {
 // FilterMapEndo returns a new iterator that yields the mapped values which are
 // produced without errors from the provided function.
 func (i *Iter[T]) FilterMapEndo(f func(T) (T, error)) *Iter[T] {
-	return WithInner[T](&filterMapInner[T, T]{inner: i, filterMapFunc: f})
+	return Wrap[T](&filterMapInner[T, T]{inner: i, filterMapFunc: f})
 }
 
 // FilterMap returns a new iterator that yields the mapped values which are
 // produced without errors from the provided function.
 func FilterMap[T, U any](i *Iter[T], f func(T) (U, error)) *Iter[U] {
-	return WithInner[U](&filterMapInner[T, U]{inner: i, filterMapFunc: f})
+	return Wrap[U](&filterMapInner[T, U]{inner: i, filterMapFunc: f})
 }
 
 func (i *filterMapInner[T, U]) findNext() (U, error) {

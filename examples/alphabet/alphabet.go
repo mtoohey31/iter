@@ -25,7 +25,7 @@ func (a *alphebetInner) Next() (rune, error) {
 }
 
 func New() *iter.Iter[rune] {
-	return iter.WithInner[rune](&alphebetInner{curr: 97})
+	return iter.Wrap[rune](&alphebetInner{curr: 97})
 }
 
 func main() {

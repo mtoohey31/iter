@@ -9,7 +9,7 @@ type takeInner[T any] struct {
 // Take returns an iterator that limits that yields up to (but no more than) n
 // values from the input iterator.
 func (i *Iter[T]) Take(n int) *Iter[T] {
-	return WithInner[T](&takeInner[T]{inner: i, max: n})
+	return Wrap[T](&takeInner[T]{inner: i, max: n})
 }
 
 func (i *takeInner[T]) HasNext() bool {

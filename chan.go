@@ -11,7 +11,7 @@ type chanInner[T any] struct {
 // up deadlocking if values have not been written: the same rules apply as
 // those for reading from a channel in the usual manner.
 func Msgs[T any](ch *chan T) *Iter[T] {
-	return WithInner[T](&chanInner[T]{ch: ch})
+	return Wrap[T](&chanInner[T]{ch: ch})
 }
 
 func (i *chanInner[T]) getNext() (T, error) {

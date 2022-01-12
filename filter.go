@@ -9,7 +9,7 @@ type filterInner[T any] struct {
 // Filter returns a new iterator that only yields the values in the input
 // iterator that satisfy the provided function.
 func (i *Iter[T]) Filter(f func(T) bool) *Iter[T] {
-	return WithInner[T](&filterInner[T]{inner: i, filterFunc: f})
+	return Wrap[T](&filterInner[T]{inner: i, filterFunc: f})
 }
 
 func (i *filterInner[T]) findNext() (T, error) {

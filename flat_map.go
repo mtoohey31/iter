@@ -10,10 +10,10 @@ type flatMapInner[T, U any] struct {
 // iterators returned by the provided function when it is applied to values
 // from the input iterator.
 func (i *Iter[T]) FlatMapEndo(f func(T) *Iter[T]) *Iter[T] {
-	return WithInner[T](&flatMapInner[T, T]{
+	return Wrap[T](&flatMapInner[T, T]{
 		inner:   i,
 		mapFunc: f,
-		curr:    WithInner[T](&emptyInner[T]{}),
+		curr:    Wrap[T](&emptyInner[T]{}),
 	})
 }
 
@@ -21,10 +21,10 @@ func (i *Iter[T]) FlatMapEndo(f func(T) *Iter[T]) *Iter[T] {
 // returned by the provided function when it is applied to values from the
 // input iterator.
 func FlatMap[T, U any](i *Iter[T], f func(T) *Iter[U]) *Iter[U] {
-	return WithInner[U](&flatMapInner[T, U]{
+	return Wrap[U](&flatMapInner[T, U]{
 		inner:   i,
 		mapFunc: f,
-		curr:    WithInner[U](&emptyInner[U]{}),
+		curr:    Wrap[U](&emptyInner[U]{}),
 	})
 }
 

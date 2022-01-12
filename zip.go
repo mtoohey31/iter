@@ -15,7 +15,7 @@ type zipInner[T, U any] struct {
 // Zip returns an iterator that yields tuples of the two provided input
 // iterators.
 func Zip[T, U any](a *Iter[T], b *Iter[U]) *Iter[tuple.T2[T, U]] {
-	return WithInner[tuple.T2[T, U]](&zipInner[T, U]{innerA: a, innerB: b})
+	return Wrap[tuple.T2[T, U]](&zipInner[T, U]{innerA: a, innerB: b})
 }
 
 func (i *zipInner[T, U]) HasNext() bool {
@@ -67,7 +67,7 @@ func Unzip[T, U any](i *Iter[tuple.T2[T, U]]) (*Iter[T], *Iter[U]) {
 	inner1 := unzipInner1[T, U]{inner: i}
 	inner2 := unzipInner2[T, U]{inner: i}
 	inner1.other, inner2.other = &inner2, &inner1
-	return WithInner[T](&inner1), WithInner[U](&inner2)
+	return Wrap[T](&inner1), Wrap[U](&inner2)
 }
 
 func (i *unzipInner1[T, U]) HasNext() bool {
