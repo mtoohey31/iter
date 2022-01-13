@@ -324,3 +324,6 @@ func BenchmarkPosition(b *testing.B) {
 func TestRev(t *testing.T) {
 	test.AssertDeepEq(Ints[int]().Take(5).Rev().Collect(), []int{4, 3, 2, 1, 0}, t)
 }
+func BenchmarkRev(b *testing.B) {
+	Ints[int]().Take(b.N).Rev()
+}
