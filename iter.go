@@ -23,6 +23,8 @@ package iter
 import (
 	"errors"
 	"sync"
+
+	"github.com/barweiss/go-tuple"
 )
 
 // Indicates an error resulting from an iterator with no more values.
@@ -454,14 +456,18 @@ func (i *Iter[T]) Reduce(f func(curr T, next T) T) (T, error) {
 	return i.FoldEndo(curr, f), nil
 }
 
-// func (i *Iter[T]) Position(f func(T) bool) int {
-// 	tup, err := Enumerate(i).Find(func(tup tuple.T2[int, T]) bool { return f(tup.V2) })
-// 	if err == nil {
-// 		return tup.V1
-// 	} else {
-// 		return -1
-// 	}
-// }
+// Position returns the position of the first value in the iterator that
+// satisfies the provided predicate function, or returns -1 if no satisfactory
+// values were found. It consumes all values up to the first satisfactory
+// value, or the whole iterator if no values satisfy the predicate.
+func Position[T any](i *Iter[T], f func(T) bool) int {
+	tup, err := Enumerate(i).Find(func(tup tuple.T2[int, T]) bool { return f(tup.V2) })
+	if err == nil {
+		return tup.V1
+	} else {
+		return -1
+	}
+}
 
 // Rev produces a new iterator whose values are reversed from those of the
 // input iterator. Note that this method is not lazy, it must consume the whole

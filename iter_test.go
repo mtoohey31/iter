@@ -312,6 +312,15 @@ func BenchmarkReduce(b *testing.B) {
 	})
 }
 
+func TestPosition(t *testing.T) {
+	test.AssertEq(Position(Ints[int](), func(i int) bool { return i == 3 }), 3, t)
+	test.AssertEq(Position(Ints[int]().Take(0), func(i int) bool { return i == 3 }), -1, t)
+}
+
+func BenchmarkPosition(b *testing.B) {
+	Position(Ints[int](), func(i int) bool { return i == b.N })
+}
+
 func TestRev(t *testing.T) {
 	test.AssertDeepEq(Ints[int]().Take(5).Rev().Collect(), []int{4, 3, 2, 1, 0}, t)
 }
