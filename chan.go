@@ -56,3 +56,20 @@ func (i *chanInner[T]) Next() (T, error) {
 		return next, nil
 	}
 }
+
+// Send consumes the input iterator, sending all yielded values into the
+// provided channel. As with receive, this can result in deadlocks if used
+// improperly: if nobody is reading from the channel. Also note that this
+// method does not close the value after the values have been written, if you
+// want that to happen, you should do so yourself.
+func (i *Iter[T]) Send(ch *chan T) {
+	for {
+		next, err := i.Next()
+
+		if err != nil {
+			return
+		}
+
+		*ch <- next
+	}
+}
