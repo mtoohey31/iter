@@ -33,13 +33,13 @@ func BenchmarkCycle100(b *testing.B) {
 }
 
 func BenchmarkCycleQuarter(b *testing.B) {
-	Ints[int]().Take(b.N / 4).Cycle().Take(b.N).Consume()
+	Ints[int]().Take(1 + (b.N / 4)).Cycle().Take(b.N).Consume()
 }
 
 func BenchmarkCycleHalf(b *testing.B) {
-	Ints[int]().Take(b.N / 2).Cycle().Take(b.N).Consume()
+	Ints[int]().Take(1 + (b.N / 2)).Cycle().Take(b.N).Consume()
 }
 
 func BenchmarkCycleFull(b *testing.B) {
-	Ints[int]().Take(b.N).Cycle().Take(b.N).Consume()
+	Ints[int]().Take(1 + b.N).Cycle().Take(b.N).Consume()
 }
