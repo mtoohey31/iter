@@ -30,14 +30,19 @@ import (
 // Indicates an error resulting from an iterator with no more values.
 var IteratorExhaustedError = errors.New("iterator exhausted")
 
-type InnerIter[T any] interface {
+// Source is an interface that provides the most basic functions of an iterator
+// and can be wrapped with Wrap to produce a value of type *Iter[T] supporting
+// more advanced behaviour.
+type Source[T any] interface {
+	// HasNext returns whether the source has a next value.
 	HasNext() bool
+	// Next returns the next value of the source, or an error if it has none.
 	Next() (T, error)
 }
 
 // Iter is a generic iterator struct, the basis of this whole package.
 type Iter[T any] struct {
-	inner InnerIter[T]
+	inner Source[T]
 }
 
 // HasNext returns whether the struct contains a next element.
@@ -53,7 +58,7 @@ func (i *Iter[T]) Next() (T, error) {
 
 // Wrap produces a result of type *Iter[T], given a struct implementing
 // the InnerIter interface.
-func Wrap[T any](inner InnerIter[T]) *Iter[T] {
+func Wrap[T any](inner Source[T]) *Iter[T] {
 	return &Iter[T]{inner: inner}
 }
 
@@ -456,10 +461,6 @@ func (i *Iter[T]) Reduce(f func(curr T, next T) T) (T, error) {
 	return i.FoldEndo(curr, f), nil
 }
 
-// Position returns the position of the first value in the iterator that
-// satisfies the provided predicate function, or returns -1 if no satisfactory
-// values were found. It consumes all values up to the first satisfactory
-// value, or the whole iterator if no values satisfy the predicate.
 func Position[T any](i *Iter[T], f func(T) bool) int {
 	tup, err := Enumerate(i).Find(func(tup tuple.T2[int, T]) bool { return f(tup.V2) })
 	if err == nil {
