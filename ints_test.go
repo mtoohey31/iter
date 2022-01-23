@@ -3,39 +3,39 @@ package iter
 import (
 	"testing"
 
-	"mtoohey.com/iter/test"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestInts(t *testing.T) {
-	test.AssertDeepEq(Ints[int]().Take(3).Collect(), []int{0, 1, 2}, t)
+	assert.Equal(t, Ints[int]().Take(3).Collect(), []int{0, 1, 2})
 }
 
 func TestIntsFrom(t *testing.T) {
-	test.AssertDeepEq(IntsFrom(2).Take(4).Collect(), []int{2, 3, 4, 5}, t)
+	assert.Equal(t, IntsFrom(2).Take(4).Collect(), []int{2, 3, 4, 5})
 }
 
 func TestIntsByZero(t *testing.T) {
-	test.AssertDeepEq(IntsBy(0).Take(5).Collect(), []int{0, 0, 0, 0, 0}, t)
+	assert.Equal(t, IntsBy(0).Take(5).Collect(), []int{0, 0, 0, 0, 0})
 }
 
 func TestIntsByIncreasing(t *testing.T) {
-	test.AssertDeepEq(IntsBy(2).Take(4).Collect(), []int{0, 2, 4, 6}, t)
+	assert.Equal(t, IntsBy(2).Take(4).Collect(), []int{0, 2, 4, 6})
 }
 
 func TestIntsByDecreasing(t *testing.T) {
-	test.AssertDeepEq(IntsBy(-4).Take(3).Collect(), []int{0, -4, -8}, t)
+	assert.Equal(t, IntsBy(-4).Take(3).Collect(), []int{0, -4, -8})
 }
 
 func TestIntsFromByZero(t *testing.T) {
-	test.AssertDeepEq(IntsFromBy(100, 0).Take(2).Collect(), []int{100, 100}, t)
+	assert.Equal(t, IntsFromBy(100, 0).Take(2).Collect(), []int{100, 100})
 }
 
 func TestIntsFromByIncreasing(t *testing.T) {
-	test.AssertDeepEq(IntsFromBy(-3, 3).Take(3).Collect(), []int{-3, 0, 3}, t)
+	assert.Equal(t, IntsFromBy(-3, 3).Take(3).Collect(), []int{-3, 0, 3})
 }
 
 func TestIntsFromByDecreasing(t *testing.T) {
-	test.AssertDeepEq(IntsFromBy(7, -3).Take(4).Collect(), []int{7, 4, 1, -2}, t)
+	assert.Equal(t, IntsFromBy(7, -3).Take(4).Collect(), []int{7, 4, 1, -2})
 }
 
 func BenchmarkInts(b *testing.B) {

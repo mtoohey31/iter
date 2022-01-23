@@ -3,15 +3,13 @@ package iter
 import (
 	"github.com/barweiss/go-tuple"
 
-	"mtoohey.com/iter/test"
+	"github.com/stretchr/testify/assert"
 
 	"testing"
 )
 
 func TestZip(t *testing.T) {
 	iter := Zip(Elems([]rune{'a', 'b', 'c', 'd'}), IntsFrom(1))
-
-	// test.Assert(iter.HasNext(), t)
 
 	expected := []tuple.T2[rune, int]{
 		tuple.New2('a', 1),
@@ -20,8 +18,7 @@ func TestZip(t *testing.T) {
 		tuple.New2('d', 4),
 	}
 
-	test.AssertDeepEq(iter.Collect(), expected, t)
-	// test.Assert(!iter.HasNext(), t)
+	assert.Equal(t, iter.Collect(), expected)
 }
 
 func BenchmarkZip(b *testing.B) {
@@ -36,7 +33,7 @@ func TestEnumerate(t *testing.T) {
 		tuple.New2(3, 1),
 	}
 
-	test.AssertDeepEq(Enumerate(IntsFromBy(7, -2).Take(4)).Collect(), expected, t)
+	assert.Equal(t, Enumerate(IntsFromBy(7, -2).Take(4)).Collect(), expected)
 }
 
 func BenchmarkEnumerate(b *testing.B) {
@@ -47,20 +44,13 @@ func TestUnzip(t *testing.T) {
 	expected := tuple.New2(Ints[int]().Take(10).Collect(), IntsFromBy(10, -1).Take(10).Collect())
 	v1, v2 := Unzip(Zip(Elems(expected.V1), Elems(expected.V2)))
 
-	// test.Assert(v1.HasNext(), t)
-	// test.Assert(v2.HasNext(), t)
-
 	v1First, _ := v1()
 	v2First, _ := v2()
 	v2Second, _ := v2()
 
-	test.AssertDeepEq(
-		tuple.New2(append([]int{v1First}, v1.Collect()...),
-			append([]int{v2First, v2Second}, v2.Collect()...)),
-		expected,
-		t)
-	// test.Assert(!v1.HasNext(), t)
-	// test.Assert(!v2.HasNext(), t)
+	assert.Equal(t, tuple.New2(append([]int{v1First}, v1.Collect()...),
+		append([]int{v2First, v2Second}, v2.Collect()...)),
+		expected)
 }
 
 func BenchmarkUnzip(b *testing.B) {

@@ -3,12 +3,12 @@ package iter
 import (
 	"testing"
 
-	"mtoohey.com/iter/test"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestRunes(t *testing.T) {
-	test.AssertDeepEq(Runes("asdf").Collect(),
-		[]rune{'a', 's', 'd', 'f'}, t)
+	assert.Equal(t, Runes("asdf").Collect(),
+		[]rune{'a', 's', 'd', 'f'})
 }
 
 func BenchmarkRunes(b *testing.B) {
@@ -24,8 +24,8 @@ func BenchmarkRunes(b *testing.B) {
 }
 
 func TestSplitByRune(t *testing.T) {
-	test.AssertDeepEq(SplitByRune("/usr/bin/ls", '/').Collect(),
-		[]string{"", "usr", "bin", "ls"}, t)
+	assert.Equal(t, SplitByRune("/usr/bin/ls", '/').Collect(),
+		[]string{"", "usr", "bin", "ls"})
 }
 
 func BenchmarkSplitByRune(b *testing.B) {
@@ -46,7 +46,7 @@ func TestSplitByString(t *testing.T) {
 	actual := iter.Collect()
 	expected := []string{"", "quick brown fox jumped over ", "lazy dogs"}
 
-	test.AssertDeepEq(actual, expected, t)
+	assert.Equal(t, actual, expected)
 }
 
 func BenchmarkSplitByString(b *testing.B) {

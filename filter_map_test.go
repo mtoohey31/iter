@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"testing"
 
-	"mtoohey.com/iter/test"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFilterMapEndo(t *testing.T) {
@@ -20,7 +20,7 @@ func TestFilterMapEndo(t *testing.T) {
 	actual := iter.Collect()
 	expected := []int{4, 8}
 
-	test.AssertDeepEq(actual, expected, t)
+	assert.Equal(t, actual, expected)
 }
 
 func TestFilterMap(t *testing.T) {
@@ -31,10 +31,7 @@ func TestFilterMap(t *testing.T) {
 	actualFirst, _ := iter()
 	expected := []int{1, 2}
 
-	// test.Assert(iter.HasNext(), t)
-	// test.Assert(iter.HasNext(), t)
-	test.AssertDeepEq(append([]int{actualFirst}, iter.Collect()...), expected, t)
-	// test.Assert(!iter.HasNext(), t)
+	assert.Equal(t, append([]int{actualFirst}, iter.Collect()...), expected)
 }
 
 func BenchmarkFilterMapEndo(b *testing.B) {

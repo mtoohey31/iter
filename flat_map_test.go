@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"mtoohey.com/iter/test"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFlatMapEndo(t *testing.T) {
@@ -16,7 +16,7 @@ func TestFlatMapEndo(t *testing.T) {
 	actual := iter.Collect()
 	expected := []int{1, 2, 2, 3, 3, 4}
 
-	test.AssertDeepEq(actual, expected, t)
+	assert.Equal(t, actual, expected)
 }
 
 func TestFlatMap(t *testing.T) {
@@ -25,14 +25,10 @@ func TestFlatMap(t *testing.T) {
 		return Runes(s)
 	})
 
-	// test.Assert(iter.HasNext(), t)
-
 	actualStart := iter.Take(5).Collect()
 	expected := strings.Join(initial, "")
 
-	// test.Assert(iter.HasNext(), t)
-	test.AssertDeepEq(string(append(actualStart, iter.Collect()...)), expected, t)
-	// test.Assert(!iter.HasNext(), t)
+	assert.Equal(t, string(append(actualStart, iter.Collect()...)), expected)
 }
 
 //

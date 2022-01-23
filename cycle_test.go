@@ -3,22 +3,21 @@ package iter
 import (
 	"testing"
 
-	"mtoohey.com/iter/test"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCycle(t *testing.T) {
 	iter, ok := Elems([]int{1, 2}).Cycle()
 
-	// test.Assert(iter.HasNext(), t)
-	test.Assert(ok, t)
+	assert.True(t, ok)
 
-	test.AssertDeepEq(iter.Take(6).Collect(), []int{1, 2, 1, 2, 1, 2}, t)
+	assert.Equal(t, iter.Take(6).Collect(), []int{1, 2, 1, 2, 1, 2})
 }
 
 func TestCyclePanic(t *testing.T) {
 	_, ok := Elems([]bool{}).Cycle()
 
-	test.Assert(!ok, t)
+	assert.True(t, !ok)
 }
 
 func BenchmarkCycle1(b *testing.B) {

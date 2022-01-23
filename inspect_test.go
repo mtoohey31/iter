@@ -3,7 +3,7 @@ package iter
 import (
 	"testing"
 
-	"mtoohey.com/iter/test"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestInspect(t *testing.T) {
@@ -17,15 +17,13 @@ func TestInspect(t *testing.T) {
 		actualNum = actualNum + n
 	})
 
-	test.AssertEq(actualNum, expectedNumBefore, t)
-	// test.Assert(newIter.HasNext(), t)
+	assert.Equal(t, actualNum, expectedNumBefore)
 
 	actualSlice := newIter.Collect()
 	expectedSlice := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
-	test.AssertEq(actualNum, expectedNumAfter, t)
-	test.AssertDeepEq(actualSlice, expectedSlice, t)
-	// test.Assert(!newIter.HasNext(), t)
+	assert.Equal(t, actualNum, expectedNumAfter)
+	assert.Equal(t, actualSlice, expectedSlice)
 }
 
 func BenchmarkInspect(b *testing.B) {

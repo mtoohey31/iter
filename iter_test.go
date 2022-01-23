@@ -5,12 +5,12 @@ import (
 	"strconv"
 	"testing"
 
-	"mtoohey.com/iter/test"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCollect(t *testing.T) {
 	expected := []string{"item1", "item2"}
-	test.AssertDeepEq(Elems(expected).Collect(), expected, t)
+	assert.Equal(t, Elems(expected).Collect(), expected)
 }
 
 func BenchmarkCollect(b *testing.B) {
@@ -21,10 +21,10 @@ func TestCollectInto(t *testing.T) {
 	actual := make([]int, 6)
 	expected := []int{0, 1, 2, 3, 4, 5}
 
-	test.AssertEq(Ints[int]().Take(6).CollectInto(actual), 6, t)
-	test.AssertDeepEq(actual, expected, t)
+	assert.Equal(t, Ints[int]().Take(6).CollectInto(actual), 6)
+	assert.Equal(t, actual, expected)
 
-	test.AssertEq(Ints[int]().Take(5).CollectInto(actual), 5, t)
+	assert.Equal(t, Ints[int]().Take(5).CollectInto(actual), 5)
 }
 
 func BenchmarkCollectInto(b *testing.B) {
@@ -33,8 +33,8 @@ func BenchmarkCollectInto(b *testing.B) {
 }
 
 func TestAll(t *testing.T) {
-	test.Assert(!Elems([]int{1, 2}).All(func(i int) bool { return i == 1 }), t)
-	test.Assert(Elems([]int{1, 2}).All(func(i int) bool { return i != 0 }), t)
+	assert.True(t, !Elems([]int{1, 2}).All(func(i int) bool { return i == 1 }))
+	assert.True(t, Elems([]int{1, 2}).All(func(i int) bool { return i != 0 }))
 }
 
 func BenchmarkAll(b *testing.B) {
@@ -44,8 +44,8 @@ func BenchmarkAll(b *testing.B) {
 }
 
 func TestAny(t *testing.T) {
-	test.Assert(Elems([]int{1, 2}).Any(func(i int) bool { return i == 1 }), t)
-	test.Assert(!Elems([]int{1, 2}).Any(func(i int) bool { return i == 0 }), t)
+	assert.True(t, Elems([]int{1, 2}).Any(func(i int) bool { return i == 1 }))
+	assert.False(t, Elems([]int{1, 2}).Any(func(i int) bool { return i == 0 }))
 }
 
 func BenchmarkAny(b *testing.B) {
@@ -55,7 +55,7 @@ func BenchmarkAny(b *testing.B) {
 }
 
 func TestCount(t *testing.T) {
-	test.AssertEq(Elems([]int{1, 2}).Count(), 2, t)
+	assert.Equal(t, Elems([]int{1, 2}).Count(), 2)
 }
 
 func BenchmarkCount(b *testing.B) {
@@ -67,13 +67,13 @@ func TestFind(t *testing.T) {
 		return i == 7
 	})
 
-	test.AssertEq(actual, 7, t)
+	assert.Equal(t, actual, 7)
 
 	_, ok := Elems([]bool{}).Find(func(b bool) bool {
 		return true
 	})
 
-	test.AssertNonNil(ok, t)
+	assert.False(t, ok)
 }
 
 func TestFindMapEndo(t *testing.T) {
@@ -85,13 +85,13 @@ func TestFindMapEndo(t *testing.T) {
 		}
 	})
 
-	test.AssertEq(actual, 7, t)
+	assert.Equal(t, actual, 7)
 
 	_, ok := Elems([]bool{}).FindMapEndo(func(b bool) (bool, error) {
 		return true, nil
 	})
 
-	test.AssertNonNil(ok, t)
+	assert.False(t, ok)
 }
 
 func TestFindMap(t *testing.T) {
@@ -103,13 +103,13 @@ func TestFindMap(t *testing.T) {
 		}
 	})
 
-	test.AssertEq(actual, 7, t)
+	assert.Equal(t, actual, 7)
 
 	_, ok := FindMap(Elems([]bool{}), func(b bool) (bool, error) {
 		return true, nil
 	})
 
-	test.AssertNonNil(ok, t)
+	assert.False(t, ok)
 }
 
 func TestFoldEndo(t *testing.T) {
@@ -119,7 +119,7 @@ func TestFoldEndo(t *testing.T) {
 		return curr + " " + next
 	})
 
-	test.AssertEq(actual, "the quick brown fox", t)
+	assert.Equal(t, actual, "the quick brown fox")
 }
 
 func BenchmarkFoldEndo(b *testing.B) {
@@ -135,7 +135,7 @@ func TestFold(t *testing.T) {
 		return curr + len(next)
 	})
 
-	test.AssertEq(actual, 16, t)
+	assert.Equal(t, actual, 16)
 }
 
 func BenchmarkFold(b *testing.B) {
@@ -147,21 +147,31 @@ func BenchmarkFold(b *testing.B) {
 func TestForEach(t *testing.T) {
 	actual := 0
 	IntsFrom(1).Take(10).ForEach(func(n int) { actual = actual + n })
-	test.AssertEq(actual, 55, t)
+	assert.Equal(t, actual, 55)
 }
 
 func BenchmarkForEach(b *testing.B) {
 	Ints[int]().Take(b.N).ForEach(func(i int) {})
 }
 
+func TestForEachParallel(t *testing.T) {
+	actual := 0
+	IntsFrom(1).Take(10).ForEachParallel(func(n int) { actual = actual + n })
+	assert.Equal(t, actual, 55)
+}
+
+func BenchmarkForEachParallel(b *testing.B) {
+	Ints[int]().Take(b.N).ForEachParallel(func(i int) {})
+}
+
 func TestLast(t *testing.T) {
 	actual, _ := IntsFrom(1).Take(10).Last()
 
-	test.AssertEq(actual, 10, t)
+	assert.Equal(t, actual, 10)
 
 	_, ok := Elems([]bool{}).Last()
 
-	test.AssertNonNil(ok, t)
+	assert.False(t, ok)
 }
 
 func BenchmarkLast(b *testing.B) {
@@ -171,15 +181,15 @@ func BenchmarkLast(b *testing.B) {
 func TestNth(t *testing.T) {
 	actual, _ := IntsFrom(1).Take(10).Nth(7)
 
-	test.AssertEq(actual, 7, t)
+	assert.Equal(t, actual, 7)
 
 	_, ok := IntsFrom(1).Take(10).Nth(17)
 
-	test.AssertNonNil(ok, t)
+	assert.False(t, ok)
 
 	_, ok = IntsFrom(1).Take(10).Nth(11)
 
-	test.AssertNonNil(ok, t)
+	assert.False(t, ok)
 }
 
 func BenchmarkNth(b *testing.B) {
@@ -189,8 +199,8 @@ func BenchmarkNth(b *testing.B) {
 func TestPartition(t *testing.T) {
 	actualA, actualB := Ints[int]().Take(4).Partition(func(i int) bool { return i%2 == 0 })
 
-	test.AssertDeepEq(actualA, []int{0, 2}, t)
-	test.AssertDeepEq(actualB, []int{1, 3}, t)
+	assert.Equal(t, actualA, []int{0, 2})
+	assert.Equal(t, actualB, []int{1, 3})
 }
 
 func BenchmarkPartition(b *testing.B) {
@@ -200,7 +210,7 @@ func BenchmarkPartition(b *testing.B) {
 }
 
 func TestTryFoldEndo(t *testing.T) {
-	actual, ok := IntsBy(2).Take(3).TryFoldEndo(0, func(curr int, next int) (int, error) {
+	actual, err := IntsBy(2).Take(3).TryFoldEndo(0, func(curr int, next int) (int, error) {
 		if next%2 == 0 {
 			return curr + next, nil
 		} else {
@@ -208,10 +218,10 @@ func TestTryFoldEndo(t *testing.T) {
 		}
 	})
 
-	test.AssertNil(ok, t)
-	test.AssertEq(actual, 6, t)
+	assert.NoError(t, err)
+	assert.Equal(t, actual, 6)
 
-	_, ok = Ints[int]().Take(5).TryFoldEndo(0, func(curr int, next int) (int, error) {
+	_, err = Ints[int]().Take(5).TryFoldEndo(0, func(curr int, next int) (int, error) {
 		if next%2 == 0 {
 			return curr + next, nil
 		} else {
@@ -219,7 +229,7 @@ func TestTryFoldEndo(t *testing.T) {
 		}
 	})
 
-	test.AssertNonNil(ok, t)
+	assert.Error(t, err)
 }
 
 func BenchmarkTryFoldEndo(b *testing.B) {
@@ -238,8 +248,8 @@ func TestTryFold(t *testing.T) {
 		}
 	})
 
-	test.AssertNil(err, t)
-	test.AssertEq(actual, 10, t)
+	assert.NoError(t, err)
+	assert.Equal(t, actual, 10)
 
 	_, err = TryFold(Elems([]string{"1", "2", "not a number", "4"}), 0, func(curr int, next string) (int, error) {
 		v, err := strconv.Atoi(next)
@@ -250,7 +260,7 @@ func TestTryFold(t *testing.T) {
 		}
 	})
 
-	test.AssertNonNil(err, t)
+	assert.Error(t, err)
 }
 
 func BenchmarkTryFold(b *testing.B) {
@@ -271,8 +281,8 @@ func TestTryForEach(t *testing.T) {
 		}
 	})
 
-	test.AssertNil(err, t)
-	test.AssertEq(actual, 10, t)
+	assert.NoError(t, err)
+	assert.Equal(t, actual, 10)
 
 	actual = 0
 	err = Elems([]string{"1", "2", "not a number", "4"}).TryForEach(func(s string) error {
@@ -285,8 +295,8 @@ func TestTryForEach(t *testing.T) {
 		}
 	})
 
-	test.AssertNonNil(err, t)
-	test.AssertEq(actual, 3, t)
+	assert.Error(t, err)
+	assert.Equal(t, actual, 3)
 }
 
 func BenchmarkTryForEach(b *testing.B) {
@@ -302,8 +312,8 @@ func TestReduce(t *testing.T) {
 		}
 	})
 
-	test.Assert(ok, t)
-	test.AssertEq(actual, 4, t)
+	assert.True(t, ok)
+	assert.Equal(t, actual, 4)
 }
 
 func BenchmarkReduce(b *testing.B) {
@@ -313,8 +323,8 @@ func BenchmarkReduce(b *testing.B) {
 }
 
 func TestPosition(t *testing.T) {
-	test.AssertEq(Position(Ints[int](), func(i int) bool { return i == 3 }), 3, t)
-	test.AssertEq(Position(Ints[int]().Take(0), func(i int) bool { return i == 3 }), -1, t)
+	assert.Equal(t, Position(Ints[int](), func(i int) bool { return i == 3 }), 3)
+	assert.Equal(t, Position(Ints[int]().Take(0), func(i int) bool { return i == 3 }), -1)
 }
 
 func BenchmarkPosition(b *testing.B) {
@@ -322,7 +332,7 @@ func BenchmarkPosition(b *testing.B) {
 }
 
 func TestRev(t *testing.T) {
-	test.AssertDeepEq(Ints[int]().Take(5).Rev().Collect(), []int{4, 3, 2, 1, 0}, t)
+	assert.Equal(t, Ints[int]().Take(5).Rev().Collect(), []int{4, 3, 2, 1, 0})
 }
 func BenchmarkRev(b *testing.B) {
 	Ints[int]().Take(b.N).Rev()

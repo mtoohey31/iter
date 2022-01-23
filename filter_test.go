@@ -3,7 +3,7 @@ package iter
 import (
 	"testing"
 
-	"mtoohey.com/iter/test"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFilter(t *testing.T) {
@@ -12,10 +12,7 @@ func TestFilter(t *testing.T) {
 	actualFirst, _ := iter()
 	expected := []int{2, 4}
 
-	// test.Assert(iter.HasNext(), t)
-	// test.Assert(iter.HasNext(), t)
-	test.AssertDeepEq(append([]int{actualFirst}, iter.Collect()...), expected, t)
-	// test.Assert(!iter.HasNext(), t)
+	assert.Equal(t, append([]int{actualFirst}, iter.Collect()...), expected)
 }
 
 func BenchmarkFilter(b *testing.B) {

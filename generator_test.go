@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"mtoohey.com/iter/test"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGenWhile(t *testing.T) {
@@ -18,18 +18,13 @@ func TestGenWhile(t *testing.T) {
 		}
 	})
 
-	// test.Assert(iter.HasNext(), t)
-	// test.Assert(iter.HasNext(), t)
-	test.AssertDeepEq(iter.Take(5).Collect(), []int{0, 0, 0, 0, 0}, t)
+	assert.Equal(t, iter.Take(5).Collect(), []int{0, 0, 0, 0, 0})
 
 	b = true
 
-	// test.Assert(!iter.HasNext(), t)
-	// test.Assert(!iter.HasNext(), t)
+	_, ok := iter()
 
-	_, err := iter()
-
-	test.AssertNonNil(err, t)
+	assert.False(t, ok)
 
 	iter = GenWhile(func() (int, error) {
 		if b {
@@ -39,9 +34,9 @@ func TestGenWhile(t *testing.T) {
 		}
 	})
 
-	_, err = iter()
+	_, ok = iter()
 
-	test.AssertNonNil(err, t)
+	assert.False(t, ok)
 }
 
 func BenchmarkGenWhile(b *testing.B) {

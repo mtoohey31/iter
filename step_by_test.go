@@ -3,15 +3,13 @@ package iter
 import (
 	"testing"
 
-	"mtoohey.com/iter/test"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestStepBy(t *testing.T) {
 	iter := Ints[int]().Take(10).StepBy(3)
 
-	// test.Assert(iter.HasNext(), t)
-	test.AssertDeepEq(iter.Collect(), []int{0, 3, 6, 9}, t)
-	// test.Assert(!iter.HasNext(), t)
+	assert.Equal(t, iter.Collect(), []int{0, 3, 6, 9})
 }
 
 func TestStepByPanic(t *testing.T) {

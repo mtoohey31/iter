@@ -3,31 +3,23 @@ package iter
 import (
 	"testing"
 
-	"mtoohey.com/iter/test"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestTakeWhile(t *testing.T) {
 	iter := Ints[int]().TakeWhile(func(i int) bool { return i < 10 })
 
-	// test.Assert(iter.HasNext(), t)
-	// test.Assert(iter.HasNext(), t)
-
-	test.AssertDeepEq(
-		iter.Collect(),
-		Ints[int]().Take(10).Collect(),
-		t)
+	assert.Equal(
+		t, iter.Collect(),
+		Ints[int]().Take(10).Collect())
 
 	iter = Ints[int]().Take(0).TakeWhile(func(i int) bool { return i < 10 })
 
-	// test.Assert(!iter.HasNext(), t)
-
 	iter.Collect()
 
-	// test.Assert(!iter.HasNext(), t)
+	_, ok := iter()
 
-	_, err := iter()
-
-	test.AssertNonNil(err, t)
+	assert.False(t, ok)
 }
 
 func BenchmarkTakeWhile(b *testing.B) {

@@ -3,7 +3,7 @@ package iter
 import (
 	"testing"
 
-	"mtoohey.com/iter/test"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestReceive(t *testing.T) {
@@ -20,11 +20,7 @@ func TestReceive(t *testing.T) {
 
 	actualStart := iter.Take(2).Collect()
 
-	// test.Assert(iter.HasNext(), t)
-	// test.Assert(iter.HasNext(), t)
-	test.AssertDeepEq(append(actualStart, iter.Collect()...), expected, t)
-
-	// test.Assert(!iter.HasNext(), t)
+	assert.Equal(t, append(actualStart, iter.Collect()...), expected)
 }
 
 func BenchmarkReceive(b *testing.B) {
@@ -56,7 +52,7 @@ func TestSend(t *testing.T) {
 		i++
 	}
 
-	test.AssertDeepEq(actual, expected, t)
+	assert.Equal(t, actual, expected)
 }
 
 func BenchmarkSend(b *testing.B) {

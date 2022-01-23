@@ -1,14 +1,14 @@
 package iter
 
 import (
-	"mtoohey.com/iter/test"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestTake(t *testing.T) {
 	iter := Ints[int]().Take(10)
-	test.AssertEq(iter.Take(5).Count(), 5, t)
-	test.AssertEq(iter.Count(), 5, t)
+	assert.Equal(t, iter.Take(5).Count(), 5)
+	assert.Equal(t, iter.Count(), 5)
 }
 
 func BenchmarkTake(b *testing.B) {

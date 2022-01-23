@@ -3,7 +3,7 @@ package iter
 import (
 	"testing"
 
-	"mtoohey.com/iter/test"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMin(t *testing.T) {
@@ -11,12 +11,12 @@ func TestMin(t *testing.T) {
 
 	actual, ok := Min(ordered)
 
-	test.Assert(ok, t)
-	test.AssertEq(actual, 0, t)
+	assert.True(t, ok)
+	assert.Equal(t, actual, 0)
 
 	_, ok = Min(ordered)
 
-	test.Assert(!ok, t)
+	assert.False(t, ok)
 
 	Min(IntsBy(-1).Take(2))
 }
@@ -32,14 +32,14 @@ func TestMinByKey(t *testing.T) {
 		return n * -1
 	})
 
-	test.Assert(ok, t)
-	test.AssertEq(actual, 9, t)
+	assert.True(t, ok)
+	assert.Equal(t, actual, 9)
 
 	_, ok = MinByKey(ordered, func(n int) int {
 		return n * -1
 	})
 
-	test.Assert(!ok, t)
+	assert.False(t, ok)
 
 	ordered = IntsBy(-1).Take(10)
 
@@ -47,8 +47,8 @@ func TestMinByKey(t *testing.T) {
 		return n * -1
 	})
 
-	test.Assert(ok, t)
-	test.AssertEq(actual, 0, t)
+	assert.True(t, ok)
+	assert.Equal(t, actual, 0)
 }
 
 func BenchmarkMinByKey(b *testing.B) {
@@ -62,12 +62,12 @@ func TestMax(t *testing.T) {
 
 	actual, ok := Max(ordered)
 
-	test.Assert(ok, t)
-	test.AssertEq(actual, 9, t)
+	assert.True(t, ok)
+	assert.Equal(t, actual, 9)
 
 	_, ok = Max(ordered)
 
-	test.Assert(!ok, t)
+	assert.False(t, ok)
 
 	Max(IntsBy(-1).Take(2))
 }
@@ -83,14 +83,14 @@ func TestMaxByKey(t *testing.T) {
 		return n * -1
 	})
 
-	test.Assert(ok, t)
-	test.AssertEq(actual, 0, t)
+	assert.True(t, ok)
+	assert.Equal(t, actual, 0)
 
 	_, ok = MaxByKey(ordered, func(n int) int {
 		return n * -1
 	})
 
-	test.Assert(!ok, t)
+	assert.False(t, ok)
 
 	ordered = IntsBy(-1).Take(10)
 
@@ -98,8 +98,8 @@ func TestMaxByKey(t *testing.T) {
 		return n * -1
 	})
 
-	test.Assert(ok, t)
-	test.AssertEq(actual, -9, t)
+	assert.True(t, ok)
+	assert.Equal(t, actual, -9)
 }
 
 func BenchmarkMaxByKey(b *testing.B) {
@@ -109,7 +109,7 @@ func BenchmarkMaxByKey(b *testing.B) {
 }
 
 func TestSum(t *testing.T) {
-	test.AssertEq(Sum(Ints[int]().Take(10)), 45, t)
+	assert.Equal(t, Sum(Ints[int]().Take(10)), 45)
 }
 
 func BenchmarkSum(b *testing.B) {

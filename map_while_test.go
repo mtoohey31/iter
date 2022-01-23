@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"mtoohey.com/iter/test"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMapWhileEndo(t *testing.T) {
@@ -18,16 +18,12 @@ func TestMapWhileEndo(t *testing.T) {
 		}
 	})
 
-	test.AssertDeepEq(mappedWhileIter.Collect(), []string{"GOOD"}, t)
-	test.AssertDeepEq(initialIter.Collect(), []string{"good", "good"}, t)
+	assert.Equal(t, mappedWhileIter.Collect(), []string{"GOOD"})
+	assert.Equal(t, initialIter.Collect(), []string{"good", "good"})
 
 	Ints[int]().Take(5).MapWhileEndo(func(i int) (int, error) {
 		return i, nil
 	}).Consume()
-
-	// Ints[int]().Take(0).MapWhileEndo(func(i int) (int, error) {
-	// 	return i, nil
-	// }).HasNext()
 }
 
 func BenchmarkMapWhileEndo(b *testing.B) {
@@ -47,15 +43,12 @@ func TestMapWhile(t *testing.T) {
 		}
 	})
 
-	// test.Assert(mappedWhileIter.HasNext(), t)
-	// test.Assert(mappedWhileIter.HasNext(), t)
-	test.AssertDeepEq(mappedWhileIter.Collect(), []int{11, 13}, t)
-	// test.Assert(!mappedWhileIter.HasNext(), t)
+	assert.Equal(t, mappedWhileIter.Collect(), []int{11, 13})
 
-	_, err := mappedWhileIter()
+	_, ok := mappedWhileIter()
 
-	test.AssertNonNil(err, t)
-	test.AssertDeepEq(initialIter.Collect(), []string{"long string again"}, t)
+	assert.False(t, ok)
+	assert.Equal(t, initialIter.Collect(), []string{"long string again"})
 }
 
 func BenchmarkMapWhile(b *testing.B) {

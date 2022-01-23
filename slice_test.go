@@ -3,12 +3,12 @@ package iter
 import (
 	"testing"
 
-	"mtoohey.com/iter/test"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestElems(t *testing.T) {
 	expected := []string{"item1", "item2"}
-	test.AssertDeepEq(Elems(expected).Collect(), expected, t)
+	assert.Equal(t, Elems(expected).Collect(), expected)
 }
 
 func BenchmarkElems(b *testing.B) {
