@@ -27,7 +27,7 @@ func TestGenWhile(t *testing.T) {
 	// test.Assert(!iter.HasNext(), t)
 	// test.Assert(!iter.HasNext(), t)
 
-	_, err := iter.Next()
+	_, err := iter()
 
 	test.AssertNonNil(err, t)
 
@@ -39,7 +39,7 @@ func TestGenWhile(t *testing.T) {
 		}
 	})
 
-	_, err = iter.Next()
+	_, err = iter()
 
 	test.AssertNonNil(err, t)
 }

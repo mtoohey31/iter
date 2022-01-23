@@ -9,14 +9,14 @@ one, consumes it unless otherwise stated, meaning that the values contained
 within cannot be used again.
 
 Methods with names suffixed by Endo indicate that the method transforms
-iterators of generic type T to some type in terms of T, such as T or *Iter[T].
+iterators of generic type T to some type in terms of T, such as T or Iter[T].
 Transformation between types is possible, but only through the corresponding
 function whose name is identical to the method, without the Endo prefix.
 Functions are required for these operations because Go does not support the
 definition of type parameters on methods. The nomenclature comes from the term
 endomorphism, though it is a bit of a misuse of the term in that some *Endo
 methods take extra parameters or return types derived from T other than
-*Iter[T].
+Iter[T].
 */
 package iter
 
@@ -26,23 +26,17 @@ import (
 	"github.com/barweiss/go-tuple"
 )
 
-// TODO: after the refactor, check if passing pointers is necessary, cause it's more ergonomic not to
-
-// Iter is a generic iterator function, the basis of this whole package.
+// Iter is a generic iterator function, the basis of this whole package. Note
+// that the typical `iter.Next()` method is replaced with `iter()`, since Iter
+// is simply defined as `func() (T, bool)`.
 type Iter[T any] func() (T, bool)
-
-// Next returns the iterator's next element, if it has one, and a boolean
-// indicating whether a next item was found.
-func (i *Iter[T]) Next() (T, bool) {
-	return (*i)()
-}
 
 // Consume fetches the next value of the iterator until no more values are
 // found. Note that it doesn't do anything with the values that are produced,
 // but it can be useful in certain cases, such as benchmarking.
-func (i *Iter[T]) Consume() {
+func (i Iter[T]) Consume() {
 	for {
-		_, ok := i.Next()
+		_, ok := i()
 
 		if !ok {
 			break
@@ -55,10 +49,10 @@ func (i *Iter[T]) Consume() {
 // Collect does not know how many values it will find, it must resize the slice
 // multiple times during the collection process. This can result in poor
 // performance, so CollectInto should be used when possible.
-func (i *Iter[T]) Collect() []T {
+func (i Iter[T]) Collect() []T {
 	var res []T
 	for {
-		next, ok := i.Next()
+		next, ok := i()
 
 		if !ok {
 			break
@@ -72,9 +66,9 @@ func (i *Iter[T]) Collect() []T {
 // CollectInto inserts values yielded by the input iterator into the provided
 // slice, and returns the number of values it was able to add before the
 // iterator was exhausted or the slice was full.
-func (i *Iter[T]) CollectInto(buf []T) int {
+func (i Iter[T]) CollectInto(buf []T) int {
 	for j := 0; j < len(buf); j++ {
-		next, ok := i.Next()
+		next, ok := i()
 
 		if !ok {
 			return j
@@ -88,9 +82,9 @@ func (i *Iter[T]) CollectInto(buf []T) int {
 
 // All returns whether all values of the iterator satisfy the provided
 // predicate function.
-func (i *Iter[T]) All(f func(T) bool) bool {
+func (i Iter[T]) All(f func(T) bool) bool {
 	for {
-		next, ok := i.Next()
+		next, ok := i()
 
 		if !ok {
 			break
@@ -105,9 +99,9 @@ func (i *Iter[T]) All(f func(T) bool) bool {
 
 // Any returns whether any of the values of the iterator satisfy the provided
 // predicate function.
-func (i *Iter[T]) Any(f func(T) bool) bool {
+func (i Iter[T]) Any(f func(T) bool) bool {
 	for {
-		next, ok := i.Next()
+		next, ok := i()
 
 		if !ok {
 			break
@@ -121,10 +115,10 @@ func (i *Iter[T]) Any(f func(T) bool) bool {
 }
 
 // Count returns the number of remaining values in the iterator.
-func (i *Iter[T]) Count() int {
+func (i Iter[T]) Count() int {
 	j := 0
 	for {
-		_, ok := i.Next()
+		_, ok := i()
 
 		if !ok {
 			break
@@ -139,9 +133,9 @@ func (i *Iter[T]) Count() int {
 // predicate function, as well as a boolean indicating whether any value was
 // found. It consumes all values up to the first satisfactory value, or the
 // whole iterator if no values satisfy the predicate.
-func (i *Iter[T]) Find(f func(T) bool) (T, bool) {
+func (i Iter[T]) Find(f func(T) bool) (T, bool) {
 	for {
-		next, ok := i.Next()
+		next, ok := i()
 
 		if !ok {
 			break
@@ -159,9 +153,9 @@ func (i *Iter[T]) Find(f func(T) bool) (T, bool) {
 // FindMapEndo returns the first transformed value in the iterator for which
 // the provided function does not return an error. As with Find, it consumes
 // all values up to the first passing one.
-func (i *Iter[T]) FindMapEndo(f func(T) (T, error)) (T, bool) {
+func (i Iter[T]) FindMapEndo(f func(T) (T, error)) (T, bool) {
 	for {
-		next, ok := i.Next()
+		next, ok := i()
 
 		if !ok {
 			break
@@ -179,9 +173,9 @@ func (i *Iter[T]) FindMapEndo(f func(T) (T, error)) (T, bool) {
 // FindMap returns the first transformed value in the iterator for which the
 // provided function does not return an error. As with Find, it consumes all
 // values up to the first passing one.
-func FindMap[T, U any](i *Iter[T], f func(T) (U, error)) (U, bool) {
+func FindMap[T, U any](i Iter[T], f func(T) (U, error)) (U, bool) {
 	for {
-		next, ok := i.Next()
+		next, ok := i()
 
 		if !ok {
 			break
@@ -199,11 +193,11 @@ func FindMap[T, U any](i *Iter[T], f func(T) (U, error)) (U, bool) {
 // FoldEndo repeatedly applies the provided function to the current value
 // (starting with `init`) and the next value of the iterator, until the whole
 // iterator is consumed.
-func (i *Iter[T]) FoldEndo(init T, f func(curr T, next T) T) T {
+func (i Iter[T]) FoldEndo(init T, f func(curr T, next T) T) T {
 	curr := init
 
 	for {
-		next, ok := i.Next()
+		next, ok := i()
 
 		if !ok {
 			break
@@ -218,11 +212,11 @@ func (i *Iter[T]) FoldEndo(init T, f func(curr T, next T) T) T {
 // Fold repeatedly applies the provided function to the current value (starting
 // with `init`) and the next value of the iterator, until the whole iterator is
 // consumed.
-func Fold[T, U any](i *Iter[T], init U, f func(curr U, next T) U) U {
+func Fold[T, U any](i Iter[T], init U, f func(curr U, next T) U) U {
 	curr := init
 
 	for {
-		next, ok := i.Next()
+		next, ok := i()
 
 		if !ok {
 			break
@@ -236,9 +230,9 @@ func Fold[T, U any](i *Iter[T], init U, f func(curr U, next T) U) U {
 
 // ForEach applies the provided function to all remaining values in the current
 // iterator.
-func (i *Iter[T]) ForEach(f func(T)) {
+func (i Iter[T]) ForEach(f func(T)) {
 	for {
-		next, ok := i.Next()
+		next, ok := i()
 
 		if !ok {
 			break
@@ -256,10 +250,10 @@ func (i *Iter[T]) ForEach(f func(T)) {
 // only waits for all executions at the end. When the function to be executed
 // is expensive and the order in which values of the iterator are operated upon
 // does not matter, this method can result in better performance than ForEach.
-func (i *Iter[T]) ForEachParallel(f func(T)) {
+func (i Iter[T]) ForEachParallel(f func(T)) {
 	var wg sync.WaitGroup
 	for {
-		next, ok := i.Next()
+		next, ok := i()
 
 		if !ok {
 			break
@@ -278,8 +272,8 @@ func (i *Iter[T]) ForEachParallel(f func(T)) {
 // Last returns the final value of the iterator, along with a boolean
 // indicating whether the operation was successful, in other words, whether the
 // iterator was already empty.
-func (i *Iter[T]) Last() (T, bool) {
-	curr, ok := i.Next()
+func (i Iter[T]) Last() (T, bool) {
+	curr, ok := i()
 
 	if !ok {
 		var z T
@@ -287,7 +281,7 @@ func (i *Iter[T]) Last() (T, bool) {
 	}
 
 	for {
-		next, ok := i.Next()
+		next, ok := i()
 
 		if ok {
 			curr = next
@@ -299,9 +293,9 @@ func (i *Iter[T]) Last() (T, bool) {
 
 // Nth returns the nth value in the iterator, and a boolean indicating whether
 // the iterator was too short. The provided value of `n` should be non-negative.
-func (i *Iter[T]) Nth(n int) (T, bool) {
+func (i Iter[T]) Nth(n int) (T, bool) {
 	for j := 0; j < n-1; j++ {
-		_, ok := i.Next()
+		_, ok := i()
 
 		if !ok {
 			var z T
@@ -309,7 +303,7 @@ func (i *Iter[T]) Nth(n int) (T, bool) {
 		}
 	}
 
-	res, ok := i.Next()
+	res, ok := i()
 
 	if ok {
 		return res, true
@@ -323,11 +317,11 @@ func (i *Iter[T]) Nth(n int) (T, bool) {
 
 // Partition returns two slices, one containing the values of the iterator that
 // satisfy the provided function, the other containing the values that do not.
-func (i *Iter[T]) Partition(f func(T) bool) ([]T, []T) {
+func (i Iter[T]) Partition(f func(T) bool) ([]T, []T) {
 	var a []T
 	var b []T
 	for {
-		next, ok := i.Next()
+		next, ok := i()
 
 		if !ok {
 			break
@@ -346,11 +340,11 @@ func (i *Iter[T]) Partition(f func(T) bool) ([]T, []T) {
 // (starting with `init`) and the next value of the iterator, until the whole
 // iterator is consumed. If at any point an error is returned, the operation
 // stops and that error is returned.
-func (i *Iter[T]) TryFoldEndo(init T, f func(curr T, next T) (T, error)) (T, error) {
+func (i Iter[T]) TryFoldEndo(init T, f func(curr T, next T) (T, error)) (T, error) {
 	curr := init
 
 	for {
-		next, ok := i.Next()
+		next, ok := i()
 
 		if !ok {
 			break
@@ -372,11 +366,11 @@ func (i *Iter[T]) TryFoldEndo(init T, f func(curr T, next T) (T, error)) (T, err
 // (starting with `init`) and the next value of the iterator, until the whole
 // iterator is consumed. If at any point an error is returned, the operation
 // stops and that error is returned.
-func TryFold[T, U any](i *Iter[T], init U, f func(curr U, next T) (U, error)) (U, error) {
+func TryFold[T, U any](i Iter[T], init U, f func(curr U, next T) (U, error)) (U, error) {
 	curr := init
 
 	for {
-		next, ok := i.Next()
+		next, ok := i()
 
 		if !ok {
 			break
@@ -396,9 +390,9 @@ func TryFold[T, U any](i *Iter[T], init U, f func(curr U, next T) (U, error)) (U
 
 // TryForEach applies the provided fallible function to all remaining values in
 // the current iterator, but stops if an error is returned at any point.
-func (i *Iter[T]) TryForEach(f func(T) error) error {
+func (i Iter[T]) TryForEach(f func(T) error) error {
 	for {
-		next, ok := i.Next()
+		next, ok := i()
 
 		if !ok {
 			break
@@ -418,8 +412,8 @@ func (i *Iter[T]) TryForEach(f func(T) error) error {
 // (starting with iterator's first value) and the next value of the iterator,
 // until the whole iterator is consumed. The boolean indicates whether the
 // iterator was already empty, meaning that it could not be reduced.
-func (i *Iter[T]) Reduce(f func(curr T, next T) T) (T, bool) {
-	curr, ok := i.Next()
+func (i Iter[T]) Reduce(f func(curr T, next T) T) (T, bool) {
+	curr, ok := i()
 
 	if !ok {
 		var z T
@@ -431,7 +425,7 @@ func (i *Iter[T]) Reduce(f func(curr T, next T) T) (T, bool) {
 
 // TODO: add godoc
 
-func Position[T any](i *Iter[T], f func(T) bool) int {
+func Position[T any](i Iter[T], f func(T) bool) int {
 	tup, ok := Enumerate(i).Find(func(tup tuple.T2[int, T]) bool { return f(tup.V2) })
 	if ok {
 		return tup.V1
@@ -443,7 +437,7 @@ func Position[T any](i *Iter[T], f func(T) bool) int {
 // Rev produces a new iterator whose values are reversed from those of the
 // input iterator. Note that this method is not lazy, it must consume the whole
 // input iterator immediately to produce the reversed result.
-func (i *Iter[T]) Rev() *Iter[T] {
+func (i Iter[T]) Rev() Iter[T] {
 	collected := i.Collect()
 	for j, k := 0, len(collected)-1; j < k; j, k = j+1, k-1 {
 		collected[j], collected[k] = collected[k], collected[j]

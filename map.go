@@ -6,7 +6,7 @@ import "github.com/barweiss/go-tuple"
 // values. While the value lookup occurs lazily, the keys must be accumulated
 // immediately when the iterator is created, so this operation can be expensive
 // if performance is important.
-func KVZip[T comparable, U any](m map[T]U) *Iter[tuple.T2[T, U]] {
+func KVZip[T comparable, U any](m map[T]U) Iter[tuple.T2[T, U]] {
 	var keys []T
 
 	for key := range m {
@@ -15,7 +15,7 @@ func KVZip[T comparable, U any](m map[T]U) *Iter[tuple.T2[T, U]] {
 		keys = append(keys, key)
 	}
 
-	tmp := Iter[tuple.T2[T, U]](func() (tuple.T2[T, U], bool) {
+	return Iter[tuple.T2[T, U]](func() (tuple.T2[T, U], bool) {
 		if len(keys) > 0 {
 			// PERF: is going from back to front here faster?
 			next := keys[0]
@@ -26,20 +26,19 @@ func KVZip[T comparable, U any](m map[T]U) *Iter[tuple.T2[T, U]] {
 			return z, false
 		}
 	})
-	return &tmp
 }
 
 // MapEndo returns a new iterator that yields the results of applying the
 // provided function to the input iterator.
-func (i *Iter[T]) MapEndo(f func(T) T) *Iter[T] {
+func (i Iter[T]) MapEndo(f func(T) T) Iter[T] {
 	return Map(i, f)
 }
 
 // Map returns a new iterator that yields the results of applying the provided
 // function to the input iterator.
-func Map[T, U any](i *Iter[T], f func(T) U) *Iter[U] {
-	tmp := Iter[U](func() (U, bool) {
-		next, ok := i.Next()
+func Map[T, U any](i Iter[T], f func(T) U) Iter[U] {
+	return Iter[U](func() (U, bool) {
+		next, ok := i()
 		if ok {
 			return f(next), true
 		} else {
@@ -47,5 +46,4 @@ func Map[T, U any](i *Iter[T], f func(T) U) *Iter[U] {
 			return z, false
 		}
 	})
-	return &tmp
 }

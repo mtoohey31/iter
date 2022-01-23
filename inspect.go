@@ -4,9 +4,9 @@ package iter
 // but it applies the provided function to values of the iterator as they are
 // requested. This methodh differs from ForEach in that it is lazy, whereas
 // ForEach is not.
-func (i *Iter[T]) Inspect(f func(T)) *Iter[T] {
-	tmp := Iter[T](func() (T, bool) {
-		next, ok := i.Next()
+func (i Iter[T]) Inspect(f func(T)) Iter[T] {
+	return Iter[T](func() (T, bool) {
+		next, ok := i()
 		if ok {
 			f(next)
 			return next, true
@@ -15,5 +15,4 @@ func (i *Iter[T]) Inspect(f func(T)) *Iter[T] {
 			return z, false
 		}
 	})
-	return &tmp
 }

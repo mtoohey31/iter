@@ -52,7 +52,7 @@ func TestMapWhile(t *testing.T) {
 	test.AssertDeepEq(mappedWhileIter.Collect(), []int{11, 13}, t)
 	// test.Assert(!mappedWhileIter.HasNext(), t)
 
-	_, err := mappedWhileIter.Next()
+	_, err := mappedWhileIter()
 
 	test.AssertNonNil(err, t)
 	test.AssertDeepEq(initialIter.Collect(), []string{"long string again"}, t)

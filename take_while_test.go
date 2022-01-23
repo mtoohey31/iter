@@ -25,7 +25,7 @@ func TestTakeWhile(t *testing.T) {
 
 	// test.Assert(!iter.HasNext(), t)
 
-	_, err := iter.Next()
+	_, err := iter()
 
 	test.AssertNonNil(err, t)
 }

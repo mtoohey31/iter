@@ -9,7 +9,7 @@ import (
 func TestFilter(t *testing.T) {
 	iter := Elems([]int{1, 2, 3, 4}).Filter(func(i int) bool { return i%2 == 0 })
 
-	actualFirst, _ := iter.Next()
+	actualFirst, _ := iter()
 	expected := []int{2, 4}
 
 	// test.Assert(iter.HasNext(), t)

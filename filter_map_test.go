@@ -28,7 +28,7 @@ func TestFilterMap(t *testing.T) {
 		return strconv.Atoi(s)
 	})
 
-	actualFirst, _ := iter.Next()
+	actualFirst, _ := iter()
 	expected := []int{1, 2}
 
 	// test.Assert(iter.HasNext(), t)

@@ -5,12 +5,12 @@ package iter
 // occurs, no more values are yielded. If this occurs, the previously yielded
 // values, as well as the first failing value, are consumed from the input
 // iterator.
-func (i *Iter[T]) TakeWhile(f func(T) bool) *Iter[T] {
+func (i Iter[T]) TakeWhile(f func(T) bool) Iter[T] {
 	failed := false
 
-	tmp := Iter[T](func() (T, bool) {
+	return Iter[T](func() (T, bool) {
 		if !failed {
-			next, ok := i.Next()
+			next, ok := i()
 			if ok {
 				if f(next) {
 					return next, true
@@ -23,5 +23,4 @@ func (i *Iter[T]) TakeWhile(f func(T) bool) *Iter[T] {
 		var z T
 		return z, false
 	})
-	return &tmp
 }

@@ -50,9 +50,9 @@ func TestUnzip(t *testing.T) {
 	// test.Assert(v1.HasNext(), t)
 	// test.Assert(v2.HasNext(), t)
 
-	v1First, _ := v1.Next()
-	v2First, _ := v2.Next()
-	v2Second, _ := v2.Next()
+	v1First, _ := v1()
+	v2First, _ := v2()
+	v2Second, _ := v2()
 
 	test.AssertDeepEq(
 		tuple.New2(append([]int{v1First}, v1.Collect()...),
