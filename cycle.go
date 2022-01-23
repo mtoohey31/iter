@@ -1,41 +1,41 @@
 package iter
 
-type cycleInner[T any] struct {
-	inner  *Iter[T]
-	memory []T
-	index  int
-}
-
 // Cycle returns an iterator that first consumes the provided input iterator,
-// then repeatedly returns the previous values. This method will panic if the
-// provided iterator is empty, to ensure this doesn't happen, check if your
-// iterator `.HasNext()` before passing it to Cycle.
-func (i *Iter[T]) Cycle() *Iter[T] {
-	if !i.HasNext() {
-		panic("Cycle iterator contained no values")
+// then repeatedly returns the previous values. It also returns a boolean that
+// indicates whether the creation of this iterator was successful: it will fail
+// if the provided iterator is already empty.
+func (i *Iter[T]) Cycle() (*Iter[T], bool) {
+	next, ok := i.Next()
+	if !ok {
+		return nil, false
 	}
 
-	return Wrap[T](&cycleInner[T]{inner: i, index: -1})
-}
+	cachedFirst := &next
+	memory := []T{*cachedFirst}
+	index := -1
 
-func (i *cycleInner[T]) HasNext() bool {
-	return true
-}
+	var self Iter[T]
+	self = Iter[T](func() (T, bool) {
+		if index == -1 {
+			if cachedFirst != nil {
+				res := *cachedFirst
+				cachedFirst = nil
+				return res, true
+			}
 
-func (i *cycleInner[T]) Next() (T, error) {
-	if i.index == -1 {
-		next, err := i.inner.Next()
-
-		if err == nil {
-			i.memory = append(i.memory, next)
-			return next, nil
+			next, ok := i.Next()
+			if ok {
+				memory = append(memory, next)
+				return next, true
+			} else {
+				index = 0
+				return self.Next()
+			}
 		} else {
-			i.index = 0
-			return i.Next()
+			res := memory[index]
+			index = (index + 1) % len(memory)
+			return res, true
 		}
-	} else {
-		res := i.memory[i.index]
-		i.index = (i.index + 1) % len(i.memory)
-		return res, nil
-	}
+	})
+	return &self, true
 }

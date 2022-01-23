@@ -21,56 +21,20 @@ methods take extra parameters or return types derived from T other than
 package iter
 
 import (
-	"errors"
 	"sync"
 
 	"github.com/barweiss/go-tuple"
 )
 
-// Indicates an error resulting from an iterator with no more values.
-var IteratorExhaustedError = errors.New("iterator exhausted")
+// TODO: after the refactor, check if passing pointers is necessary, cause it's more ergonomic not to
 
-// Source is an interface that provides the most basic functions of an iterator
-// and can be wrapped with Wrap to produce a value of type *Iter[T] supporting
-// more advanced behaviour.
-type Source[T any] interface {
-	// HasNext returns whether the source has a next value.
-	HasNext() bool
-	// Next returns the next value of the source, or an error if it has none.
-	Next() (T, error)
-}
+// Iter is a generic iterator function, the basis of this whole package.
+type Iter[T any] func() (T, bool)
 
-// Iter is a generic iterator struct, the basis of this whole package.
-type Iter[T any] struct {
-	inner Source[T]
-}
-
-// HasNext returns whether the struct contains a next element.
-func (i *Iter[T]) HasNext() bool {
-	return i.inner.HasNext()
-}
-
-// Next returns the iterator's next element, if it has one. Otherwise, it
-// produces an error.
-func (i *Iter[T]) Next() (T, error) {
-	return i.inner.Next()
-}
-
-// Wrap produces a result of type *Iter[T], given a struct implementing
-// the InnerIter interface.
-func Wrap[T any](inner Source[T]) *Iter[T] {
-	return &Iter[T]{inner: inner}
-}
-
-type emptyInner[T any] struct{}
-
-func (i *emptyInner[T]) HasNext() bool {
-	return false
-}
-
-func (i *emptyInner[T]) Next() (T, error) {
-	var z T
-	return z, IteratorExhaustedError
+// Next returns the iterator's next element, if it has one, and a boolean
+// indicating whether a next item was found.
+func (i *Iter[T]) Next() (T, bool) {
+	return (*i)()
 }
 
 // Consume fetches the next value of the iterator until no more values are
@@ -78,9 +42,9 @@ func (i *emptyInner[T]) Next() (T, error) {
 // but it can be useful in certain cases, such as benchmarking.
 func (i *Iter[T]) Consume() {
 	for {
-		_, err := i.Next()
+		_, ok := i.Next()
 
-		if err != nil {
+		if !ok {
 			break
 		}
 	}
@@ -94,9 +58,9 @@ func (i *Iter[T]) Consume() {
 func (i *Iter[T]) Collect() []T {
 	var res []T
 	for {
-		next, err := i.Next()
+		next, ok := i.Next()
 
-		if err != nil {
+		if !ok {
 			break
 		}
 
@@ -110,9 +74,9 @@ func (i *Iter[T]) Collect() []T {
 // iterator was exhausted or the slice was full.
 func (i *Iter[T]) CollectInto(buf []T) int {
 	for j := 0; j < len(buf); j++ {
-		next, err := i.Next()
+		next, ok := i.Next()
 
-		if err != nil {
+		if !ok {
 			return j
 		}
 
@@ -126,9 +90,9 @@ func (i *Iter[T]) CollectInto(buf []T) int {
 // predicate function.
 func (i *Iter[T]) All(f func(T) bool) bool {
 	for {
-		next, err := i.Next()
+		next, ok := i.Next()
 
-		if err != nil {
+		if !ok {
 			break
 		}
 
@@ -143,9 +107,9 @@ func (i *Iter[T]) All(f func(T) bool) bool {
 // predicate function.
 func (i *Iter[T]) Any(f func(T) bool) bool {
 	for {
-		next, err := i.Next()
+		next, ok := i.Next()
 
-		if err != nil {
+		if !ok {
 			break
 		}
 
@@ -160,9 +124,9 @@ func (i *Iter[T]) Any(f func(T) bool) bool {
 func (i *Iter[T]) Count() int {
 	j := 0
 	for {
-		_, err := i.Next()
+		_, ok := i.Next()
 
-		if err != nil {
+		if !ok {
 			break
 		}
 
@@ -172,64 +136,64 @@ func (i *Iter[T]) Count() int {
 }
 
 // Find returns the first value in the iterator that satisfies the provided
-// predicate function, or returns an error if no satisfactory values were
+// predicate function, as well as a boolean indicating whether any value was
 // found. It consumes all values up to the first satisfactory value, or the
 // whole iterator if no values satisfy the predicate.
-func (i *Iter[T]) Find(f func(T) bool) (T, error) {
+func (i *Iter[T]) Find(f func(T) bool) (T, bool) {
 	for {
-		next, err := i.Next()
+		next, ok := i.Next()
 
-		if err != nil {
+		if !ok {
 			break
 		}
 
 		if f(next) {
-			return next, nil
+			return next, true
 		}
 	}
 
 	var z T
-	return z, errors.New("no element found")
+	return z, false
 }
 
 // FindMapEndo returns the first transformed value in the iterator for which
 // the provided function does not return an error. As with Find, it consumes
 // all values up to the first passing one.
-func (i *Iter[T]) FindMapEndo(f func(T) (T, error)) (T, error) {
+func (i *Iter[T]) FindMapEndo(f func(T) (T, error)) (T, bool) {
 	for {
-		next, err := i.Next()
+		next, ok := i.Next()
 
-		if err != nil {
+		if !ok {
 			break
 		}
 
 		if mappedNext, err := f(next); err == nil {
-			return mappedNext, nil
+			return mappedNext, true
 		}
 	}
 
 	var z T
-	return z, errors.New("no element found")
+	return z, false
 }
 
 // FindMap returns the first transformed value in the iterator for which the
 // provided function does not return an error. As with Find, it consumes all
 // values up to the first passing one.
-func FindMap[T, U any](i *Iter[T], f func(T) (U, error)) (U, error) {
+func FindMap[T, U any](i *Iter[T], f func(T) (U, error)) (U, bool) {
 	for {
-		next, err := i.Next()
+		next, ok := i.Next()
 
-		if err != nil {
+		if !ok {
 			break
 		}
 
 		if mappedNext, err := f(next); err == nil {
-			return mappedNext, nil
+			return mappedNext, true
 		}
 	}
 
 	var z U
-	return z, errors.New("no element found")
+	return z, false
 }
 
 // FoldEndo repeatedly applies the provided function to the current value
@@ -239,9 +203,9 @@ func (i *Iter[T]) FoldEndo(init T, f func(curr T, next T) T) T {
 	curr := init
 
 	for {
-		next, err := i.Next()
+		next, ok := i.Next()
 
-		if err != nil {
+		if !ok {
 			break
 		}
 
@@ -258,9 +222,9 @@ func Fold[T, U any](i *Iter[T], init U, f func(curr U, next T) U) U {
 	curr := init
 
 	for {
-		next, err := i.Next()
+		next, ok := i.Next()
 
-		if err != nil {
+		if !ok {
 			break
 		}
 
@@ -274,9 +238,9 @@ func Fold[T, U any](i *Iter[T], init U, f func(curr U, next T) U) U {
 // iterator.
 func (i *Iter[T]) ForEach(f func(T)) {
 	for {
-		next, err := i.Next()
+		next, ok := i.Next()
 
-		if err != nil {
+		if !ok {
 			break
 		}
 
@@ -295,9 +259,9 @@ func (i *Iter[T]) ForEach(f func(T)) {
 func (i *Iter[T]) ForEachParallel(f func(T)) {
 	var wg sync.WaitGroup
 	for {
-		next, err := i.Next()
+		next, ok := i.Next()
 
-		if err != nil {
+		if !ok {
 			break
 		}
 
@@ -311,46 +275,47 @@ func (i *Iter[T]) ForEachParallel(f func(T)) {
 	wg.Wait()
 }
 
-// Last returns the final value of the iterator, or an error if the iterator is
-// already empty.
-func (i *Iter[T]) Last() (T, error) {
-	curr, err := i.Next()
+// Last returns the final value of the iterator, along with a boolean
+// indicating whether the operation was successful, in other words, whether the
+// iterator was already empty.
+func (i *Iter[T]) Last() (T, bool) {
+	curr, ok := i.Next()
 
-	if err != nil {
+	if !ok {
 		var z T
-		return z, IteratorExhaustedError
+		return z, false
 	}
 
 	for {
-		next, err := i.Next()
+		next, ok := i.Next()
 
-		if err == nil {
+		if ok {
 			curr = next
 		} else {
-			return curr, nil
+			return curr, true
 		}
 	}
 }
 
-// Nth returns the nth value in the iterator, or an error if the iterator is
-// too short. The provided value of `n` should be non-negative.
-func (i *Iter[T]) Nth(n int) (T, error) {
+// Nth returns the nth value in the iterator, and a boolean indicating whether
+// the iterator was too short. The provided value of `n` should be non-negative.
+func (i *Iter[T]) Nth(n int) (T, bool) {
 	for j := 0; j < n-1; j++ {
-		_, err := i.Next()
+		_, ok := i.Next()
 
-		if err != nil {
+		if !ok {
 			var z T
-			return z, IteratorExhaustedError
+			return z, false
 		}
 	}
 
-	res, err := i.Next()
+	res, ok := i.Next()
 
-	if err == nil {
-		return res, nil
+	if ok {
+		return res, true
 	} else {
 		var z T
-		return z, IteratorExhaustedError
+		return z, false
 	}
 }
 
@@ -362,9 +327,9 @@ func (i *Iter[T]) Partition(f func(T) bool) ([]T, []T) {
 	var a []T
 	var b []T
 	for {
-		next, err := i.Next()
+		next, ok := i.Next()
 
-		if err != nil {
+		if !ok {
 			break
 		}
 
@@ -385,12 +350,13 @@ func (i *Iter[T]) TryFoldEndo(init T, f func(curr T, next T) (T, error)) (T, err
 	curr := init
 
 	for {
-		next, err := i.Next()
+		next, ok := i.Next()
 
-		if err != nil {
+		if !ok {
 			break
 		}
 
+		var err error
 		curr, err = f(curr, next)
 
 		if err != nil {
@@ -410,12 +376,13 @@ func TryFold[T, U any](i *Iter[T], init U, f func(curr U, next T) (U, error)) (U
 	curr := init
 
 	for {
-		next, err := i.Next()
+		next, ok := i.Next()
 
-		if err != nil {
+		if !ok {
 			break
 		}
 
+		var err error
 		curr, err = f(curr, next)
 
 		if err != nil {
@@ -431,13 +398,13 @@ func TryFold[T, U any](i *Iter[T], init U, f func(curr U, next T) (U, error)) (U
 // the current iterator, but stops if an error is returned at any point.
 func (i *Iter[T]) TryForEach(f func(T) error) error {
 	for {
-		next, err := i.Next()
+		next, ok := i.Next()
 
-		if err != nil {
+		if !ok {
 			break
 		}
 
-		err = f(next)
+		err := f(next)
 
 		if err != nil {
 			return err
@@ -449,21 +416,24 @@ func (i *Iter[T]) TryForEach(f func(T) error) error {
 
 // Reduce repeatedly applies the provided function to the current value
 // (starting with iterator's first value) and the next value of the iterator,
-// until the whole iterator is consumed.
-func (i *Iter[T]) Reduce(f func(curr T, next T) T) (T, error) {
-	curr, err := i.Next()
+// until the whole iterator is consumed. The boolean indicates whether the
+// iterator was already empty, meaning that it could not be reduced.
+func (i *Iter[T]) Reduce(f func(curr T, next T) T) (T, bool) {
+	curr, ok := i.Next()
 
-	if err != nil {
+	if !ok {
 		var z T
-		return z, IteratorExhaustedError
+		return z, false
 	}
 
-	return i.FoldEndo(curr, f), nil
+	return i.FoldEndo(curr, f), true
 }
 
+// TODO: add godoc
+
 func Position[T any](i *Iter[T], f func(T) bool) int {
-	tup, err := Enumerate(i).Find(func(tup tuple.T2[int, T]) bool { return f(tup.V2) })
-	if err == nil {
+	tup, ok := Enumerate(i).Find(func(tup tuple.T2[int, T]) bool { return f(tup.V2) })
+	if ok {
 		return tup.V1
 	} else {
 		return -1

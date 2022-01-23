@@ -3,7 +3,7 @@ package iter
 import "github.com/barweiss/go-tuple"
 
 // Min returns the minimum value in the provided iterator.
-func Min[T ordered](oi *Iter[T]) (T, error) {
+func Min[T ordered](oi *Iter[T]) (T, bool) {
 	return oi.Reduce(func(curr T, next T) T {
 		if curr < next {
 			return curr
@@ -15,12 +15,12 @@ func Min[T ordered](oi *Iter[T]) (T, error) {
 
 // MinByKey returns the value with the minimum result after the application of
 // the provided function.
-func MinByKey[T any, U ordered](oi *Iter[T], key func(T) U) (T, error) {
-	init, err := oi.Next()
+func MinByKey[T any, U ordered](oi *Iter[T], key func(T) U) (T, bool) {
+	init, ok := oi.Next()
 
-	if err != nil {
+	if !ok {
 		var z T
-		return z, IteratorExhaustedError
+		return z, false
 	}
 
 	return Fold(oi, tuple.New2(init, key(init)), func(curr tuple.T2[T, U], next T) tuple.T2[T, U] {
@@ -30,11 +30,11 @@ func MinByKey[T any, U ordered](oi *Iter[T], key func(T) U) (T, error) {
 		} else {
 			return tuple.New2(next, keyNext)
 		}
-	}).V1, nil
+	}).V1, true
 }
 
 // Max returns the maximum value in the provided iterator.
-func Max[T ordered](oi *Iter[T]) (T, error) {
+func Max[T ordered](oi *Iter[T]) (T, bool) {
 	return oi.Reduce(func(curr T, next T) T {
 		if curr > next {
 			return curr
@@ -46,12 +46,12 @@ func Max[T ordered](oi *Iter[T]) (T, error) {
 
 // MaxByKey returns the value with the maximum result after the application of
 // the provided function.
-func MaxByKey[T any, U ordered](oi *Iter[T], key func(T) U) (T, error) {
-	init, err := oi.Next()
+func MaxByKey[T any, U ordered](oi *Iter[T], key func(T) U) (T, bool) {
+	init, ok := oi.Next()
 
-	if err != nil {
+	if !ok {
 		var z T
-		return z, IteratorExhaustedError
+		return z, false
 	}
 
 	return Fold(oi, tuple.New2(init, key(init)), func(curr tuple.T2[T, U], next T) tuple.T2[T, U] {
@@ -61,7 +61,7 @@ func MaxByKey[T any, U ordered](oi *Iter[T], key func(T) U) (T, error) {
 		} else {
 			return tuple.New2(next, keyNext)
 		}
-	}).V1, nil
+	}).V1, true
 }
 
 // Sum returns the sum of all the values in the provided iterator.

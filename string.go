@@ -11,38 +11,30 @@ func Runes(s string) *Iter[rune] {
 	return Elems(runes)
 }
 
-type splitByRuneInner struct {
-	string string
-	rune   rune
-	index  int
-}
-
 // SplitByRune returns an iterator over the substrings of the input string
 // between occurences of the provided rune.
 func SplitByRune(s string, r rune) *Iter[string] {
-	return Wrap[string](&splitByRuneInner{s, r, 0})
-}
+	runes := []rune(s)
+	index := 0
 
-func (i *splitByRuneInner) HasNext() bool {
-	return i.index < len(i.string)
-}
+	tmp := Iter[string](func() (string, bool) {
+		newIndex := index
+		if len(runes) > index {
+			for newIndex < len(runes) {
+				if runes[newIndex] == r {
+					break
+				}
+				newIndex++
+			}
 
-func (i *splitByRuneInner) Next() (string, error) {
-	if !i.HasNext() {
-		return "", IteratorExhaustedError
-	}
-
-	runeIndex := strings.IndexRune(i.string[i.index:], i.rune)
-
-	if runeIndex == -1 {
-		res := i.string[i.index:]
-		i.index = len(i.string)
-		return res, nil
-	} else {
-		res := i.string[i.index : i.index+runeIndex]
-		i.index = i.index + runeIndex + 1
-		return res, nil
-	}
+			res := runes[index:newIndex]
+			index = newIndex + 1
+			return string(res), true
+		} else {
+			return "", false
+		}
+	})
+	return &tmp
 }
 
 type splitByStringInner struct {
@@ -54,27 +46,24 @@ type splitByStringInner struct {
 // SplitByString returns an iterator over the substrings of the input string
 // between occurences of the provided separator string.
 func SplitByString(s string, sep string) *Iter[string] {
-	return Wrap[string](&splitByStringInner{s, sep, 0})
-}
+	index := 0
 
-func (i *splitByStringInner) HasNext() bool {
-	return i.index < len(i.string)
-}
+	tmp := Iter[string](func() (string, bool) {
+		if len(s) > index {
+			sepIndex := strings.Index(s[index:], sep)
 
-func (i *splitByStringInner) Next() (string, error) {
-	if !i.HasNext() {
-		return "", IteratorExhaustedError
-	}
-
-	sepIndex := strings.Index(i.string[i.index:], i.sep)
-
-	if sepIndex == -1 {
-		res := i.string[i.index:]
-		i.index = len(i.string)
-		return res, nil
-	} else {
-		res := i.string[i.index : i.index+sepIndex]
-		i.index = i.index + sepIndex + len(i.sep)
-		return res, nil
-	}
+			if sepIndex == -1 {
+				res := s[index:]
+				index = len(s)
+				return res, true
+			} else {
+				res := s[index : index+sepIndex]
+				index += sepIndex + len(sep)
+				return res, true
+			}
+		} else {
+			return "", false
+		}
+	})
+	return &tmp
 }

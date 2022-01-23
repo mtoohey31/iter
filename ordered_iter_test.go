@@ -9,14 +9,14 @@ import (
 func TestMin(t *testing.T) {
 	ordered := Ints[int]().Take(10)
 
-	actual, err := Min(ordered)
+	actual, ok := Min(ordered)
 
-	test.AssertNil(err, t)
+	test.Assert(ok, t)
 	test.AssertEq(actual, 0, t)
 
-	_, err = Min(ordered)
+	_, ok = Min(ordered)
 
-	test.AssertNonNil(err, t)
+	test.Assert(!ok, t)
 
 	Min(IntsBy(-1).Take(2))
 }
@@ -28,26 +28,26 @@ func BenchmarkMin(b *testing.B) {
 func TestMinByKey(t *testing.T) {
 	ordered := Ints[int]().Take(10)
 
-	actual, err := MinByKey(ordered, func(n int) int {
+	actual, ok := MinByKey(ordered, func(n int) int {
 		return n * -1
 	})
 
-	test.AssertNil(err, t)
+	test.Assert(ok, t)
 	test.AssertEq(actual, 9, t)
 
-	_, err = MinByKey(ordered, func(n int) int {
+	_, ok = MinByKey(ordered, func(n int) int {
 		return n * -1
 	})
 
-	test.AssertNonNil(err, t)
+	test.Assert(!ok, t)
 
 	ordered = IntsBy(-1).Take(10)
 
-	actual, err = MinByKey(ordered, func(n int) int {
+	actual, ok = MinByKey(ordered, func(n int) int {
 		return n * -1
 	})
 
-	test.AssertNil(err, t)
+	test.Assert(ok, t)
 	test.AssertEq(actual, 0, t)
 }
 
@@ -60,14 +60,14 @@ func BenchmarkMinByKey(b *testing.B) {
 func TestMax(t *testing.T) {
 	ordered := Ints[int]().Take(10)
 
-	actual, err := Max(ordered)
+	actual, ok := Max(ordered)
 
-	test.AssertNil(err, t)
+	test.Assert(ok, t)
 	test.AssertEq(actual, 9, t)
 
-	_, err = Max(ordered)
+	_, ok = Max(ordered)
 
-	test.AssertNonNil(err, t)
+	test.Assert(!ok, t)
 
 	Max(IntsBy(-1).Take(2))
 }
@@ -79,26 +79,26 @@ func BenchmarkMax(b *testing.B) {
 func TestMaxByKey(t *testing.T) {
 	ordered := Ints[int]().Take(10)
 
-	actual, err := MaxByKey(ordered, func(n int) int {
+	actual, ok := MaxByKey(ordered, func(n int) int {
 		return n * -1
 	})
 
-	test.AssertNil(err, t)
+	test.Assert(ok, t)
 	test.AssertEq(actual, 0, t)
 
-	_, err = MaxByKey(ordered, func(n int) int {
+	_, ok = MaxByKey(ordered, func(n int) int {
 		return n * -1
 	})
 
-	test.AssertNonNil(err, t)
+	test.Assert(!ok, t)
 
 	ordered = IntsBy(-1).Take(10)
 
-	actual, err = MaxByKey(ordered, func(n int) int {
+	actual, ok = MaxByKey(ordered, func(n int) int {
 		return n * -1
 	})
 
-	test.AssertNil(err, t)
+	test.Assert(ok, t)
 	test.AssertEq(actual, -9, t)
 }
 

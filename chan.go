@@ -1,60 +1,16 @@
 package iter
 
-type chanInner[T any] struct {
-	ch         *chan T
-	cachedNext *T
-}
-
 // Receive returns an iterator that reads values from the provided channel, and is
 // exhausted when the channel is closed. Note that since this iterator reads
 // from a channel, every time the next value is requested the program may end
 // up deadlocking if values have not been written: the same rules apply as
 // those for reading from a channel in the usual manner.
 func Receive[T any](ch *chan T) *Iter[T] {
-	return Wrap[T](&chanInner[T]{ch: ch})
-}
-
-func (i *chanInner[T]) getNext() (T, error) {
-	next, ok := <-*i.ch
-
-	if ok {
-		return next, nil
-	} else {
-		var z T
-		return z, IteratorExhaustedError
-	}
-}
-
-func (i *chanInner[T]) HasNext() bool {
-	if i.cachedNext != nil {
-		return true
-	} else {
-		next, err := i.getNext()
-
-		if err != nil {
-			return false
-		}
-
-		i.cachedNext = &next
-		return true
-	}
-}
-
-func (i *chanInner[T]) Next() (T, error) {
-	if i.cachedNext != nil {
-		err := *i.cachedNext
-		i.cachedNext = nil
-		return err, nil
-	} else {
-		next, err := i.getNext()
-
-		if err != nil {
-			var z T
-			return z, IteratorExhaustedError
-		}
-
-		return next, nil
-	}
+	tmp := Iter[T](func() (T, bool) {
+		next, ok := <-*ch
+		return next, ok
+	})
+	return &tmp
 }
 
 // Send consumes the input iterator, sending all yielded values into the
@@ -64,9 +20,9 @@ func (i *chanInner[T]) Next() (T, error) {
 // want that to happen, you should do so yourself.
 func (i *Iter[T]) Send(ch *chan T) {
 	for {
-		next, err := i.Next()
+		next, ok := i.Next()
 
-		if err != nil {
+		if !ok {
 			return
 		}
 
