@@ -9,7 +9,7 @@ func (i Iter[T]) FilterMapEndo(f func(T) (T, error)) Iter[T] {
 // FilterMap returns a new iterator that yields the mapped values which are
 // produced without errors from the provided function.
 func FilterMap[T, U any](i Iter[T], f func(T) (U, error)) Iter[U] {
-	return Iter[U](func() (U, bool) {
+	return func() (U, bool) {
 		for {
 			next, ok := i()
 
@@ -22,5 +22,5 @@ func FilterMap[T, U any](i Iter[T], f func(T) (U, error)) Iter[U] {
 				return mappedNext, true
 			}
 		}
-	})
+	}
 }

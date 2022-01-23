@@ -8,7 +8,7 @@ package iter
 func (i Iter[T]) TakeWhile(f func(T) bool) Iter[T] {
 	failed := false
 
-	return Iter[T](func() (T, bool) {
+	return func() (T, bool) {
 		if !failed {
 			next, ok := i()
 			if ok {
@@ -22,5 +22,5 @@ func (i Iter[T]) TakeWhile(f func(T) bool) Iter[T] {
 
 		var z T
 		return z, false
-	})
+	}
 }

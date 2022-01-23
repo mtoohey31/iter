@@ -11,13 +11,13 @@ func (i Iter[T]) FlatMapEndo(f func(T) Iter[T]) Iter[T] {
 // returned by the provided function when it is applied to values from the
 // input iterator.
 func FlatMap[T, U any](i Iter[T], f func(T) Iter[U]) Iter[U] {
-	curr := Iter[U](func() (U, bool) {
+	curr := func() (U, bool) {
 		var z U
 		return z, false
-	})
+	}
 
 	var self Iter[U]
-	self = Iter[U](func() (U, bool) {
+	self = func() (U, bool) {
 		next, ok := curr()
 
 		if ok {
@@ -32,6 +32,6 @@ func FlatMap[T, U any](i Iter[T], f func(T) Iter[U]) Iter[U] {
 				return z, false
 			}
 		}
-	})
+	}
 	return self
 }

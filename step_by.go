@@ -10,9 +10,9 @@ func (i Iter[T]) StepBy(step int) Iter[T] {
 		panic(fmt.Sprintf("invalid StepBy step: %d", step))
 	}
 
-	return Iter[T](func() (T, bool) {
+	return func() (T, bool) {
 		res, err := i()
 		i.Take(step - 1).Consume()
 		return res, err
-	})
+	}
 }

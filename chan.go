@@ -6,10 +6,10 @@ package iter
 // up deadlocking if values have not been written: the same rules apply as
 // those for reading from a channel in the usual manner.
 func Receive[T any](ch *chan T) Iter[T] {
-	return Iter[T](func() (T, bool) {
+	return func() (T, bool) {
 		next, ok := <-*ch
 		return next, ok
-	})
+	}
 }
 
 // Send consumes the input iterator, sending all yielded values into the

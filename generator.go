@@ -6,7 +6,7 @@ package iter
 func GenWhile[T any](f func() (T, error)) Iter[T] {
 	failed := false
 	var self Iter[T]
-	self = Iter[T](func() (T, bool) {
+	self = func() (T, bool) {
 		if failed {
 			var z T
 			return z, false
@@ -19,6 +19,6 @@ func GenWhile[T any](f func() (T, error)) Iter[T] {
 				return self()
 			}
 		}
-	})
+	}
 	return self
 }

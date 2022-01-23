@@ -15,7 +15,7 @@ func (i Iter[T]) Cycle() (Iter[T], bool) {
 	index := -1
 
 	var self Iter[T]
-	self = Iter[T](func() (T, bool) {
+	self = func() (T, bool) {
 		if index == -1 {
 			if cachedFirst != nil {
 				res := *cachedFirst
@@ -36,6 +36,6 @@ func (i Iter[T]) Cycle() (Iter[T], bool) {
 			index = (index + 1) % len(memory)
 			return res, true
 		}
-	})
+	}
 	return self, true
 }

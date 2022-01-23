@@ -37,7 +37,7 @@ func (i Iter[T]) MapEndo(f func(T) T) Iter[T] {
 // Map returns a new iterator that yields the results of applying the provided
 // function to the input iterator.
 func Map[T, U any](i Iter[T], f func(T) U) Iter[U] {
-	return Iter[U](func() (U, bool) {
+	return func() (U, bool) {
 		next, ok := i()
 		if ok {
 			return f(next), true
@@ -45,5 +45,5 @@ func Map[T, U any](i Iter[T], f func(T) U) Iter[U] {
 			var z U
 			return z, false
 		}
-	})
+	}
 }

@@ -5,7 +5,7 @@ package iter
 // requested. This methodh differs from ForEach in that it is lazy, whereas
 // ForEach is not.
 func (i Iter[T]) Inspect(f func(T)) Iter[T] {
-	return Iter[T](func() (T, bool) {
+	return func() (T, bool) {
 		next, ok := i()
 		if ok {
 			f(next)
@@ -14,5 +14,5 @@ func (i Iter[T]) Inspect(f func(T)) Iter[T] {
 			var z T
 			return z, false
 		}
-	})
+	}
 }

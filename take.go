@@ -5,7 +5,7 @@ package iter
 func (i Iter[T]) Take(n int) Iter[T] {
 	curr := 0
 
-	return Iter[T](func() (T, bool) {
+	return func() (T, bool) {
 		if curr < n {
 			curr++
 			return i()
@@ -13,5 +13,5 @@ func (i Iter[T]) Take(n int) Iter[T] {
 			var z T
 			return z, false
 		}
-	})
+	}
 }

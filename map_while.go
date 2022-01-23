@@ -12,7 +12,7 @@ func (i Iter[T]) MapWhileEndo(f func(T) (T, error)) Iter[T] {
 // error occurs. At that point, no further values are returned.
 func MapWhile[T, U any](i Iter[T], f func(T) (U, error)) Iter[U] {
 	failed := false
-	return Iter[U](func() (U, bool) {
+	return func() (U, bool) {
 		if failed {
 			var z U
 			return z, false
@@ -31,5 +31,5 @@ func MapWhile[T, U any](i Iter[T], f func(T) (U, error)) Iter[U] {
 				return z, false
 			}
 		}
-	})
+	}
 }
