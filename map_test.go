@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMapData(t *testing.T) {
+func TestKVZip(t *testing.T) {
 	expected := []tuple.T2[string, int]{
 		tuple.New2("1", 1),
 		tuple.New2("2", 2),
@@ -27,12 +27,38 @@ func TestMapData(t *testing.T) {
 	assert.ElementsMatch(t, iter.Collect(), expected)
 }
 
-func BenchmarkMapData(b *testing.B) {
+func BenchmarkKVZip(b *testing.B) {
 	m := make(map[int]int)
 	for i := 0; i < b.N; i++ {
 		m[i] = i
 	}
 	KVZip(m).Consume()
+}
+
+func TestKVZipChannelled(t *testing.T) {
+	expected := []tuple.T2[string, int]{
+		tuple.New2("1", 1),
+		tuple.New2("2", 2),
+		tuple.New2("3", 3),
+		tuple.New2("4", 4),
+	}
+
+	m := make(map[string]int)
+	for _, v := range expected {
+		m[v.V1] = v.V2
+	}
+
+	iter := KVZipChannelled(m)
+
+	assert.ElementsMatch(t, iter.Collect(), expected)
+}
+
+func BenchmarkKVZipChannelled(b *testing.B) {
+	m := make(map[int]int)
+	for i := 0; i < b.N; i++ {
+		m[i] = i
+	}
+	KVZipChannelled(m).Consume()
 }
 
 func TestMapEndoFunc(t *testing.T) {
