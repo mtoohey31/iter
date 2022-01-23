@@ -29,6 +29,7 @@ See `examples/` for more demonstrations.
 
 - It should go without saying that since `1.18` is still beta, so is this library.
 
-## Similar Projects
+## Acknowledgements
 
-- The inspiration for my own attempt, which is more mature but doesn't support chaining calls: <https://github.com/polyfloyd/go-iterator>
+- Everyone that commented on my [r/golang post](https://www.reddit.com/r/golang/comments/s13jlz/iter_generic_lazy_iterators_for_go_118/)
+- The inspiration for my own attempt: <https://github.com/polyfloyd/go-iterator>
