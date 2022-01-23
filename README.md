@@ -23,8 +23,6 @@ func main() {
 }
 ```
 
-See `examples/` for more demonstrations.
-
 ## Notes
 
 - It should go without saying that since `1.18` is still beta, so is this library.
