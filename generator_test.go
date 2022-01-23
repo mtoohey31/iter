@@ -7,21 +7,6 @@ import (
 	"mtoohey.com/iter/test"
 )
 
-func TestGen(t *testing.T) {
-	iter := Gen(func() int {
-		return 0
-	})
-
-	test.Assert(iter.HasNext(), t)
-	test.AssertDeepEq(iter.Take(5).Collect(), []int{0, 0, 0, 0, 0}, t)
-}
-
-func BenchmarkGen(b *testing.B) {
-	Gen(func() int {
-		return 0
-	}).Take(b.N).Consume()
-}
-
 func TestGenWhile(t *testing.T) {
 	b := false
 
@@ -33,16 +18,16 @@ func TestGenWhile(t *testing.T) {
 		}
 	})
 
-	test.Assert(iter.HasNext(), t)
-	test.Assert(iter.HasNext(), t)
+	// test.Assert(iter.HasNext(), t)
+	// test.Assert(iter.HasNext(), t)
 	test.AssertDeepEq(iter.Take(5).Collect(), []int{0, 0, 0, 0, 0}, t)
 
 	b = true
 
-	test.Assert(!iter.HasNext(), t)
-	test.Assert(!iter.HasNext(), t)
+	// test.Assert(!iter.HasNext(), t)
+	// test.Assert(!iter.HasNext(), t)
 
-	_, err := iter.Next()
+	_, err := iter()
 
 	test.AssertNonNil(err, t)
 
@@ -54,7 +39,7 @@ func TestGenWhile(t *testing.T) {
 		}
 	})
 
-	_, err = iter.Next()
+	_, err = iter()
 
 	test.AssertNonNil(err, t)
 }

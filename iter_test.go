@@ -69,11 +69,11 @@ func TestFind(t *testing.T) {
 
 	test.AssertEq(actual, 7, t)
 
-	_, err := Elems([]bool{}).Find(func(b bool) bool {
+	_, ok := Elems([]bool{}).Find(func(b bool) bool {
 		return true
 	})
 
-	test.AssertNonNil(err, t)
+	test.AssertNonNil(ok, t)
 }
 
 func TestFindMapEndo(t *testing.T) {
@@ -87,11 +87,11 @@ func TestFindMapEndo(t *testing.T) {
 
 	test.AssertEq(actual, 7, t)
 
-	_, err := Elems([]bool{}).FindMapEndo(func(b bool) (bool, error) {
+	_, ok := Elems([]bool{}).FindMapEndo(func(b bool) (bool, error) {
 		return true, nil
 	})
 
-	test.AssertNonNil(err, t)
+	test.AssertNonNil(ok, t)
 }
 
 func TestFindMap(t *testing.T) {
@@ -105,11 +105,11 @@ func TestFindMap(t *testing.T) {
 
 	test.AssertEq(actual, 7, t)
 
-	_, err := FindMap(Elems([]bool{}), func(b bool) (bool, error) {
+	_, ok := FindMap(Elems([]bool{}), func(b bool) (bool, error) {
 		return true, nil
 	})
 
-	test.AssertNonNil(err, t)
+	test.AssertNonNil(ok, t)
 }
 
 func TestFoldEndo(t *testing.T) {
@@ -159,9 +159,9 @@ func TestLast(t *testing.T) {
 
 	test.AssertEq(actual, 10, t)
 
-	_, err := Elems([]bool{}).Last()
+	_, ok := Elems([]bool{}).Last()
 
-	test.AssertNonNil(err, t)
+	test.AssertNonNil(ok, t)
 }
 
 func BenchmarkLast(b *testing.B) {
@@ -173,13 +173,13 @@ func TestNth(t *testing.T) {
 
 	test.AssertEq(actual, 7, t)
 
-	_, err := IntsFrom(1).Take(10).Nth(17)
+	_, ok := IntsFrom(1).Take(10).Nth(17)
 
-	test.AssertNonNil(err, t)
+	test.AssertNonNil(ok, t)
 
-	_, err = IntsFrom(1).Take(10).Nth(11)
+	_, ok = IntsFrom(1).Take(10).Nth(11)
 
-	test.AssertNonNil(err, t)
+	test.AssertNonNil(ok, t)
 }
 
 func BenchmarkNth(b *testing.B) {
@@ -200,7 +200,7 @@ func BenchmarkPartition(b *testing.B) {
 }
 
 func TestTryFoldEndo(t *testing.T) {
-	actual, err := IntsBy(2).Take(3).TryFoldEndo(0, func(curr int, next int) (int, error) {
+	actual, ok := IntsBy(2).Take(3).TryFoldEndo(0, func(curr int, next int) (int, error) {
 		if next%2 == 0 {
 			return curr + next, nil
 		} else {
@@ -208,10 +208,10 @@ func TestTryFoldEndo(t *testing.T) {
 		}
 	})
 
-	test.AssertNil(err, t)
+	test.AssertNil(ok, t)
 	test.AssertEq(actual, 6, t)
 
-	_, err = Ints[int]().Take(5).TryFoldEndo(0, func(curr int, next int) (int, error) {
+	_, ok = Ints[int]().Take(5).TryFoldEndo(0, func(curr int, next int) (int, error) {
 		if next%2 == 0 {
 			return curr + next, nil
 		} else {
@@ -219,7 +219,7 @@ func TestTryFoldEndo(t *testing.T) {
 		}
 	})
 
-	test.AssertNonNil(err, t)
+	test.AssertNonNil(ok, t)
 }
 
 func BenchmarkTryFoldEndo(b *testing.B) {
@@ -294,7 +294,7 @@ func BenchmarkTryForEach(b *testing.B) {
 }
 
 func TestReduce(t *testing.T) {
-	actual, err := Ints[int]().Take(5).Reduce(func(curr int, next int) int {
+	actual, ok := Ints[int]().Take(5).Reduce(func(curr int, next int) int {
 		if next > curr {
 			return next
 		} else {
@@ -302,7 +302,7 @@ func TestReduce(t *testing.T) {
 		}
 	})
 
-	test.AssertNil(err, t)
+	test.Assert(ok, t)
 	test.AssertEq(actual, 4, t)
 }
 
