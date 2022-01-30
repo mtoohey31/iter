@@ -1,9 +1,12 @@
 package iter
 
-import "github.com/barweiss/go-tuple"
+import (
+	"constraints"
+	"github.com/barweiss/go-tuple"
+)
 
 // Min returns the minimum value in the provided iterator.
-func Min[T ordered](oi Iter[T]) (T, bool) {
+func Min[T constraints.Ordered](oi Iter[T]) (T, bool) {
 	return oi.Reduce(func(curr T, next T) T {
 		if curr < next {
 			return curr
@@ -15,7 +18,7 @@ func Min[T ordered](oi Iter[T]) (T, bool) {
 
 // MinByKey returns the value with the minimum result after the application of
 // the provided function.
-func MinByKey[T any, U ordered](oi Iter[T], key func(T) U) (T, bool) {
+func MinByKey[T any, U constraints.Ordered](oi Iter[T], key func(T) U) (T, bool) {
 	init, ok := oi()
 
 	if !ok {
@@ -34,7 +37,7 @@ func MinByKey[T any, U ordered](oi Iter[T], key func(T) U) (T, bool) {
 }
 
 // Max returns the maximum value in the provided iterator.
-func Max[T ordered](oi Iter[T]) (T, bool) {
+func Max[T constraints.Ordered](oi Iter[T]) (T, bool) {
 	return oi.Reduce(func(curr T, next T) T {
 		if curr > next {
 			return curr
@@ -46,7 +49,7 @@ func Max[T ordered](oi Iter[T]) (T, bool) {
 
 // MaxByKey returns the value with the maximum result after the application of
 // the provided function.
-func MaxByKey[T any, U ordered](oi Iter[T], key func(T) U) (T, bool) {
+func MaxByKey[T any, U constraints.Ordered](oi Iter[T], key func(T) U) (T, bool) {
 	init, ok := oi()
 
 	if !ok {
@@ -65,7 +68,7 @@ func MaxByKey[T any, U ordered](oi Iter[T], key func(T) U) (T, bool) {
 }
 
 // Sum returns the sum of all the values in the provided iterator.
-func Sum[T ordered](oi Iter[T]) T {
+func Sum[T constraints.Ordered](oi Iter[T]) T {
 	var z T
 	return oi.FoldEndo(z, func(curr, next T) T { return curr + next })
 }
