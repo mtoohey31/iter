@@ -32,8 +32,6 @@ func Unzip[T, U any](i Iter[tuple.T2[T, U]]) (Iter[T], Iter[U]) {
 	var aCache []T
 	var bCache []U
 
-	// PERF: does using an index instead of reassigning the slice improve things?
-
 	return func() (T, bool) {
 			if len(aCache) == 0 {
 				next, ok := i()
