@@ -196,19 +196,6 @@ func BenchmarkNth(b *testing.B) {
 	Ints[int]().Nth(b.N)
 }
 
-func TestPartition(t *testing.T) {
-	actualA, actualB := Ints[int]().Take(4).Partition(func(i int) bool { return i%2 == 0 })
-
-	assert.Equal(t, actualA, []int{0, 2})
-	assert.Equal(t, actualB, []int{1, 3})
-}
-
-func BenchmarkPartition(b *testing.B) {
-	Ints[int]().Take(b.N).Partition(func(i int) bool {
-		return i%2 == 0
-	})
-}
-
 func TestTryFoldEndo(t *testing.T) {
 	actual, err := IntsBy(2).Take(3).TryFoldEndo(0, func(curr int, next int) (int, error) {
 		if next%2 == 0 {

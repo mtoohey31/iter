@@ -313,29 +313,6 @@ func (i Iter[T]) Nth(n int) (T, bool) {
 	}
 }
 
-// TODO: refactor to return two iterators
-
-// Partition returns two slices, one containing the values of the iterator that
-// satisfy the provided function, the other containing the values that do not.
-func (i Iter[T]) Partition(f func(T) bool) ([]T, []T) {
-	var a []T
-	var b []T
-	for {
-		next, ok := i()
-
-		if !ok {
-			break
-		}
-
-		if f(next) {
-			a = append(a, next)
-		} else {
-			b = append(b, next)
-		}
-	}
-	return a, b
-}
-
 // TryFoldEndo applies the provided fallible function to the current value
 // (starting with `init`) and the next value of the iterator, until the whole
 // iterator is consumed. If at any point an error is returned, the operation
