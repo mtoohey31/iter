@@ -26,6 +26,7 @@ func main() {
 ## Notes
 
 - It should go without saying that since `1.18` is still beta, so is this library.
+- Some rudimentary benchmarks comparing performance to that of loop based solutions to similar problems can be found [here](https://github.com/mtoohey31/iter-loop-benchmarks).
 
 ## Acknowledgements
 
