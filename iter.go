@@ -423,8 +423,10 @@ func (i Iter[T]) Reduce(f func(curr T, next T) T) (T, bool) {
 	return i.FoldEndo(curr, f), true
 }
 
-// TODO: add godoc
-
+// Position returns the index of the first element satisfying the provided
+// function, or -1 if one is not found. It consumes every element up to and
+// including the element that satisfies the function, or the whole iterator if
+// no no satisfactory element is found.
 func Position[T any](i Iter[T], f func(T) bool) int {
 	tup, ok := Enumerate(i).Find(func(tup tuple.T2[int, T]) bool { return f(tup.V2) })
 	if ok {
