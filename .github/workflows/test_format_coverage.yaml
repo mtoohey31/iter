@@ -1,9 +1,9 @@
-name: Test and check codecov and format
+name: Test and check format, code coverage, and godoc coverage
 on:
   push:
     branches: ["**"]
 jobs:
-  test_format:
+  test_format_coverage:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -15,3 +15,5 @@ jobs:
         run: TEST_OUTPUT="$(go test -coverprofile=/dev/null)" && echo "$TEST_OUTPUT" && test "$(echo "$TEST_OUTPUT" | head -n 2 | tail -n 1 | awk '{ print $2 }')" = '100.0%'
       - name: Check format
         run: test -z "$(gofmt -l .)"
+      - name: Check godoc coverage
+        uses: mtoohey31/godoc-coverage-action@2c3634eb810e6861396836a55cd24752204a2967
