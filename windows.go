@@ -5,7 +5,8 @@ package iter
 // etc.
 func Windows[T any](i Iter[T], n int) Iter[[]T] {
 	window := make([]T, n)
-	if i.CollectInto(window[1:]) < n-1 {
+	index := n - 1
+	if i.CollectInto(window[0:index]) < n-1 {
 		var z []T
 		return func() ([]T, bool) {
 			return z, false
@@ -17,9 +18,11 @@ func Windows[T any](i Iter[T], n int) Iter[[]T] {
 				var z []T
 				return z, false
 			}
-			window = append(window, next)[1:]
+			window[index] = next
+			index = (index + 1) % n
 			res := make([]T, n)
-			copy(res, window)
+			copy(res[0:n-index], window[index:])
+			copy(res[n-index:], window[:index])
 			return res, true
 		}
 	}

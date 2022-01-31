@@ -26,6 +26,10 @@ func BenchmarkWindows1(b *testing.B) {
 	Windows(Ints[int](), 1).Take(b.N).Consume()
 }
 
+func BenchmarkWindows3(b *testing.B) {
+	Windows(Ints[int](), 1).Take(b.N).Consume()
+}
+
 func BenchmarkWindows10(b *testing.B) {
 	Windows(Ints[int](), 10).Take(b.N).Consume()
 }
