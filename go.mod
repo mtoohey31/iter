@@ -3,8 +3,9 @@ module mtoohey.com/iter
 go 1.18
 
 require (
-	github.com/barweiss/go-tuple v0.0.0-20220101222006-ee01a9510b0b
+	github.com/barweiss/go-tuple v1.0.2
 	github.com/stretchr/testify v1.7.0
+	golang.org/x/exp v0.0.0-20220314205449-43aec2f8a4e7
 )
 
 require (

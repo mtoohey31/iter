@@ -1,8 +1,8 @@
 package iter
 
 import (
-	"constraints"
 	"github.com/barweiss/go-tuple"
+	"golang.org/x/exp/constraints"
 )
 
 // Min returns the minimum value in the provided iterator.

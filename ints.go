@@ -1,6 +1,6 @@
 package iter
 
-import "constraints"
+import "golang.org/x/exp/constraints"
 
 // Ints returns an iterator that produces constraints.Integer values of the specified
 // generic type, starting from 0 and increasing by 1.
