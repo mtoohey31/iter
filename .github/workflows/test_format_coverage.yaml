@@ -9,8 +9,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
         with:
-          go-version: 1.18.0-beta1
-          stable: false
+          go-version: 1.18
       - name: Test and check codecov
         run: TEST_OUTPUT="$(go test -coverprofile=/dev/null)" && echo "$TEST_OUTPUT" && test "$(echo "$TEST_OUTPUT" | head -n 2 | tail -n 1 | awk '{ print $2 }')" = '100.0%'
       - name: Check format
