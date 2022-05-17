@@ -27,8 +27,8 @@ import (
 )
 
 // Iter is a generic iterator function, the basis of this whole package. Note
-// that the typical `iter.Next()` method is replaced with `iter()`, since Iter
-// is simply defined as `func() (T, bool)`.
+// that the typical iter.Next() method is replaced with iter(), since Iter
+// is simply defined as func() (T, bool).
 type Iter[T any] func() (T, bool)
 
 // Consume fetches the next value of the iterator until no more values are
@@ -191,7 +191,7 @@ func FindMap[T, U any](i Iter[T], f func(T) (U, error)) (U, bool) {
 }
 
 // FoldEndo repeatedly applies the provided function to the current value
-// (starting with `init`) and the next value of the iterator, until the whole
+// (starting with init) and the next value of the iterator, until the whole
 // iterator is consumed.
 func (i Iter[T]) FoldEndo(init T, f func(curr T, next T) T) T {
 	curr := init
@@ -210,7 +210,7 @@ func (i Iter[T]) FoldEndo(init T, f func(curr T, next T) T) T {
 }
 
 // Fold repeatedly applies the provided function to the current value (starting
-// with `init`) and the next value of the iterator, until the whole iterator is
+// with init) and the next value of the iterator, until the whole iterator is
 // consumed.
 func Fold[T, U any](i Iter[T], init U, f func(curr U, next T) U) U {
 	curr := init
@@ -292,7 +292,7 @@ func (i Iter[T]) Last() (T, bool) {
 }
 
 // Nth returns the nth value in the iterator, and a boolean indicating whether
-// the iterator was too short. The provided value of `n` should be non-negative.
+// the iterator was too short. The provided value of n should be non-negative.
 func (i Iter[T]) Nth(n int) (T, bool) {
 	for j := 0; j < n-1; j++ {
 		_, ok := i()
@@ -314,7 +314,7 @@ func (i Iter[T]) Nth(n int) (T, bool) {
 }
 
 // TryFoldEndo applies the provided fallible function to the current value
-// (starting with `init`) and the next value of the iterator, until the whole
+// (starting with init) and the next value of the iterator, until the whole
 // iterator is consumed. If at any point an error is returned, the operation
 // stops and that error is returned.
 func (i Iter[T]) TryFoldEndo(init T, f func(curr T, next T) (T, error)) (T, error) {
@@ -340,7 +340,7 @@ func (i Iter[T]) TryFoldEndo(init T, f func(curr T, next T) (T, error)) (T, erro
 }
 
 // TryFold applies the provided fallible function to the current value
-// (starting with `init`) and the next value of the iterator, until the whole
+// (starting with init) and the next value of the iterator, until the whole
 // iterator is consumed. If at any point an error is returned, the operation
 // stops and that error is returned.
 func TryFold[T, U any](i Iter[T], init U, f func(curr U, next T) (U, error)) (U, error) {
