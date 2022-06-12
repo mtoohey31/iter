@@ -1,1 +1,5 @@
-/iter.test
+**.test
+**.out
+
+/result
+/CHANGEME
