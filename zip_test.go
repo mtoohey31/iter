@@ -18,7 +18,7 @@ func TestZip(t *testing.T) {
 		tuple.New2('d', 4),
 	}
 
-	assert.Equal(t, iter.Collect(), expected)
+	assert.Equal(t, expected, iter.Collect())
 }
 
 func BenchmarkZip(b *testing.B) {
@@ -33,7 +33,7 @@ func TestEnumerate(t *testing.T) {
 		tuple.New2(3, 1),
 	}
 
-	assert.Equal(t, Enumerate(IntsFromBy(7, -2).Take(4)).Collect(), expected)
+	assert.Equal(t, expected, Enumerate(IntsFromBy(7, -2).Take(4)).Collect())
 }
 
 func BenchmarkEnumerate(b *testing.B) {
@@ -48,9 +48,8 @@ func TestUnzip(t *testing.T) {
 	v2First, _ := v2()
 	v2Second, _ := v2()
 
-	assert.Equal(t, tuple.New2(append([]int{v1First}, v1.Collect()...),
-		append([]int{v2First, v2Second}, v2.Collect()...)),
-		expected)
+	assert.Equal(t, expected, tuple.New2(append([]int{v1First}, v1.Collect()...),
+		append([]int{v2First, v2Second}, v2.Collect()...)))
 }
 
 func BenchmarkUnzip(b *testing.B) {

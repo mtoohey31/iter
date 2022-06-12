@@ -12,7 +12,7 @@ func TestMin(t *testing.T) {
 	actual, ok := Min(ordered)
 
 	assert.True(t, ok)
-	assert.Equal(t, actual, 0)
+	assert.Equal(t, 0, actual)
 
 	_, ok = Min(ordered)
 
@@ -33,7 +33,7 @@ func TestMinByKey(t *testing.T) {
 	})
 
 	assert.True(t, ok)
-	assert.Equal(t, actual, 9)
+	assert.Equal(t, 9, actual)
 
 	_, ok = MinByKey(ordered, func(n int) int {
 		return n * -1
@@ -48,7 +48,7 @@ func TestMinByKey(t *testing.T) {
 	})
 
 	assert.True(t, ok)
-	assert.Equal(t, actual, 0)
+	assert.Equal(t, 0, actual)
 }
 
 func BenchmarkMinByKey(b *testing.B) {
@@ -63,7 +63,7 @@ func TestMax(t *testing.T) {
 	actual, ok := Max(ordered)
 
 	assert.True(t, ok)
-	assert.Equal(t, actual, 9)
+	assert.Equal(t, 9, actual)
 
 	_, ok = Max(ordered)
 
@@ -84,7 +84,7 @@ func TestMaxByKey(t *testing.T) {
 	})
 
 	assert.True(t, ok)
-	assert.Equal(t, actual, 0)
+	assert.Equal(t, 0, actual)
 
 	_, ok = MaxByKey(ordered, func(n int) int {
 		return n * -1
@@ -99,7 +99,7 @@ func TestMaxByKey(t *testing.T) {
 	})
 
 	assert.True(t, ok)
-	assert.Equal(t, actual, -9)
+	assert.Equal(t, -9, actual)
 }
 
 func BenchmarkMaxByKey(b *testing.B) {
@@ -109,7 +109,7 @@ func BenchmarkMaxByKey(b *testing.B) {
 }
 
 func TestSum(t *testing.T) {
-	assert.Equal(t, Sum(Ints[int]().Take(10)), 45)
+	assert.Equal(t, 45, Sum(Ints[int]().Take(10)))
 }
 
 func BenchmarkSum(b *testing.B) {

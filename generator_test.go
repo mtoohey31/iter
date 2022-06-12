@@ -18,7 +18,7 @@ func TestGenWhile(t *testing.T) {
 		}
 	})
 
-	assert.Equal(t, iter.Take(5).Collect(), []int{0, 0, 0, 0, 0})
+	assert.Equal(t, []int{0, 0, 0, 0, 0}, iter.Take(5).Collect())
 
 	b = true
 

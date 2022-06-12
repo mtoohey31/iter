@@ -14,7 +14,7 @@ func TestFilter(t *testing.T) {
 	actualFirst, _ := iter()
 	expected := []int{2, 4}
 
-	assert.Equal(t, append([]int{actualFirst}, iter.Collect()...), expected)
+	assert.Equal(t, expected, append([]int{actualFirst}, iter.Collect()...))
 }
 
 func BenchmarkFilter(b *testing.B) {
@@ -35,7 +35,7 @@ func TestFilterMapEndo(t *testing.T) {
 	actual := iter.Collect()
 	expected := []int{4, 8}
 
-	assert.Equal(t, actual, expected)
+	assert.Equal(t, expected, actual)
 }
 
 func TestFilterMap(t *testing.T) {
@@ -46,7 +46,7 @@ func TestFilterMap(t *testing.T) {
 	actualFirst, _ := iter()
 	expected := []int{1, 2}
 
-	assert.Equal(t, append([]int{actualFirst}, iter.Collect()...), expected)
+	assert.Equal(t, expected, append([]int{actualFirst}, iter.Collect()...))
 }
 
 func BenchmarkFilterMapEndo(b *testing.B) {

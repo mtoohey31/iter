@@ -11,7 +11,7 @@ func TestCycle(t *testing.T) {
 
 	assert.True(t, ok)
 
-	assert.Equal(t, iter.Take(6).Collect(), []int{1, 2, 1, 2, 1, 2})
+	assert.Equal(t, []int{1, 2, 1, 2, 1, 2}, iter.Take(6).Collect())
 }
 
 func TestCyclePanic(t *testing.T) {

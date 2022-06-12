@@ -9,7 +9,7 @@ import (
 func TestChain(t *testing.T) {
 	iter := Elems([]int{1, 2}).Chain(Elems([]int{3, 4}))
 	actual := iter.Collect()
-	assert.Equal(t, actual, []int{1, 2, 3, 4})
+	assert.Equal(t, []int{1, 2, 3, 4}, actual)
 }
 
 // operations should not take much longer than that of the range iterator

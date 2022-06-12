@@ -7,8 +7,7 @@ import (
 )
 
 func TestRunes(t *testing.T) {
-	assert.Equal(t, Runes("asdf").Collect(),
-		[]rune{'a', 's', 'd', 'f'})
+	assert.Equal(t, []rune{'a', 's', 'd', 'f'}, Runes("asdf").Collect())
 }
 
 func BenchmarkRunes(b *testing.B) {
@@ -24,8 +23,8 @@ func BenchmarkRunes(b *testing.B) {
 }
 
 func TestSplitByRune(t *testing.T) {
-	assert.Equal(t, SplitByRune("/usr/bin/ls", '/').Collect(),
-		[]string{"", "usr", "bin", "ls"})
+	assert.Equal(t, []string{"", "usr", "bin", "ls"},
+		SplitByRune("/usr/bin/ls", '/').Collect())
 }
 
 func BenchmarkSplitByRune(b *testing.B) {
@@ -46,7 +45,7 @@ func TestSplitByString(t *testing.T) {
 	actual := iter.Collect()
 	expected := []string{"", "quick brown fox jumped over ", "lazy dogs"}
 
-	assert.Equal(t, actual, expected)
+	assert.Equal(t, expected, actual)
 }
 
 func BenchmarkSplitByString(b *testing.B) {

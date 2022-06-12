@@ -7,35 +7,35 @@ import (
 )
 
 func TestInts(t *testing.T) {
-	assert.Equal(t, Ints[int]().Take(3).Collect(), []int{0, 1, 2})
+	assert.Equal(t, []int{0, 1, 2}, Ints[int]().Take(3).Collect())
 }
 
 func TestIntsFrom(t *testing.T) {
-	assert.Equal(t, IntsFrom(2).Take(4).Collect(), []int{2, 3, 4, 5})
+	assert.Equal(t, []int{2, 3, 4, 5}, IntsFrom(2).Take(4).Collect())
 }
 
 func TestIntsByZero(t *testing.T) {
-	assert.Equal(t, IntsBy(0).Take(5).Collect(), []int{0, 0, 0, 0, 0})
+	assert.Equal(t, []int{0, 0, 0, 0, 0}, IntsBy(0).Take(5).Collect())
 }
 
 func TestIntsByIncreasing(t *testing.T) {
-	assert.Equal(t, IntsBy(2).Take(4).Collect(), []int{0, 2, 4, 6})
+	assert.Equal(t, []int{0, 2, 4, 6}, IntsBy(2).Take(4).Collect())
 }
 
 func TestIntsByDecreasing(t *testing.T) {
-	assert.Equal(t, IntsBy(-4).Take(3).Collect(), []int{0, -4, -8})
+	assert.Equal(t, []int{0, -4, -8}, IntsBy(-4).Take(3).Collect())
 }
 
 func TestIntsFromByZero(t *testing.T) {
-	assert.Equal(t, IntsFromBy(100, 0).Take(2).Collect(), []int{100, 100})
+	assert.Equal(t, []int{100, 100}, IntsFromBy(100, 0).Take(2).Collect())
 }
 
 func TestIntsFromByIncreasing(t *testing.T) {
-	assert.Equal(t, IntsFromBy(-3, 3).Take(3).Collect(), []int{-3, 0, 3})
+	assert.Equal(t, []int{-3, 0, 3}, IntsFromBy(-3, 3).Take(3).Collect())
 }
 
 func TestIntsFromByDecreasing(t *testing.T) {
-	assert.Equal(t, IntsFromBy(7, -3).Take(4).Collect(), []int{7, 4, 1, -2})
+	assert.Equal(t, []int{7, 4, 1, -2}, IntsFromBy(7, -3).Take(4).Collect())
 }
 
 func BenchmarkInts(b *testing.B) {

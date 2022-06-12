@@ -7,8 +7,8 @@ import (
 
 func TestTake(t *testing.T) {
 	iter := Ints[int]().Take(10)
-	assert.Equal(t, iter.Take(5).Count(), 5)
-	assert.Equal(t, iter.Count(), 5)
+	assert.Equal(t, 5, iter.Take(5).Count())
+	assert.Equal(t, 5, iter.Count())
 }
 
 func BenchmarkTake(b *testing.B) {
@@ -18,9 +18,7 @@ func BenchmarkTake(b *testing.B) {
 func TestTakeWhile(t *testing.T) {
 	iter := Ints[int]().TakeWhile(func(i int) bool { return i < 10 })
 
-	assert.Equal(
-		t, iter.Collect(),
-		Ints[int]().Take(10).Collect())
+	assert.Equal(t, Ints[int]().Take(10).Collect(), iter.Collect())
 
 	iter = Ints[int]().Take(0).TakeWhile(func(i int) bool { return i < 10 })
 

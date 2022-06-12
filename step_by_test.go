@@ -9,7 +9,7 @@ import (
 func TestStepBy(t *testing.T) {
 	iter := Ints[int]().Take(10).StepBy(3)
 
-	assert.Equal(t, iter.Collect(), []int{0, 3, 6, 9})
+	assert.Equal(t, []int{0, 3, 6, 9}, iter.Collect())
 }
 
 func TestStepByPanic(t *testing.T) {

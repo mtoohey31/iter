@@ -8,7 +8,7 @@ import (
 
 func TestElems(t *testing.T) {
 	expected := []string{"item1", "item2"}
-	assert.Equal(t, Elems(expected).Collect(), expected)
+	assert.Equal(t, expected, Elems(expected).Collect())
 }
 
 func BenchmarkElems(b *testing.B) {

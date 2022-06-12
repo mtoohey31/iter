@@ -17,13 +17,13 @@ func TestInspect(t *testing.T) {
 		actualNum = actualNum + n
 	})
 
-	assert.Equal(t, actualNum, expectedNumBefore)
+	assert.Equal(t, expectedNumBefore, actualNum)
 
 	actualSlice := newIter.Collect()
 	expectedSlice := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
-	assert.Equal(t, actualNum, expectedNumAfter)
-	assert.Equal(t, actualSlice, expectedSlice)
+	assert.Equal(t, expectedNumAfter, actualNum)
+	assert.Equal(t, expectedSlice, actualSlice)
 }
 
 func BenchmarkInspect(b *testing.B) {

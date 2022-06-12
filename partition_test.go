@@ -9,13 +9,13 @@ import (
 func TestPartition(t *testing.T) {
 	actualA, actualB := Ints[int]().Take(4).Partition(func(i int) bool { return i%2 == 0 })
 
-	assert.Equal(t, actualA.Collect(), []int{0, 2})
-	assert.Equal(t, actualB.Collect(), []int{1, 3})
+	assert.Equal(t, []int{0, 2}, actualA.Collect())
+	assert.Equal(t, []int{1, 3}, actualB.Collect())
 
 	actualA, actualB = Ints[int]().Take(4).Partition(func(i int) bool { return i%2 == 0 })
 
-	assert.Equal(t, actualB.Collect(), []int{1, 3})
-	assert.Equal(t, actualA.Collect(), []int{0, 2})
+	assert.Equal(t, []int{1, 3}, actualB.Collect())
+	assert.Equal(t, []int{0, 2}, actualA.Collect())
 }
 
 func BenchmarkPartition(b *testing.B) {

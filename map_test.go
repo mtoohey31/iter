@@ -24,7 +24,7 @@ func TestKVZip(t *testing.T) {
 
 	iter := KVZip(m)
 
-	assert.ElementsMatch(t, iter.Collect(), expected)
+	assert.ElementsMatch(t, expected, iter.Collect())
 }
 
 func BenchmarkKVZip(b *testing.B) {
@@ -50,7 +50,7 @@ func TestKVZipChannelled(t *testing.T) {
 
 	iter := KVZipChannelled(m)
 
-	assert.ElementsMatch(t, iter.Collect(), expected)
+	assert.ElementsMatch(t, expected, iter.Collect())
 }
 
 func BenchmarkKVZipChannelled(b *testing.B) {
@@ -64,7 +64,7 @@ func BenchmarkKVZipChannelled(b *testing.B) {
 func TestMapEndoFunc(t *testing.T) {
 	iter := Elems([]string{"item1", "item2"}).MapEndo(func(s string) string { return strings.ToUpper(s) })
 
-	assert.Equal(t, iter.Collect(), []string{"ITEM1", "ITEM2"})
+	assert.Equal(t, []string{"ITEM1", "ITEM2"}, iter.Collect())
 }
 
 func BenchmarkMapEndoFunc(b *testing.B) {
@@ -76,7 +76,7 @@ func BenchmarkMapEndoFunc(b *testing.B) {
 func TestMapFunc(t *testing.T) {
 	iter := Map(Elems([]string{"item1", "item2"}), func(s string) int { return len(s) })
 
-	assert.Equal(t, iter.Collect(), []int{5, 5})
+	assert.Equal(t, []int{5, 5}, iter.Collect())
 }
 
 func BenchmarkMapFunc(b *testing.B) {
@@ -95,8 +95,8 @@ func TestMapWhileEndo(t *testing.T) {
 		}
 	})
 
-	assert.Equal(t, mappedWhileIter.Collect(), []string{"GOOD"})
-	assert.Equal(t, initialIter.Collect(), []string{"good", "good"})
+	assert.Equal(t, []string{"GOOD"}, mappedWhileIter.Collect())
+	assert.Equal(t, []string{"good", "good"}, initialIter.Collect())
 
 	Ints[int]().Take(5).MapWhileEndo(func(i int) (int, error) {
 		return i, nil
@@ -120,12 +120,12 @@ func TestMapWhile(t *testing.T) {
 		}
 	})
 
-	assert.Equal(t, mappedWhileIter.Collect(), []int{11, 13})
+	assert.Equal(t, []int{11, 13}, mappedWhileIter.Collect())
 
 	_, ok := mappedWhileIter()
 
 	assert.False(t, ok)
-	assert.Equal(t, initialIter.Collect(), []string{"long string again"})
+	assert.Equal(t, []string{"long string again"}, initialIter.Collect())
 }
 
 func BenchmarkMapWhile(b *testing.B) {
@@ -143,7 +143,7 @@ func TestFlatMapEndo(t *testing.T) {
 	actual := iter.Collect()
 	expected := []int{1, 2, 2, 3, 3, 4}
 
-	assert.Equal(t, actual, expected)
+	assert.Equal(t, expected, actual)
 }
 
 func TestFlatMap(t *testing.T) {

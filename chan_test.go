@@ -20,7 +20,7 @@ func TestReceive(t *testing.T) {
 
 	actualStart := iter.Take(2).Collect()
 
-	assert.Equal(t, append(actualStart, iter.Collect()...), expected)
+	assert.Equal(t, expected, append(actualStart, iter.Collect()...))
 }
 
 func BenchmarkReceive(b *testing.B) {
@@ -52,7 +52,7 @@ func TestSend(t *testing.T) {
 		i++
 	}
 
-	assert.Equal(t, actual, expected)
+	assert.Equal(t, expected, actual)
 }
 
 func BenchmarkSend(b *testing.B) {
