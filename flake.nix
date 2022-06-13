@@ -2,13 +2,14 @@
   inputs = {
     nixpkgs.url = "nixpkgs/nixpkgs-unstable";
     utils.url = "github:numtide/flake-utils";
+    godoc-coverage.url = "github:mtoohey31/godoc-coverage";
     gow-src = {
       url = "github:mitranim/gow";
       flake = false;
     };
   };
 
-  outputs = { self, nixpkgs, utils, gow-src }:
+  outputs = { self, nixpkgs, utils, gow-src, ... }@inputs:
     utils.lib.eachDefaultSystem (system:
       with import nixpkgs
         {
@@ -21,9 +22,21 @@
                 vendorSha256 = "o6KltbjmAN2w9LMeS9oozB0qz9tSMYmdDW3CwUNChzA=";
               };
             })
+            inputs.godoc-coverage.overlays.default
           ];
           inherit system;
         }; {
-        devShells.default = mkShell { packages = [ go_1_18 gopls gow ]; };
+        devShells = {
+          ci = mkShell { packages = [ go_1_18 godoc-coverage ]; };
+
+          default = mkShell {
+            packages = [
+              go_1_18
+              godoc-coverage
+              gopls
+              gow
+            ];
+          };
+        };
       });
 }

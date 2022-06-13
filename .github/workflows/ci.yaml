@@ -1,0 +1,23 @@
+name: CI
+on:
+  push:
+    branches: ["**"]
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Cache nix
+        uses: mtoohey31/cache-flake-attrs@v2
+        with:
+          key: ${{ runner.os }}-nix-${{ hashFiles('./flake.lock', './flake.nix') }}
+          flake_paths: .#devShells.x86_64-linux.ci
+      - name: Cache go
+        uses: actions/cache@v3
+        with:
+          key: ${{ runner.os }}-go-${{ hashFiles('./go.mod', './go.sum') }}
+          path: |
+            ~/.go
+            ~/.cache/go-build
+      - name: Run CI
+        run: GOCACHE="$HOME/.cache/go-build" GOPATH="$HOME/.go" nix --extra-experimental-features nix-command --extra-experimental-features flakes develop .#ci -k GOPATH -k GOCACHE -ic make ci
