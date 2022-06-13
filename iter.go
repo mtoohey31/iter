@@ -8,13 +8,23 @@ should assume that any function which accepts an iterator, but does not return
 one, consumes it unless otherwise stated, meaning that the values contained
 within cannot be used again.
 
+Reducers with names prefixed by Go indicate that they perform some operations
+using goroutines. This means that multiple evaluations of the prior steps
+in the iterator may take place at the same time. This could result in race
+conditions depending on the operators that have been used so far in the chain.
+The Mutex method will ensure that only one evaluation of the prior steps occurs
+at once. See its documentation for more information on how to use it. These
+operators expose an n parameter to set the number of goroutines that should be
+spawned since the optimal value will be different in each case. Benchmarking
+should be used to determine what's best for your situation.
+
 Methods with names suffixed by Endo indicate that the method transforms
 iterators of generic type T to some type in terms of T, such as T or Iter[T].
 Transformation between types is possible, but only through the corresponding
 function whose name is identical to the method, without the Endo prefix.
 Functions are required for these operations because Go does not support the
 definition of type parameters on methods. The nomenclature comes from the term
-endomorphism, though it is a bit of a misuse of the term in that some *Endo
+endomorphism, though it is a bit of a misuse of the term in that some Endo
 methods take extra parameters or return types derived from T other than
 Iter[T].
 */
