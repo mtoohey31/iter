@@ -42,6 +42,7 @@ package iter
 
 import (
 	"sync"
+	"sync/atomic"
 
 	"github.com/barweiss/go-tuple"
 )
@@ -219,6 +220,37 @@ func (i Iter[T]) All(f func(T) bool) bool {
 	return true
 }
 
+// GoAll returns whether all values of the iterator satisfy the provided
+// predicate function. n is the number of goroutines that should be spawned.
+func (i Iter[T]) GoAll(f func(T) bool, n int) bool {
+	c := uint32(n)
+	res := make(chan bool)
+
+	for j := 0; j < n; j++ {
+		go func() {
+			for {
+				next, ok := i()
+
+				if !ok {
+					break
+				}
+
+				if !f(next) {
+					res <- false
+					return
+				}
+			}
+
+			// subtracts 1 since int32(^uint32(0)) == -1
+			if atomic.AddUint32(&c, ^uint32(0)) == 0 {
+				res <- true
+			}
+		}()
+	}
+
+	return <-res
+}
+
 // Any returns whether any of the values of the iterator satisfy the provided
 // predicate function.
 func (i Iter[T]) Any(f func(T) bool) bool {
@@ -234,6 +266,37 @@ func (i Iter[T]) Any(f func(T) bool) bool {
 		}
 	}
 	return false
+}
+
+// GoAny returns whether any values of the iterator satisfy the provided
+// predicate function. n is the number of goroutines that should be spawned.
+func (i Iter[T]) GoAny(f func(T) bool, n int) bool {
+	c := uint32(n)
+	res := make(chan bool)
+
+	for j := 0; j < n; j++ {
+		go func() {
+			for {
+				next, ok := i()
+
+				if !ok {
+					break
+				}
+
+				if f(next) {
+					res <- true
+					return
+				}
+			}
+
+			// subtracts 1 since int32(^uint32(0)) == -1
+			if atomic.AddUint32(&c, ^uint32(0)) == 0 {
+				res <- false
+			}
+		}()
+	}
+
+	return <-res
 }
 
 // Count returns the number of remaining values in the iterator.

@@ -66,8 +66,9 @@ func TestGoCollectInto(t *testing.T) {
 }
 
 func TestAll(t *testing.T) {
-	assert.True(t, !Elems([]int{1, 2}).All(func(i int) bool { return i == 1 }))
+	assert.False(t, Elems([]int{1, 2}).All(func(i int) bool { return i == 1 }))
 	assert.True(t, Elems([]int{1, 2}).All(func(i int) bool { return i != 0 }))
+	assert.True(t, Elems([]struct{}{}).All(func(struct{}) bool { return false }))
 }
 
 func BenchmarkAll(b *testing.B) {
@@ -76,15 +77,40 @@ func BenchmarkAll(b *testing.B) {
 	})
 }
 
+func TestGoAll(t *testing.T) {
+	assert.False(t, Elems([]int{1, 2}).Mutex().GoAll(func(i int) bool {
+		return i == 1
+	}, mp))
+	assert.True(t, Elems([]int{1, 2}).Mutex().GoAll(func(i int) bool {
+		return i != 0
+	}, mp))
+	assert.True(t, Elems([]struct{}{}).Mutex().GoAll(func(struct{}) bool {
+		return false
+	}, mp))
+}
+
 func TestAny(t *testing.T) {
 	assert.True(t, Elems([]int{1, 2}).Any(func(i int) bool { return i == 1 }))
 	assert.False(t, Elems([]int{1, 2}).Any(func(i int) bool { return i == 0 }))
+	assert.False(t, Elems([]struct{}{}).Any(func(struct{}) bool { return true }))
 }
 
 func BenchmarkAny(b *testing.B) {
 	Ints[int]().Take(b.N).Any(func(i int) bool {
 		return i < 0
 	})
+}
+
+func TestGoAny(t *testing.T) {
+	assert.True(t, Elems([]int{1, 2}).Mutex().GoAny(func(i int) bool {
+		return i == 1
+	}, mp))
+	assert.False(t, Elems([]int{1, 2}).Mutex().GoAny(func(i int) bool {
+		return i == 0
+	}, mp))
+	assert.False(t, Elems([]struct{}{}).Mutex().GoAny(func(struct{}) bool {
+		return true
+	}, mp))
 }
 
 func TestCount(t *testing.T) {
