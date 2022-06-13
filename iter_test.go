@@ -12,6 +12,8 @@ import (
 
 var mp = runtime.GOMAXPROCS(0)
 
+func sleep(int) { time.Sleep(time.Millisecond) }
+
 func TestGoConsume(t *testing.T) {
 	iter := Ints[int]().Take(10).Mutex()
 	iter.GoConsume(mp)
@@ -21,7 +23,7 @@ func TestGoConsume(t *testing.T) {
 }
 
 func BenchmarkGoConsume(b *testing.B) {
-	Ints[int]().Take(b.N).Inspect(func(int) { time.Sleep(time.Millisecond) }).GoConsume(b.N)
+	Ints[int]().Take(b.N).Inspect(sleep).GoConsume(b.N)
 }
 
 func TestCollect(t *testing.T) {
@@ -119,6 +121,15 @@ func TestCount(t *testing.T) {
 
 func BenchmarkCount(b *testing.B) {
 	Ints[int]().Take(b.N).Count()
+}
+
+func TestGoCount(t *testing.T) {
+	iter := Ints[int]().Take(10).Mutex()
+	assert.Equal(t, 10, iter.GoCount(mp))
+}
+
+func BenchmarkGoCount(b *testing.B) {
+	Ints[int]().Take(b.N).Mutex().Inspect(sleep).GoCount(b.N)
 }
 
 func TestFind(t *testing.T) {

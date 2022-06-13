@@ -314,6 +314,34 @@ func (i Iter[T]) Count() int {
 	return j
 }
 
+// GoCount returns the number of remaining values in the iterator. n is the
+// number of goroutines that should be spawned.
+func (i Iter[T]) GoCount(n int) int {
+	var wg sync.WaitGroup
+	wg.Add(n)
+
+	var j uint32
+
+	for k := 0; k < n; k++ {
+		go func() {
+			for {
+				_, ok := i()
+
+				if !ok {
+					break
+				}
+
+				atomic.AddUint32(&j, 1)
+			}
+
+			wg.Done()
+		}()
+	}
+
+	wg.Wait()
+	return int(j)
+}
+
 // Find returns the first value in the iterator that satisfies the provided
 // predicate function, as well as a boolean indicating whether any value was
 // found. It consumes all values up to the first satisfactory value, or the
