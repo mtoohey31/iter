@@ -185,7 +185,7 @@ func TestFindMap(t *testing.T) {
 func TestFoldEndo(t *testing.T) {
 	iter := Elems([]string{"quick", "brown", "fox"})
 
-	actual := iter.FoldEndo("the", func(curr string, next string) string {
+	actual := iter.FoldEndo("the", func(curr, next string) string {
 		return curr + " " + next
 	})
 
@@ -267,7 +267,7 @@ func BenchmarkNth(b *testing.B) {
 }
 
 func TestTryFoldEndo(t *testing.T) {
-	actual, err := IntsBy(2).Take(3).TryFoldEndo(0, func(curr int, next int) (int, error) {
+	actual, err := IntsBy(2).Take(3).TryFoldEndo(0, func(curr, next int) (int, error) {
 		if next%2 == 0 {
 			return curr + next, nil
 		} else {
@@ -278,7 +278,7 @@ func TestTryFoldEndo(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 6, actual)
 
-	_, err = Ints[int]().Take(5).TryFoldEndo(0, func(curr int, next int) (int, error) {
+	_, err = Ints[int]().Take(5).TryFoldEndo(0, func(curr, next int) (int, error) {
 		if next%2 == 0 {
 			return curr + next, nil
 		} else {
@@ -361,7 +361,7 @@ func BenchmarkTryForEach(b *testing.B) {
 }
 
 func TestReduce(t *testing.T) {
-	actual, ok := Ints[int]().Take(5).Reduce(func(curr int, next int) int {
+	actual, ok := Ints[int]().Take(5).Reduce(func(curr, next int) int {
 		if next > curr {
 			return next
 		} else {
