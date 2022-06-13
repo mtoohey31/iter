@@ -33,6 +33,11 @@ func BenchmarkCollect(b *testing.B) {
 	Ints[int]().Take(b.N).Collect()
 }
 
+func TestGoCollect(t *testing.T) {
+	expected := []string{"item1", "item2", "item3", "item4"}
+	assert.ElementsMatch(t, expected, Elems(expected).Mutex().GoCollect(mp))
+}
+
 func TestCollectInto(t *testing.T) {
 	actual := make([]int, 6)
 	expected := []int{0, 1, 2, 3, 4, 5}
@@ -46,6 +51,18 @@ func TestCollectInto(t *testing.T) {
 func BenchmarkCollectInto(b *testing.B) {
 	slice := make([]int, b.N)
 	Ints[int]().CollectInto(slice)
+}
+
+func TestGoCollectInto(t *testing.T) {
+	actual := make([]int, 6)
+	expected := []int{0, 1, 2, 3, 4, 5}
+
+	Ints[int]().Take(6).Mutex().GoCollectInto(actual, mp)
+	assert.ElementsMatch(t, expected, actual)
+
+	actual = make([]int, 5)
+	Ints[int]().Take(5).Mutex().GoCollectInto(actual, mp)
+	assert.ElementsMatch(t, expected[:5], actual)
 }
 
 func TestAll(t *testing.T) {

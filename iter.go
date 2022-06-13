@@ -110,6 +110,42 @@ func (i Iter[T]) Collect() []T {
 	return res
 }
 
+// GoCollect fetches the next value of the iterator until no more values are
+// found, places these values in a slice, and returns it. Note that since
+// Collect does not know how many values it will find, it must resize the slice
+// multiple times during the collection process. This can result in poor
+// performance, so CollectInto should be used when possible. n is the number of
+// goroutines that should be spawned. Because of this, the order of the result
+// may not be preserved.
+func (i Iter[T]) GoCollect(n int) []T {
+	var wg sync.WaitGroup
+	wg.Add(n)
+
+	var res []T
+	var m sync.Mutex
+
+	for j := 0; j < n; j++ {
+		go func() {
+			for {
+				next, ok := i()
+
+				if !ok {
+					break
+				}
+
+				m.Lock()
+				res = append(res, next)
+				m.Unlock()
+			}
+
+			wg.Done()
+		}()
+	}
+
+	wg.Wait()
+	return res
+}
+
 // CollectInto inserts values yielded by the input iterator into the provided
 // slice, and returns the number of values it was able to add before the
 // iterator was exhausted or the slice was full.
@@ -125,6 +161,45 @@ func (i Iter[T]) CollectInto(buf []T) int {
 	}
 
 	return len(buf)
+}
+
+// GoCollectInto inserts values yielded by the input iterator into the provided
+// slice. n is the number of goroutines that should be spawned. Since this
+// method uses goroutines, the order of the elements may not be preserved. The
+// number of values added is not returned, because it is possible for values
+// to be consumed that cannot be added to the slice, so the iterator should be
+// considered exhausted after this method is called. Note that this method also
+// doesn't check whether the slice has been filled. If it is possible that the
+// length of your iterator may exceed the length of the slice, you should use
+// MTake (the mutexed version of Take) to ensure the slice is not indexed beyond
+// its length.
+func (i Iter[T]) GoCollectInto(buf []T, n int) {
+	var wg sync.WaitGroup
+	wg.Add(n)
+
+	var m sync.Mutex
+	k := 0
+
+	for j := 0; j < n; j++ {
+		go func() {
+			for {
+				next, ok := i()
+
+				if !ok {
+					break
+				}
+
+				m.Lock()
+				buf[k] = next
+				k++
+				m.Unlock()
+			}
+
+			wg.Done()
+		}()
+	}
+
+	wg.Wait()
 }
 
 // All returns whether all values of the iterator satisfy the provided
