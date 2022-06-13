@@ -53,7 +53,8 @@ type Iter[T any] func() (T, bool)
 
 // Consume fetches the next value of the iterator until no more values are
 // found. Note that it doesn't do anything with the values that are produced,
-// but it can be useful in certain cases, such as benchmarking.
+// but it can be useful in certain cases, such dropping a fixed number of items
+// from an iterator by chaining Take and Consume.
 func (i Iter[T]) Consume() {
 	for {
 		_, ok := i()
