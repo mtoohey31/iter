@@ -65,6 +65,32 @@ func (i Iter[T]) Consume() {
 	}
 }
 
+// GoConsume fetches the next value of the iterator until no more values are
+// found. Note that it doesn't do anything with the values that are produced,
+// but it can be useful in certain cases, such dropping a fixed number of items
+// from an iterator by chaining Take and Consume. n is the number of goroutines
+// that should be spawned.
+func (i Iter[T]) GoConsume(n int) {
+	var wg sync.WaitGroup
+	wg.Add(n)
+
+	for j := 0; j < n; j++ {
+		go func() {
+			for {
+				_, ok := i()
+
+				if !ok {
+					break
+				}
+			}
+
+			wg.Done()
+		}()
+	}
+
+	wg.Wait()
+}
+
 // Collect fetches the next value of the iterator until no more values are
 // found, places these values in a slice, and returns it. Note that since
 // Collect does not know how many values it will find, it must resize the slice

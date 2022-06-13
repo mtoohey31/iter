@@ -2,11 +2,27 @@ package iter
 
 import (
 	"errors"
+	"runtime"
 	"strconv"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
+
+var mp = runtime.GOMAXPROCS(0)
+
+func TestGoConsume(t *testing.T) {
+	iter := Ints[int]().Take(10).Mutex()
+	iter.GoConsume(mp)
+
+	_, ok := iter()
+	assert.False(t, ok)
+}
+
+func BenchmarkGoConsume(b *testing.B) {
+	Ints[int]().Take(b.N).Inspect(func(int) { time.Sleep(time.Millisecond) }).GoConsume(b.N)
+}
 
 func TestCollect(t *testing.T) {
 	expected := []string{"item1", "item2"}
