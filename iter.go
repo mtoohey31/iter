@@ -18,6 +18,16 @@ operators expose an n parameter to set the number of goroutines that should be
 spawned since the optimal value will be different in each case. Benchmarking
 should be used to determine what's best for your situation.
 
+On a related note, operators with names prefixed by M are themselves safe to use
+across goroutines. However, if prior operations are unsafe with respect to use
+across goroutines, using an M-prefixed operator will not protect against those
+issues; in that case, Mutex must be used. If an operator has an M-variant, you
+can assume that the usual variant is unsafe for use across goroutines. If an
+operator does not have an M-variant, no assumptions should be made. To
+complicate things further, some operators goroutine-safety may depend on the
+parameters they're passed (particularly those that accept functions). If you are
+unsure, examine the implemenation.
+
 Methods with names suffixed by Endo indicate that the method transforms
 iterators of generic type T to some type in terms of T, such as T or Iter[T].
 Transformation between types is possible, but only through the corresponding

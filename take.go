@@ -1,5 +1,7 @@
 package iter
 
+import "sync"
+
 // Take returns an iterator that limits that yields up to (but no more than) n
 // values from the input iterator.
 func (i Iter[T]) Take(n int) Iter[T] {
@@ -10,6 +12,27 @@ func (i Iter[T]) Take(n int) Iter[T] {
 			curr++
 			return i()
 		} else {
+			var z T
+			return z, false
+		}
+	}
+}
+
+// MTake returns an iterator that limits that yields up to (but no more than) n
+// values from the input iterator. This operator is safe for use across
+// goroutines.
+func (i Iter[T]) MTake(n int) Iter[T] {
+	var m sync.Mutex
+	curr := 0
+
+	return func() (T, bool) {
+		m.Lock()
+		if curr < n {
+			curr++
+			m.Unlock()
+			return i()
+		} else {
+			m.Unlock()
 			var z T
 			return z, false
 		}
