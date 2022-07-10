@@ -4,24 +4,29 @@ Package iter provides generic, lazy iterators, functions for producing them from
 
 ## Usage
 
+<!-- `$ cat _demos/hello-world/main.go` as go -->
 ```go
 package main
 
 import (
-  "fmt"
-  "strings"
+	"fmt"
+	"strings"
 
-  "mtoohey.com/iter"
+	"mtoohey.com/iter"
 )
 
 func main() {
-  initial := iter.Elems([]string{"hello", "beautiful", "world"})
-  result := initial.Filter(func(s string) bool {
-    return len(s) < 6
-  }).MapEndo(strings.ToUpper).Collect()
-  fmt.Println(result) // produces: [HELLO WORLD]
+	initial := iter.Elems([]string{"hello", "beautiful", "world"})
+	result := initial.Filter(func(s string) bool {
+		return len(s) < 6
+	}).MapEndo(strings.ToUpper).Collect()
+	fmt.Println(result) // produces: [HELLO WORLD]
 }
 ```
+
+## Practical Examples
+
+- [mtoohey31/godoc-coverage](https://github.com/mtoohey31/godoc-coverage) makes use of this package and is heavily commented.
 
 ## Notes
 

@@ -1,8 +1,8 @@
-.PHONY: default ci test test-cov-check test-watch fmt fmt-check godoc-check
+.PHONY: default ci test test-cov-check test-watch fmt fmt-check godoc-check mdsh mdsh-check
 
 default: test-watch
 
-ci: fmt-check godoc-check test-cov-check
+ci: fmt-check godoc-check mdsh-check test-cov-check
 
 fmt:
 	gofmt -w .
@@ -12,6 +12,12 @@ fmt-check:
 
 godoc-check:
 	godoc-coverage .
+
+mdsh:
+	mdsh
+
+mdsh-check:
+	mdsh --frozen
 
 test:
 	go test -coverprofile=/dev/null

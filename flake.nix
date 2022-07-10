@@ -26,16 +26,11 @@
           ];
           inherit system;
         }; {
-        devShells = {
-          ci = mkShell { packages = [ go_1_18 godoc-coverage ]; };
+        devShells = rec {
+          ci = mkShell { packages = [ go_1_18 godoc-coverage mdsh ]; };
 
           default = mkShell {
-            packages = [
-              go_1_18
-              godoc-coverage
-              gopls
-              gow
-            ];
+            packages = ci.nativeBuildInputs ++ [ gopls gow ];
           };
         };
       });
