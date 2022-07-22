@@ -2,19 +2,27 @@ package iter
 
 import (
 	"errors"
-	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"mtoohey.com/iter/testutils"
 )
 
-func TestFilter(t *testing.T) {
-	iter := Elems([]int{1, 2, 3, 4}).Filter(func(i int) bool { return i%2 == 0 })
+func FuzzFilter(f *testing.F) {
+	testutils.AddByteSlices(f)
 
-	actualFirst, _ := iter()
-	expected := []int{2, 4}
+	f.Fuzz(func(t *testing.T, b []byte) {
+		expected := []byte{}
+		for _, v := range b {
+			if v%2 == 0 {
+				expected = append(expected, v)
+			}
+		}
 
-	assert.Equal(t, expected, append([]int{actualFirst}, iter.Collect()...))
+		assert.Equal(t, expected, Elems(b).Filter(func(v byte) bool {
+			return v%2 == 0
+		}).Collect())
+	})
 }
 
 func BenchmarkFilter(b *testing.B) {
@@ -23,52 +31,51 @@ func BenchmarkFilter(b *testing.B) {
 	}).Take(b.N).Consume()
 }
 
-func TestFilterMapEndo(t *testing.T) {
-	iter := Elems([]int{1, 2, 3, 4}).FilterMapEndo(func(i int) (int, error) {
-		if i%2 != 0 {
-			return 0, errors.New("")
-		} else {
-			return i * 2, nil
+func FuzzFilterMap(f *testing.F) {
+	testutils.AddByteSlices(f)
+	err := errors.New("")
+
+	f.Fuzz(func(t *testing.T, b []byte) {
+		expected := []byte{}
+		for _, v := range b {
+			if v%2 == 0 {
+				expected = append(expected, v*2)
+			}
 		}
+
+		predicate := func(v byte) (byte, error) {
+			if v%2 != 0 {
+				return 0, err
+			} else {
+				return v * 2, nil
+			}
+		}
+
+		assert.Equal(t, expected, Elems(b).FilterMapEndo(predicate).Collect())
+		assert.Equal(t, expected, FilterMap(Elems(b), predicate).Collect())
 	})
-
-	actual := iter.Collect()
-	expected := []int{4, 8}
-
-	assert.Equal(t, expected, actual)
-}
-
-func TestFilterMap(t *testing.T) {
-	iter := FilterMap(Elems([]string{"1", "nope", "2", "un-uh"}), func(s string) (int, error) {
-		return strconv.Atoi(s)
-	})
-
-	actualFirst, _ := iter()
-	expected := []int{1, 2}
-
-	assert.Equal(t, expected, append([]int{actualFirst}, iter.Collect()...))
 }
 
 func BenchmarkFilterMapEndo(b *testing.B) {
-	var dummyErr error
+	err := errors.New("")
 
 	Ints[int]().FilterMapEndo(func(i int) (int, error) {
 		if i%2 == 0 {
 			return i * 2, nil
 		} else {
-			return 0, dummyErr
+			return 0, err
 		}
 	}).Take(b.N).Consume()
 }
 
 func BenchmarkFilterMap(b *testing.B) {
-	var dummyErr error
+	err := errors.New("")
 
 	FilterMap(Ints[int](), func(i int) (int, error) {
 		if i%2 == 0 {
 			return i * 2, nil
 		} else {
-			return 0, dummyErr
+			return 0, err
 		}
 	}).Take(b.N).Consume()
 }

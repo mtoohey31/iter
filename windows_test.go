@@ -4,21 +4,31 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"mtoohey.com/iter/testutils"
 )
 
-func TestWindows(t *testing.T) {
-	assert.Equal(t, [][]int{
-		{0, 1, 2, 3, 4},
-		{1, 2, 3, 4, 5},
-		{2, 3, 4, 5, 6},
-		{3, 4, 5, 6, 7},
-		{4, 5, 6, 7, 8},
-		{5, 6, 7, 8, 9},
-	}, Windows(Ints[int]().Take(10), 5).Collect())
-	_, ok := Windows(Ints[int]().Take(10), 11)()
-	assert.False(t, ok)
-	_, ok = Windows(Ints[int]().Take(10), 12)()
-	assert.False(t, ok)
+func FuzzWindows(f *testing.F) {
+	testutils.AddByteSliceUintPairs(f)
+
+	f.Fuzz(func(t *testing.T, b []byte, m uint) {
+		// ensures n is >= 1
+		n := int(m + 1)
+		nWindows := len(b) - n + 1
+		actual := Windows(Elems(b), n).Collect()
+		if nWindows > 0 {
+			windows := make([][]byte, nWindows)
+			for i := 0; i < nWindows; i++ {
+				w := make([]byte, n)
+				for j := 0; j < n; j++ {
+					w[j] = b[i+j]
+				}
+				windows[i] = w
+			}
+			assert.Equal(t, windows, actual)
+		} else {
+			assert.Empty(t, actual)
+		}
+	})
 }
 
 func BenchmarkWindows1(b *testing.B) {

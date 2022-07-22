@@ -8,33 +8,13 @@ should assume that any function which accepts an iterator, but does not return
 one, consumes it unless otherwise stated, meaning that the values contained
 within cannot be used again.
 
-Reducers with names prefixed by Go indicate that they perform some operations
-using goroutines. This means that multiple evaluations of the prior steps
-in the iterator may take place at the same time. This could result in race
-conditions depending on the operators that have been used so far in the chain.
-The Mutex method will ensure that only one evaluation of the prior steps occurs
-at once. See its documentation for more information on how to use it. These
-operators expose an n parameter to set the number of goroutines that should be
-spawned since the optimal value will be different in each case. Benchmarking
-should be used to determine what's best for your situation.
-
-On a related note, operators with names prefixed by M are themselves safe to use
-across goroutines. However, if prior operations are unsafe with respect to use
-across goroutines, using an M-prefixed operator will not protect against those
-issues; in that case, Mutex must be used. If an operator has an M-variant, you
-can assume that the usual variant is unsafe for use across goroutines. If an
-operator does not have an M-variant, no assumptions should be made. To
-complicate things further, some operators goroutine-safety may depend on the
-parameters they're passed (particularly those that accept functions). If you are
-unsure, examine the implemenation.
-
 Methods with names suffixed by Endo indicate that the method transforms
 iterators of generic type T to some type in terms of T, such as T or Iter[T].
 Transformation between types is possible, but only through the corresponding
 function whose name is identical to the method, without the Endo prefix.
 Functions are required for these operations because Go does not support the
 definition of type parameters on methods. The nomenclature comes from the term
-endomorphism, though it is a bit of a misuse of the term in that some Endo
+endomorphism, though it is a bit of a misuse of the term in that some *Endo
 methods take extra parameters or return types derived from T other than
 Iter[T].
 */
@@ -42,7 +22,6 @@ package iter
 
 import (
 	"sync"
-	"sync/atomic"
 
 	"github.com/barweiss/go-tuple"
 )
@@ -66,32 +45,6 @@ func (i Iter[T]) Consume() {
 	}
 }
 
-// GoConsume fetches the next value of the iterator until no more values are
-// found. Note that it doesn't do anything with the values that are produced,
-// but it can be useful in certain cases, such dropping a fixed number of items
-// from an iterator by chaining Take and Consume. n is the number of goroutines
-// that should be spawned.
-func (i Iter[T]) GoConsume(n int) {
-	var wg sync.WaitGroup
-	wg.Add(n)
-
-	for j := 0; j < n; j++ {
-		go func() {
-			for {
-				_, ok := i()
-
-				if !ok {
-					break
-				}
-			}
-
-			wg.Done()
-		}()
-	}
-
-	wg.Wait()
-}
-
 // Collect fetches the next value of the iterator until no more values are
 // found, places these values in a slice, and returns it. Note that since
 // Collect does not know how many values it will find, it must resize the slice
@@ -108,42 +61,6 @@ func (i Iter[T]) Collect() []T {
 
 		res = append(res, next)
 	}
-	return res
-}
-
-// GoCollect fetches the next value of the iterator until no more values are
-// found, places these values in a slice, and returns it. Note that since
-// Collect does not know how many values it will find, it must resize the slice
-// multiple times during the collection process. This can result in poor
-// performance, so CollectInto should be used when possible. n is the number of
-// goroutines that should be spawned. Because of this, the order of the result
-// may not be preserved.
-func (i Iter[T]) GoCollect(n int) []T {
-	var wg sync.WaitGroup
-	wg.Add(n)
-
-	var res []T
-	var m sync.Mutex
-
-	for j := 0; j < n; j++ {
-		go func() {
-			for {
-				next, ok := i()
-
-				if !ok {
-					break
-				}
-
-				m.Lock()
-				res = append(res, next)
-				m.Unlock()
-			}
-
-			wg.Done()
-		}()
-	}
-
-	wg.Wait()
 	return res
 }
 
@@ -164,45 +81,6 @@ func (i Iter[T]) CollectInto(buf []T) int {
 	return len(buf)
 }
 
-// GoCollectInto inserts values yielded by the input iterator into the provided
-// slice. n is the number of goroutines that should be spawned. Since this
-// method uses goroutines, the order of the elements may not be preserved. The
-// number of values added is not returned, because it is possible for values
-// to be consumed that cannot be added to the slice, so the iterator should be
-// considered exhausted after this method is called. Note that this method also
-// doesn't check whether the slice has been filled. If it is possible that the
-// length of your iterator may exceed the length of the slice, you should use
-// MTake (the mutexed version of Take) to ensure the slice is not indexed beyond
-// its length.
-func (i Iter[T]) GoCollectInto(buf []T, n int) {
-	var wg sync.WaitGroup
-	wg.Add(n)
-
-	var m sync.Mutex
-	k := 0
-
-	for j := 0; j < n; j++ {
-		go func() {
-			for {
-				next, ok := i()
-
-				if !ok {
-					break
-				}
-
-				m.Lock()
-				buf[k] = next
-				k++
-				m.Unlock()
-			}
-
-			wg.Done()
-		}()
-	}
-
-	wg.Wait()
-}
-
 // All returns whether all values of the iterator satisfy the provided
 // predicate function.
 func (i Iter[T]) All(f func(T) bool) bool {
@@ -218,37 +96,6 @@ func (i Iter[T]) All(f func(T) bool) bool {
 		}
 	}
 	return true
-}
-
-// GoAll returns whether all values of the iterator satisfy the provided
-// predicate function. n is the number of goroutines that should be spawned.
-func (i Iter[T]) GoAll(f func(T) bool, n int) bool {
-	c := uint32(n)
-	res := make(chan bool)
-
-	for j := 0; j < n; j++ {
-		go func() {
-			for {
-				next, ok := i()
-
-				if !ok {
-					break
-				}
-
-				if !f(next) {
-					res <- false
-					return
-				}
-			}
-
-			// subtracts 1 since int32(^uint32(0)) == -1
-			if atomic.AddUint32(&c, ^uint32(0)) == 0 {
-				res <- true
-			}
-		}()
-	}
-
-	return <-res
 }
 
 // Any returns whether any of the values of the iterator satisfy the provided
@@ -268,37 +115,6 @@ func (i Iter[T]) Any(f func(T) bool) bool {
 	return false
 }
 
-// GoAny returns whether any values of the iterator satisfy the provided
-// predicate function. n is the number of goroutines that should be spawned.
-func (i Iter[T]) GoAny(f func(T) bool, n int) bool {
-	c := uint32(n)
-	res := make(chan bool)
-
-	for j := 0; j < n; j++ {
-		go func() {
-			for {
-				next, ok := i()
-
-				if !ok {
-					break
-				}
-
-				if f(next) {
-					res <- true
-					return
-				}
-			}
-
-			// subtracts 1 since int32(^uint32(0)) == -1
-			if atomic.AddUint32(&c, ^uint32(0)) == 0 {
-				res <- false
-			}
-		}()
-	}
-
-	return <-res
-}
-
 // Count returns the number of remaining values in the iterator.
 func (i Iter[T]) Count() int {
 	j := 0
@@ -312,34 +128,6 @@ func (i Iter[T]) Count() int {
 		j++
 	}
 	return j
-}
-
-// GoCount returns the number of remaining values in the iterator. n is the
-// number of goroutines that should be spawned.
-func (i Iter[T]) GoCount(n int) int {
-	var wg sync.WaitGroup
-	wg.Add(n)
-
-	var j uint32
-
-	for k := 0; k < n; k++ {
-		go func() {
-			for {
-				_, ok := i()
-
-				if !ok {
-					break
-				}
-
-				atomic.AddUint32(&j, 1)
-			}
-
-			wg.Done()
-		}()
-	}
-
-	wg.Wait()
-	return int(j)
 }
 
 // Find returns the first value in the iterator that satisfies the provided

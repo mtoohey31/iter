@@ -1,9 +1,16 @@
 package iter
 
+// TODO: rework this in the next breaking change so that we can enforce the
+// requirements at a type level instead of having to panic.
+
 // Windows returns an iterator over slices of the provided length, containing,
 // first items 0 through n-1 of the input iterator, then items 1 through n,
-// etc.
+// etc. Panics for n < 1.
 func Windows[T any](i Iter[T], n int) Iter[[]T] {
+	if n < 1 {
+		panic("n < 1")
+	}
+
 	window := make([]T, n)
 	index := n - 1
 	if i.CollectInto(window[0:index]) < n-1 {

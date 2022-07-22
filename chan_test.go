@@ -4,23 +4,25 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"mtoohey.com/iter/testutils"
 )
 
-func TestReceive(t *testing.T) {
-	ch := make(chan int)
-	iter := Receive(&ch)
-	expected := []int{2, 7, 31, 645}
+func FuzzReceive(f *testing.F) {
+	testutils.AddByteSlices(f)
 
-	go func() {
-		for _, v := range expected {
-			ch <- v
-		}
-		close(ch)
-	}()
+	f.Fuzz(func(t *testing.T, b []byte) {
+		ch := make(chan byte)
 
-	actualStart := iter.Take(2).Collect()
+		go func() {
+			for _, v := range b {
+				ch <- v
+			}
+			close(ch)
+		}()
 
-	assert.Equal(t, expected, append(actualStart, iter.Collect()...))
+		assert.Equal(t, b, Receive(&ch).Collect())
+	})
 }
 
 func BenchmarkReceive(b *testing.B) {
@@ -36,23 +38,24 @@ func BenchmarkReceive(b *testing.B) {
 	Receive(&ch).Consume()
 }
 
-func TestSend(t *testing.T) {
-	ch := make(chan int)
-	expected := []int{5, 8, 11, 14}
+func FuzzSend(f *testing.F) {
+	testutils.AddByteSlices(f)
 
-	go func() {
-		IntsFromBy(5, 3).Take(4).Send(&ch)
-		close(ch)
-	}()
+	f.Fuzz(func(t *testing.T, b []byte) {
+		ch := make(chan byte)
 
-	actual := make([]int, 4)
-	i := 0
-	for v := range ch {
-		actual[i] = v
-		i++
-	}
+		go func() {
+			Elems(b).Send(&ch)
+			close(ch)
+		}()
 
-	assert.Equal(t, expected, actual)
+		actual := []byte{}
+		for v := range ch {
+			actual = append(actual, v)
+		}
+
+		assert.Equal(t, b, actual)
+	})
 }
 
 func BenchmarkSend(b *testing.B) {

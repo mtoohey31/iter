@@ -4,20 +4,28 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"mtoohey.com/iter/testutils"
 )
 
-func TestCycle(t *testing.T) {
-	iter, ok := Elems([]int{1, 2}).Cycle()
+func FuzzCycle(f *testing.F) {
+	testutils.AddByteSlices(f)
 
-	assert.True(t, ok)
+	f.Fuzz(func(t *testing.T, b []byte) {
+		i, ok := Elems(b).Cycle()
 
-	assert.Equal(t, []int{1, 2, 1, 2, 1, 2}, iter.Take(6).Collect())
-}
+		// when the input iterator is already empty, Cycle fails
+		if len(b) == 0 {
+			assert.False(t, ok)
+		} else {
+			assert.True(t, ok)
 
-func TestCyclePanic(t *testing.T) {
-	_, ok := Elems([]bool{}).Cycle()
-
-	assert.True(t, !ok)
+			expected := b
+			expected = append(expected, b...)
+			expected = append(expected, b...)
+			assert.Equal(t, expected, i.Take(len(b)*3).Collect())
+		}
+	})
 }
 
 func BenchmarkCycle1(b *testing.B) {

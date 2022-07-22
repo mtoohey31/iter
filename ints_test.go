@@ -7,35 +7,58 @@ import (
 )
 
 func TestInts(t *testing.T) {
-	assert.Equal(t, []int{0, 1, 2}, Ints[int]().Take(3).Collect())
+	assert.Equal(t, []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
+		Ints[int]().Take(10).Collect())
 }
 
-func TestIntsFrom(t *testing.T) {
-	assert.Equal(t, []int{2, 3, 4, 5}, IntsFrom(2).Take(4).Collect())
+func FuzzIntsFrom(f *testing.F) {
+	f.Add(0)
+	f.Add(27)
+	f.Add(168)
+	f.Add(41981)
+
+	f.Fuzz(func(t *testing.T, n int) {
+		expected := []int{}
+		for i := n; i < n+10; i++ {
+			expected = append(expected, i)
+		}
+
+		assert.Equal(t, expected, IntsFrom(n).Take(10).Collect())
+	})
 }
 
-func TestIntsByZero(t *testing.T) {
-	assert.Equal(t, []int{0, 0, 0, 0, 0}, IntsBy(0).Take(5).Collect())
+func FuzzIntsBy(f *testing.F) {
+	f.Add(0)
+	f.Add(27)
+	f.Add(168)
+	f.Add(41981)
+
+	f.Fuzz(func(t *testing.T, n int) {
+		expected := []int{}
+		i := 0
+		for j := 0; j < 10; i, j = i+n, j+1 {
+			expected = append(expected, i)
+		}
+
+		assert.Equal(t, expected, IntsBy(n).Take(10).Collect())
+	})
 }
 
-func TestIntsByIncreasing(t *testing.T) {
-	assert.Equal(t, []int{0, 2, 4, 6}, IntsBy(2).Take(4).Collect())
-}
+func FuzzIntsFromBy(f *testing.F) {
+	f.Add(0, 0)
+	f.Add(27, 18)
+	f.Add(168, 354)
+	f.Add(41981, 94876)
 
-func TestIntsByDecreasing(t *testing.T) {
-	assert.Equal(t, []int{0, -4, -8}, IntsBy(-4).Take(3).Collect())
-}
+	f.Fuzz(func(t *testing.T, m, n int) {
+		expected := []int{}
+		i := m
+		for j := 0; j < 10; i, j = i+n, j+1 {
+			expected = append(expected, i)
+		}
 
-func TestIntsFromByZero(t *testing.T) {
-	assert.Equal(t, []int{100, 100}, IntsFromBy(100, 0).Take(2).Collect())
-}
-
-func TestIntsFromByIncreasing(t *testing.T) {
-	assert.Equal(t, []int{-3, 0, 3}, IntsFromBy(-3, 3).Take(3).Collect())
-}
-
-func TestIntsFromByDecreasing(t *testing.T) {
-	assert.Equal(t, []int{7, 4, 1, -2}, IntsFromBy(7, -3).Take(4).Collect())
+		assert.Equal(t, expected, IntsFromBy(m, n).Take(10).Collect())
+	})
 }
 
 func BenchmarkInts(b *testing.B) {

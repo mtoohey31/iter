@@ -1,55 +1,77 @@
 package iter
 
 import (
-	"github.com/barweiss/go-tuple"
+	"testing"
 
+	"github.com/barweiss/go-tuple"
 	"github.com/stretchr/testify/assert"
 
-	"testing"
+	"mtoohey.com/iter/testutils"
 )
 
-func TestZip(t *testing.T) {
-	iter := Zip(Elems([]rune{'a', 'b', 'c', 'd'}), IntsFrom(1))
+func FuzzZip(f *testing.F) {
+	f.Add([]byte{}, []byte{})
+	f.Add([]byte{1, 2}, []byte{3, 4})
 
-	expected := []tuple.T2[rune, int]{
-		tuple.New2('a', 1),
-		tuple.New2('b', 2),
-		tuple.New2('c', 3),
-		tuple.New2('d', 4),
-	}
+	f.Fuzz(func(t *testing.T, a, b []byte) {
+		expected := make([]tuple.T2[byte, byte], len(a))
 
-	assert.Equal(t, expected, iter.Collect())
+		for i := range a {
+			expected[i] = tuple.New2(a[i], b[i])
+		}
+
+		assert.Equal(t, expected, Zip(Elems(a), Elems(b)).Collect())
+	})
 }
 
 func BenchmarkZip(b *testing.B) {
 	Zip(Ints[int](), Ints[int]()).Take(b.N).Consume()
 }
 
-func TestEnumerate(t *testing.T) {
-	expected := []tuple.T2[int, int]{
-		tuple.New2(0, 7),
-		tuple.New2(1, 5),
-		tuple.New2(2, 3),
-		tuple.New2(3, 1),
-	}
+func FuzzEnumerate(f *testing.F) {
+	testutils.AddByteSlices(f)
 
-	assert.Equal(t, expected, Enumerate(IntsFromBy(7, -2).Take(4)).Collect())
+	f.Fuzz(func(t *testing.T, b []byte) {
+		expected := make([]tuple.T2[int, byte], len(b))
+
+		for i, v := range b {
+			expected[i] = tuple.New2(i, v)
+		}
+
+		assert.Equal(t, expected, Enumerate(Elems(b)).Collect())
+	})
 }
 
 func BenchmarkEnumerate(b *testing.B) {
 	Enumerate(Ints[int]()).Take(b.N).Consume()
 }
 
-func TestUnzip(t *testing.T) {
-	expected := tuple.New2(Ints[int]().Take(10).Collect(), IntsFromBy(10, -1).Take(10).Collect())
-	v1, v2 := Unzip(Zip(Elems(expected.V1), Elems(expected.V2)))
+func FuzzUnzip(f *testing.F) {
+	testutils.AddByteSlices(f)
 
-	v1First, _ := v1()
-	v2First, _ := v2()
-	v2Second, _ := v2()
+	f.Fuzz(func(t *testing.T, b []byte) {
+		i := 0
+		iter := func() (tuple.T2[byte, byte], bool) {
+			if i < len(b) {
+				res := tuple.New2(b[i], b[len(b)-1-i])
+				i++
+				return res, true
+			} else {
+				var z tuple.T2[byte, byte]
+				return z, false
+			}
+		}
 
-	assert.Equal(t, expected, tuple.New2(append([]int{v1First}, v1.Collect()...),
-		append([]int{v2First, v2Second}, v2.Collect()...)))
+		l, r := Unzip(iter)
+
+		bRev := make([]byte, len(b))
+		for j, v := range b {
+			bRev[len(b)-1-j] = v
+		}
+
+		assert.Equal(t, b, l.Collect())
+		assert.Equal(t, bRev, r.Collect())
+	})
 }
 
 func BenchmarkUnzip(b *testing.B) {

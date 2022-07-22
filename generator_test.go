@@ -5,38 +5,28 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"mtoohey.com/iter/testutils"
 )
 
-func TestGenWhile(t *testing.T) {
-	b := false
+func FuzzGenWhile(f *testing.F) {
+	testutils.AddUints(f)
 
-	iter := GenWhile(func() (int, error) {
-		if b {
-			return 0, errors.New("")
-		} else {
-			return 0, nil
+	f.Fuzz(func(t *testing.T, n uint) {
+		expected := make([]uint, n)
+		for i := uint(0); i < n; i++ {
+			expected[i] = i
 		}
+		u := uint(0)
+		assert.Equal(t, expected, GenWhile(func() (uint, error) {
+			u++
+			if u-1 < n {
+				return u - 1, nil
+			} else {
+				return 0, errors.New("")
+			}
+		}).Collect())
 	})
-
-	assert.Equal(t, []int{0, 0, 0, 0, 0}, iter.Take(5).Collect())
-
-	b = true
-
-	_, ok := iter()
-
-	assert.False(t, ok)
-
-	iter = GenWhile(func() (int, error) {
-		if b {
-			return 0, errors.New("")
-		} else {
-			return 0, nil
-		}
-	})
-
-	_, ok = iter()
-
-	assert.False(t, ok)
 }
 
 func BenchmarkGenWhile(b *testing.B) {

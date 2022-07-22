@@ -24,7 +24,7 @@ test:
 
 test-cov-check:
 	TEST_OUTPUT="$$(go test -coverprofile=/dev/null)" && echo "$$TEST_OUTPUT" && \
-	  test "$$(echo "$$TEST_OUTPUT" | head -n2 | tail -n1 | awk '{ print $$2 }' | grep -oP '^\d+')" -gt 95
+	  test "$$(echo "$$TEST_OUTPUT" | head -n2 | tail -n1 | awk '{ print $$2 }')" = '100.0%'
 
 test-watch:
 	gow -c test . -coverprofile=/dev/null

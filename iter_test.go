@@ -2,29 +2,11 @@ package iter
 
 import (
 	"errors"
-	"runtime"
 	"strconv"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 )
-
-var mp = runtime.GOMAXPROCS(0)
-
-func sleep(int) { time.Sleep(time.Millisecond) }
-
-func TestGoConsume(t *testing.T) {
-	iter := Ints[int]().Take(10).Mutex()
-	iter.GoConsume(mp)
-
-	_, ok := iter()
-	assert.False(t, ok)
-}
-
-func BenchmarkGoConsume(b *testing.B) {
-	Ints[int]().Take(b.N).Inspect(sleep).GoConsume(b.N)
-}
 
 func TestCollect(t *testing.T) {
 	expected := []string{"item1", "item2"}
@@ -33,11 +15,6 @@ func TestCollect(t *testing.T) {
 
 func BenchmarkCollect(b *testing.B) {
 	Ints[int]().Take(b.N).Collect()
-}
-
-func TestGoCollect(t *testing.T) {
-	expected := []string{"item1", "item2", "item3", "item4"}
-	assert.ElementsMatch(t, expected, Elems(expected).Mutex().GoCollect(mp))
 }
 
 func TestCollectInto(t *testing.T) {
@@ -55,22 +32,9 @@ func BenchmarkCollectInto(b *testing.B) {
 	Ints[int]().CollectInto(slice)
 }
 
-func TestGoCollectInto(t *testing.T) {
-	actual := make([]int, 6)
-	expected := []int{0, 1, 2, 3, 4, 5}
-
-	Ints[int]().Take(6).Mutex().GoCollectInto(actual, mp)
-	assert.ElementsMatch(t, expected, actual)
-
-	actual = make([]int, 5)
-	Ints[int]().Take(5).Mutex().GoCollectInto(actual, mp)
-	assert.ElementsMatch(t, expected[:5], actual)
-}
-
 func TestAll(t *testing.T) {
-	assert.False(t, Elems([]int{1, 2}).All(func(i int) bool { return i == 1 }))
+	assert.True(t, !Elems([]int{1, 2}).All(func(i int) bool { return i == 1 }))
 	assert.True(t, Elems([]int{1, 2}).All(func(i int) bool { return i != 0 }))
-	assert.True(t, Elems([]struct{}{}).All(func(struct{}) bool { return false }))
 }
 
 func BenchmarkAll(b *testing.B) {
@@ -79,22 +43,9 @@ func BenchmarkAll(b *testing.B) {
 	})
 }
 
-func TestGoAll(t *testing.T) {
-	assert.False(t, Elems([]int{1, 2}).Mutex().GoAll(func(i int) bool {
-		return i == 1
-	}, mp))
-	assert.True(t, Elems([]int{1, 2}).Mutex().GoAll(func(i int) bool {
-		return i != 0
-	}, mp))
-	assert.True(t, Elems([]struct{}{}).Mutex().GoAll(func(struct{}) bool {
-		return false
-	}, mp))
-}
-
 func TestAny(t *testing.T) {
 	assert.True(t, Elems([]int{1, 2}).Any(func(i int) bool { return i == 1 }))
 	assert.False(t, Elems([]int{1, 2}).Any(func(i int) bool { return i == 0 }))
-	assert.False(t, Elems([]struct{}{}).Any(func(struct{}) bool { return true }))
 }
 
 func BenchmarkAny(b *testing.B) {
@@ -103,33 +54,12 @@ func BenchmarkAny(b *testing.B) {
 	})
 }
 
-func TestGoAny(t *testing.T) {
-	assert.True(t, Elems([]int{1, 2}).Mutex().GoAny(func(i int) bool {
-		return i == 1
-	}, mp))
-	assert.False(t, Elems([]int{1, 2}).Mutex().GoAny(func(i int) bool {
-		return i == 0
-	}, mp))
-	assert.False(t, Elems([]struct{}{}).Mutex().GoAny(func(struct{}) bool {
-		return true
-	}, mp))
-}
-
 func TestCount(t *testing.T) {
 	assert.Equal(t, 2, Elems([]int{1, 2}).Count())
 }
 
 func BenchmarkCount(b *testing.B) {
 	Ints[int]().Take(b.N).Count()
-}
-
-func TestGoCount(t *testing.T) {
-	iter := Ints[int]().Take(10).Mutex()
-	assert.Equal(t, 10, iter.GoCount(mp))
-}
-
-func BenchmarkGoCount(b *testing.B) {
-	Ints[int]().Take(b.N).Mutex().Inspect(sleep).GoCount(b.N)
 }
 
 func TestFind(t *testing.T) {

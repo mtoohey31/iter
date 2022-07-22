@@ -1,32 +1,42 @@
 package iter
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"mtoohey.com/iter/testutils"
 )
 
-func TestTake(t *testing.T) {
-	iter := Ints[int]().Take(10)
-	assert.Equal(t, 5, iter.Take(5).Count())
-	assert.Equal(t, 5, iter.Count())
+func FuzzTake(f *testing.F) {
+	testutils.AddByteSliceUintPairs(f)
+
+	f.Fuzz(func(t *testing.T, b []byte, n uint) {
+		var expected []byte
+		if int(n) < len(b) {
+			expected = b[:n]
+		} else {
+			expected = b
+		}
+		assert.Equal(t, expected, Elems(b).Take(int(n)).Collect())
+	})
 }
 
 func BenchmarkTake(b *testing.B) {
 	Ints[int]().Take(b.N).Consume()
 }
 
-func TestTakeWhile(t *testing.T) {
-	iter := Ints[int]().TakeWhile(func(i int) bool { return i < 10 })
+func FuzzTakeWhile(f *testing.F) {
+	testutils.AddUints(f)
 
-	assert.Equal(t, Ints[int]().Take(10).Collect(), iter.Collect())
-
-	iter = Ints[int]().Take(0).TakeWhile(func(i int) bool { return i < 10 })
-
-	iter.Collect()
-
-	_, ok := iter()
-
-	assert.False(t, ok)
+	f.Fuzz(func(t *testing.T, n uint) {
+		expected := make([]uint, n)
+		for i := uint(0); i < n; i++ {
+			expected[i] = i
+		}
+		assert.Equal(t, expected, Ints[uint]().TakeWhile(func(u uint) bool {
+			return u < n
+		}).Collect())
+	})
 }
 
 func BenchmarkTakeWhile(b *testing.B) {
