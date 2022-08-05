@@ -24,13 +24,9 @@ func main() {
 }
 ```
 
-## Practical Examples
+## Regarding Performance
 
-- [mtoohey31/godoc-coverage](https://github.com/mtoohey31/godoc-coverage) makes use of this package and is heavily commented.
-
-## Notes
-
-- Some rudimentary benchmarks comparing performance to that of loop based solutions to similar problems can be found [here](https://github.com/mtoohey31/iter-loop-benchmarks).
+There is some overhead to using the iterators in this package, since each evaluation requires a function call, so if the performance of your application is a top priority, this package _might_ not be the best choice. Don't guess about performance though: I would recommend benchmarking to determine what impact of using iterators, because in some cases lazy iterators may be faster than the equivalent loop.
 
 ## Acknowledgements
 
