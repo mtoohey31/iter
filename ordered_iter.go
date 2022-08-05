@@ -18,15 +18,15 @@ func Min[T constraints.Ordered](oi Iter[T]) (T, bool) {
 
 // MinByKey returns the value with the minimum result after the application of
 // the provided function.
-func MinByKey[T any, U constraints.Ordered](oi Iter[T], key func(T) U) (T, bool) {
-	init, ok := oi()
+func MinByKey[T any, U constraints.Ordered](i Iter[T], key func(T) U) (T, bool) {
+	init, ok := i()
 
 	if !ok {
 		var z T
 		return z, false
 	}
 
-	return Fold(oi, tuple.New2(init, key(init)), func(curr tuple.T2[T, U], next T) tuple.T2[T, U] {
+	return Fold(i, tuple.New2(init, key(init)), func(curr tuple.T2[T, U], next T) tuple.T2[T, U] {
 		keyNext := key(next)
 		if curr.V2 < keyNext {
 			return curr
@@ -49,15 +49,15 @@ func Max[T constraints.Ordered](oi Iter[T]) (T, bool) {
 
 // MaxByKey returns the value with the maximum result after the application of
 // the provided function.
-func MaxByKey[T any, U constraints.Ordered](oi Iter[T], key func(T) U) (T, bool) {
-	init, ok := oi()
+func MaxByKey[T any, U constraints.Ordered](i Iter[T], key func(T) U) (T, bool) {
+	init, ok := i()
 
 	if !ok {
 		var z T
 		return z, false
 	}
 
-	return Fold(oi, tuple.New2(init, key(init)), func(curr tuple.T2[T, U], next T) tuple.T2[T, U] {
+	return Fold(i, tuple.New2(init, key(init)), func(curr tuple.T2[T, U], next T) tuple.T2[T, U] {
 		keyNext := key(next)
 		if curr.V2 > keyNext {
 			return curr

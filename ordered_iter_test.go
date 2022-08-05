@@ -4,51 +4,60 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"mtoohey.com/iter/testutils"
 )
 
-func TestMin(t *testing.T) {
-	ordered := Ints[int]().Take(10)
+func FuzzMin(f *testing.F) {
+	f.Add([]byte{2, 9, 1, 5, 0})
+	f.Add([]byte{})
+	f.Add([]byte{9, 4, 1})
+	f.Add([]byte{30})
 
-	actual, ok := Min(ordered)
+	f.Fuzz(func(t *testing.T, b []byte) {
+		foundMin := false
+		var min byte
+		for _, v := range b {
+			if !foundMin || v < min {
+				foundMin = true
+				min = v
+			}
+		}
 
-	assert.True(t, ok)
-	assert.Equal(t, 0, actual)
-
-	_, ok = Min(ordered)
-
-	assert.False(t, ok)
-
-	Min(IntsBy(-1).Take(2))
+		actual, ok := Min(Elems(b))
+		if assert.Equal(t, foundMin, ok) && foundMin {
+			assert.Equal(t, min, actual)
+		}
+	})
 }
 
 func BenchmarkMin(b *testing.B) {
 	Min(Ints[int]().Take(b.N))
 }
 
-func TestMinByKey(t *testing.T) {
-	ordered := Ints[int]().Take(10)
+func FuzzMinByKey(f *testing.F) {
+	f.Add([]byte{2, 9, 1, 5, 0})
+	f.Add([]byte{})
+	f.Add([]byte{9, 4, 1})
+	f.Add([]byte{30})
 
-	actual, ok := MinByKey(ordered, func(n int) int {
-		return n * -1
+	f.Fuzz(func(t *testing.T, b []byte) {
+		foundMax := false
+		var max byte
+		for _, v := range b {
+			if !foundMax || v > max {
+				foundMax = true
+				max = v
+			}
+		}
+
+		actual, ok := MinByKey(Elems(b), func(v byte) int {
+			return -int(v)
+		})
+		if assert.Equal(t, foundMax, ok) && foundMax {
+			assert.Equal(t, max, actual)
+		}
 	})
-
-	assert.True(t, ok)
-	assert.Equal(t, 9, actual)
-
-	_, ok = MinByKey(ordered, func(n int) int {
-		return n * -1
-	})
-
-	assert.False(t, ok)
-
-	ordered = IntsBy(-1).Take(10)
-
-	actual, ok = MinByKey(ordered, func(n int) int {
-		return n * -1
-	})
-
-	assert.True(t, ok)
-	assert.Equal(t, 0, actual)
 }
 
 func BenchmarkMinByKey(b *testing.B) {
@@ -57,49 +66,56 @@ func BenchmarkMinByKey(b *testing.B) {
 	})
 }
 
-func TestMax(t *testing.T) {
-	ordered := Ints[int]().Take(10)
+func FuzzMax(f *testing.F) {
+	f.Add([]byte{2, 9, 1, 5, 0})
+	f.Add([]byte{})
+	f.Add([]byte{9, 4, 1})
+	f.Add([]byte{30})
 
-	actual, ok := Max(ordered)
+	f.Fuzz(func(t *testing.T, b []byte) {
+		foundMax := false
+		var max byte
+		for _, v := range b {
+			if !foundMax || v > max {
+				foundMax = true
+				max = v
+			}
+		}
 
-	assert.True(t, ok)
-	assert.Equal(t, 9, actual)
-
-	_, ok = Max(ordered)
-
-	assert.False(t, ok)
-
-	Max(IntsBy(-1).Take(2))
+		actual, ok := Max(Elems(b))
+		if assert.Equal(t, foundMax, ok) && foundMax {
+			assert.Equal(t, max, actual)
+		}
+	})
 }
 
 func BenchmarkMax(b *testing.B) {
 	Max(Ints[int]().Take(b.N))
 }
 
-func TestMaxByKey(t *testing.T) {
-	ordered := Ints[int]().Take(10)
+func FuzzMaxByKey(f *testing.F) {
+	f.Add([]byte{2, 9, 1, 5, 0})
+	f.Add([]byte{})
+	f.Add([]byte{9, 4, 1})
+	f.Add([]byte{30})
 
-	actual, ok := MaxByKey(ordered, func(n int) int {
-		return n * -1
+	f.Fuzz(func(t *testing.T, b []byte) {
+		foundMin := false
+		var min byte
+		for _, v := range b {
+			if !foundMin || v < min {
+				foundMin = true
+				min = v
+			}
+		}
+
+		actual, ok := MaxByKey(Elems(b), func(v byte) int {
+			return -int(v)
+		})
+		if assert.Equal(t, foundMin, ok) && foundMin {
+			assert.Equal(t, min, actual)
+		}
 	})
-
-	assert.True(t, ok)
-	assert.Equal(t, 0, actual)
-
-	_, ok = MaxByKey(ordered, func(n int) int {
-		return n * -1
-	})
-
-	assert.False(t, ok)
-
-	ordered = IntsBy(-1).Take(10)
-
-	actual, ok = MaxByKey(ordered, func(n int) int {
-		return n * -1
-	})
-
-	assert.True(t, ok)
-	assert.Equal(t, -9, actual)
 }
 
 func BenchmarkMaxByKey(b *testing.B) {
@@ -108,8 +124,17 @@ func BenchmarkMaxByKey(b *testing.B) {
 	})
 }
 
-func TestSum(t *testing.T) {
-	assert.Equal(t, 45, Sum(Ints[int]().Take(10)))
+func FuzzSum(f *testing.F) {
+	testutils.AddUints(f)
+
+	f.Fuzz(func(t *testing.T, n uint) {
+		expected := uint(0)
+		for i := uint(0); i < n; i++ {
+			expected += i
+		}
+
+		assert.Equal(t, expected, Sum(Ints[uint]().Take(int(n))))
+	})
 }
 
 func BenchmarkSum(b *testing.B) {

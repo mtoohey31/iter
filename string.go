@@ -4,22 +4,19 @@ import "strings"
 
 // Runes returns an iterator over the runes of the input string.
 func Runes(s string) Iter[rune] {
-	runes := make([]rune, len(s))
-	for i, rune := range s {
-		runes[i] = rune
-	}
-	return Elems(runes)
+	return Elems([]rune(s))
 }
 
 // SplitByRune returns an iterator over the substrings of the input string
 // between occurences of the provided rune.
 func SplitByRune(s string, r rune) Iter[string] {
+	// TODO: this isn't lazy!
 	runes := []rune(s)
 	index := 0
 
 	return func() (string, bool) {
 		newIndex := index
-		if len(runes) > index {
+		if index < len(runes) {
 			for newIndex < len(runes) {
 				if runes[newIndex] == r {
 					break
@@ -30,6 +27,9 @@ func SplitByRune(s string, r rune) Iter[string] {
 			res := runes[index:newIndex]
 			index = newIndex + 1
 			return string(res), true
+		} else if index == len(runes) {
+			index += 1
+			return "", true
 		} else {
 			return "", false
 		}
@@ -42,7 +42,7 @@ func SplitByString(s string, sep string) Iter[string] {
 	index := 0
 
 	return func() (string, bool) {
-		if len(s) > index {
+		if index < len(s) {
 			sepIndex := strings.Index(s[index:], sep)
 
 			if sepIndex == -1 {

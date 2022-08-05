@@ -2,29 +2,45 @@ package iter
 
 import (
 	"errors"
-	"strconv"
+	"sync"
 	"testing"
 
+	"github.com/barweiss/go-tuple"
 	"github.com/stretchr/testify/assert"
+
+	"mtoohey.com/iter/testutils"
 )
 
-func TestCollect(t *testing.T) {
-	expected := []string{"item1", "item2"}
-	assert.Equal(t, expected, Elems(expected).Collect())
+func FuzzCollect(f *testing.F) {
+	testutils.AddByteSlices(f)
+
+	f.Fuzz(func(t *testing.T, b []byte) {
+		assert.Equal(t, b, Elems(b).Collect())
+	})
 }
 
 func BenchmarkCollect(b *testing.B) {
 	Ints[int]().Take(b.N).Collect()
 }
 
-func TestCollectInto(t *testing.T) {
-	actual := make([]int, 6)
-	expected := []int{0, 1, 2, 3, 4, 5}
+func FuzzCollectInto(f *testing.F) {
+	testutils.AddByteSliceUintPairs(f)
 
-	assert.Equal(t, 6, Ints[int]().Take(6).CollectInto(actual))
-	assert.Equal(t, expected, actual)
-
-	assert.Equal(t, 5, Ints[int]().Take(5).CollectInto(actual))
+	f.Fuzz(func(t *testing.T, b []byte, n uint) {
+		actual := make([]byte, n)
+		var expectedN = len(b)
+		if int(n) < expectedN {
+			expectedN = int(n)
+		}
+		assert.Equal(t, expectedN, Elems(b).CollectInto(actual))
+		var expected []byte
+		if int(n) < len(b) {
+			expected = b[:n]
+		} else {
+			expected = append(b, make([]byte, int(n)-len(b))...)
+		}
+		assert.Equal(t, expected, actual)
+	})
 }
 
 func BenchmarkCollectInto(b *testing.B) {
@@ -32,9 +48,23 @@ func BenchmarkCollectInto(b *testing.B) {
 	Ints[int]().CollectInto(slice)
 }
 
-func TestAll(t *testing.T) {
-	assert.True(t, !Elems([]int{1, 2}).All(func(i int) bool { return i == 1 }))
-	assert.True(t, Elems([]int{1, 2}).All(func(i int) bool { return i != 0 }))
+func FuzzAll(f *testing.F) {
+	f.Add([]byte{})
+	f.Add([]byte{1})
+	f.Add([]byte{1, 2, 3, 4})
+	f.Add([]byte{1, 3, 5, 7})
+	f.Add([]byte{0, 2, 4, 6, 8})
+
+	f.Fuzz(func(t *testing.T, b []byte) {
+		expected := true
+		for _, v := range b {
+			if v%2 != 0 {
+				expected = false
+			}
+		}
+
+		assert.Equal(t, expected, Elems(b).All(func(v byte) bool { return v%2 == 0 }))
+	})
 }
 
 func BenchmarkAll(b *testing.B) {
@@ -43,9 +73,23 @@ func BenchmarkAll(b *testing.B) {
 	})
 }
 
-func TestAny(t *testing.T) {
-	assert.True(t, Elems([]int{1, 2}).Any(func(i int) bool { return i == 1 }))
-	assert.False(t, Elems([]int{1, 2}).Any(func(i int) bool { return i == 0 }))
+func FuzzAny(f *testing.F) {
+	f.Add([]byte{})
+	f.Add([]byte{1})
+	f.Add([]byte{1, 2, 3, 4})
+	f.Add([]byte{1, 3, 5, 7})
+	f.Add([]byte{0, 2, 4, 6, 8})
+
+	f.Fuzz(func(t *testing.T, b []byte) {
+		expected := false
+		for _, v := range b {
+			if v%2 == 0 {
+				expected = true
+			}
+		}
+
+		assert.Equal(t, expected, Elems(b).Any(func(v byte) bool { return v%2 == 0 }))
+	})
 }
 
 func BenchmarkAny(b *testing.B) {
@@ -54,72 +98,78 @@ func BenchmarkAny(b *testing.B) {
 	})
 }
 
-func TestCount(t *testing.T) {
-	assert.Equal(t, 2, Elems([]int{1, 2}).Count())
+func FuzzCount(f *testing.F) {
+	testutils.AddUints(f)
+
+	f.Fuzz(func(t *testing.T, n uint) {
+		assert.Equal(t, int(n), Ints[int]().Take(int(n)).Count())
+	})
 }
 
 func BenchmarkCount(b *testing.B) {
 	Ints[int]().Take(b.N).Count()
 }
 
-func TestFind(t *testing.T) {
-	actual, _ := Ints[int]().Find(func(i int) bool {
-		return i == 7
-	})
+func FuzzFind(f *testing.F) {
+	testutils.AddByteSliceUintPairs(f)
 
-	assert.Equal(t, 7, actual)
-
-	_, ok := Elems([]bool{}).Find(func(b bool) bool {
-		return true
-	})
-
-	assert.False(t, ok)
-}
-
-func TestFindMapEndo(t *testing.T) {
-	actual, _ := Ints[int]().FindMapEndo(func(i int) (int, error) {
-		if i == 7 {
-			return i, nil
-		} else {
-			return 0, errors.New("")
+	f.Fuzz(func(t *testing.T, b []byte, n uint) {
+		actual, ok := Zip(Elems(b), Ints[uint]()).Find(
+			func(t tuple.T2[byte, uint]) bool {
+				return t.V2 == n
+			})
+		if assert.Equal(t, uint(len(b)) > n, ok) && ok {
+			assert.Equal(t, n, actual.V2)
 		}
 	})
-
-	assert.Equal(t, 7, actual)
-
-	_, ok := Elems([]bool{}).FindMapEndo(func(b bool) (bool, error) {
-		return true, nil
-	})
-
-	assert.False(t, ok)
 }
 
-func TestFindMap(t *testing.T) {
-	actual, _ := FindMap(Ints[int](), func(i int) (int, error) {
-		if i == 7 {
-			return i, nil
-		} else {
-			return 0, errors.New("")
+func FuzzFindMap(f *testing.F) {
+	testutils.AddByteSliceUintPairs(f)
+
+	f.Fuzz(func(t *testing.T, b []byte, n uint) {
+		actual, ok := Zip(Elems(b), Ints[uint]()).FindMapEndo(
+			func(t tuple.T2[byte, uint]) (tuple.T2[byte, uint], error) {
+				if t.V2 == n {
+					return tuple.New2(t.V1+1, t.V2+1), nil
+				}
+
+				return tuple.New2(byte(0), uint(0)), errors.New("")
+			})
+		if assert.Equal(t, uint(len(b)) > n, ok) && ok {
+			assert.Equal(t, n+1, actual.V2)
+		}
+
+		actual, ok = FindMap(Zip(Elems(b), Ints[uint]()),
+			func(t tuple.T2[byte, uint]) (tuple.T2[byte, uint], error) {
+				if t.V2 == n {
+					return tuple.New2(t.V1+1, t.V2+1), nil
+				}
+
+				return tuple.New2(byte(0), uint(0)), errors.New("")
+			})
+		if assert.Equal(t, uint(len(b)) > n, ok) && ok {
+			assert.Equal(t, n+1, actual.V2)
 		}
 	})
-
-	assert.Equal(t, 7, actual)
-
-	_, ok := FindMap(Elems([]bool{}), func(b bool) (bool, error) {
-		return true, nil
-	})
-
-	assert.False(t, ok)
 }
 
-func TestFoldEndo(t *testing.T) {
-	iter := Elems([]string{"quick", "brown", "fox"})
+func FuzzFold(f *testing.F) {
+	testutils.AddByteSlices(f)
 
-	actual := iter.FoldEndo("the", func(curr, next string) string {
-		return curr + " " + next
+	f.Fuzz(func(t *testing.T, b []byte) {
+		var expected byte = 0
+		for _, v := range b {
+			expected += v
+		}
+
+		assert.Equal(t, expected, Elems(b).FoldEndo(0, func(sum, v byte) byte {
+			return sum + v
+		}))
+		assert.Equal(t, expected, Fold(Elems(b), 0, func(sum, v byte) byte {
+			return sum + v
+		}))
 	})
-
-	assert.Equal(t, "the quick brown fox", actual)
 }
 
 func BenchmarkFoldEndo(b *testing.B) {
@@ -128,95 +178,128 @@ func BenchmarkFoldEndo(b *testing.B) {
 	})
 }
 
-func TestFold(t *testing.T) {
-	iter := Elems([]string{"the", "quick", "brown", "fox"})
-
-	actual := Fold(iter, 0, func(curr int, next string) int {
-		return curr + len(next)
-	})
-
-	assert.Equal(t, 16, actual)
-}
-
 func BenchmarkFold(b *testing.B) {
 	Fold(Ints[int]().Take(b.N), 0, func(p, n int) int {
 		return p + n
 	})
 }
 
-func TestForEach(t *testing.T) {
-	actual := 0
-	IntsFrom(1).Take(10).ForEach(func(n int) { actual = actual + n })
-	assert.Equal(t, 55, actual)
+func FuzzForEach(f *testing.F) {
+	testutils.AddByteSlices(f)
+
+	f.Fuzz(func(t *testing.T, b []byte) {
+		var expected byte
+		for _, v := range b {
+			expected += v
+		}
+
+		var actual byte
+		Elems(b).ForEach(func(v byte) { actual += v })
+		assert.Equal(t, expected, actual)
+
+		var m sync.Mutex
+		actual = 0
+		Elems(b).ForEachParallel(func(v byte) {
+			m.Lock()
+			defer m.Unlock()
+			actual += v
+		})
+		assert.Equal(t, expected, actual)
+	})
 }
 
 func BenchmarkForEach(b *testing.B) {
 	Ints[int]().Take(b.N).ForEach(func(i int) {})
 }
 
-func TestForEachParallel(t *testing.T) {
-	actual := 0
-	IntsFrom(1).Take(10).ForEachParallel(func(n int) { actual = actual + n })
-	assert.Equal(t, 55, actual)
-}
-
 func BenchmarkForEachParallel(b *testing.B) {
 	Ints[int]().Take(b.N).ForEachParallel(func(i int) {})
 }
 
-func TestLast(t *testing.T) {
-	actual, _ := IntsFrom(1).Take(10).Last()
+func FuzzLast(f *testing.F) {
+	testutils.AddByteSlices(f)
 
-	assert.Equal(t, 10, actual)
-
-	_, ok := Elems([]bool{}).Last()
-
-	assert.False(t, ok)
+	f.Fuzz(func(t *testing.T, b []byte) {
+		actual, ok := Elems(b).Last()
+		if len(b) == 0 {
+			assert.False(t, ok)
+			assert.Zero(t, actual)
+		} else if assert.True(t, ok) {
+			assert.Equal(t, b[len(b)-1], actual)
+		}
+	})
 }
 
 func BenchmarkLast(b *testing.B) {
 	Ints[int]().Take(b.N).Last()
 }
 
-func TestNth(t *testing.T) {
-	actual, _ := IntsFrom(1).Take(10).Nth(7)
+func FuzzNth(f *testing.F) {
+	testutils.AddByteSliceUintPairs(f)
 
-	assert.Equal(t, 7, actual)
-
-	_, ok := IntsFrom(1).Take(10).Nth(17)
-
-	assert.False(t, ok)
-
-	_, ok = IntsFrom(1).Take(10).Nth(11)
-
-	assert.False(t, ok)
+	f.Fuzz(func(t *testing.T, b []byte, n uint) {
+		actual, ok := Elems(b).Nth(int(n))
+		if len(b) <= int(n) {
+			assert.False(t, ok)
+			assert.Zero(t, actual)
+		} else if assert.True(t, ok) {
+			assert.Equal(t, b[n], actual)
+		}
+	})
 }
 
 func BenchmarkNth(b *testing.B) {
 	Ints[int]().Nth(b.N)
 }
 
-func TestTryFoldEndo(t *testing.T) {
-	actual, err := IntsBy(2).Take(3).TryFoldEndo(0, func(curr, next int) (int, error) {
-		if next%2 == 0 {
-			return curr + next, nil
+func FuzzTryFold(f *testing.F) {
+	err := errors.New("")
+
+	f.Add(5, true)
+	f.Add(5, false)
+	f.Add(18, true)
+	f.Add(18, false)
+	f.Add(318, true)
+	f.Add(318, false)
+
+	f.Fuzz(func(t *testing.T, n int, b bool) {
+		expected := 0
+		for i := 0; i < n; i++ {
+			expected += i
+		}
+
+		actual, actualErr := Ints[int]().Take(n).TryFoldEndo(0, func(sum, v int) (int, error) {
+			if b {
+				return 0, err
+			}
+
+			return sum + v, nil
+		})
+
+		if b {
+			assert.Same(t, err, actualErr)
 		} else {
-			return 0, errors.New("")
+			if assert.NoError(t, actualErr) {
+				assert.Equal(t, expected, actual)
+			}
+		}
+
+		actual, actualErr = TryFold(Ints[int]().Take(n), 0, func(sum, v int) (int, error) {
+			if b {
+				return 0, err
+			}
+
+			return sum + v, nil
+		})
+
+		if b {
+			assert.True(t, err == actualErr)
+		} else {
+			if assert.NoError(t, actualErr) {
+				assert.Equal(t, expected, actual)
+			}
 		}
 	})
-
-	assert.NoError(t, err)
-	assert.Equal(t, 6, actual)
-
-	_, err = Ints[int]().Take(5).TryFoldEndo(0, func(curr, next int) (int, error) {
-		if next%2 == 0 {
-			return curr + next, nil
-		} else {
-			return 0, errors.New("")
-		}
-	})
-
-	assert.Error(t, err)
 }
 
 func BenchmarkTryFoldEndo(b *testing.B) {
@@ -225,82 +308,71 @@ func BenchmarkTryFoldEndo(b *testing.B) {
 	})
 }
 
-func TestTryFold(t *testing.T) {
-	actual, err := TryFold(Elems([]string{"1", "2", "3", "4"}), 0, func(curr int, next string) (int, error) {
-		v, err := strconv.Atoi(next)
-		if err == nil {
-			return curr + v, nil
-		} else {
-			return 0, err
-		}
-	})
-
-	assert.NoError(t, err)
-	assert.Equal(t, 10, actual)
-
-	_, err = TryFold(Elems([]string{"1", "2", "not a number", "4"}), 0, func(curr int, next string) (int, error) {
-		v, err := strconv.Atoi(next)
-		if err == nil {
-			return curr + v, nil
-		} else {
-			return 0, err
-		}
-	})
-
-	assert.Error(t, err)
-}
-
 func BenchmarkTryFold(b *testing.B) {
 	TryFold(Ints[int]().Take(b.N), 0, func(curr, next int) (int, error) {
 		return 0, nil
 	})
 }
 
-func TestTryForEach(t *testing.T) {
-	actual := 0
-	err := Elems([]string{"1", "2", "3", "4"}).TryForEach(func(s string) error {
-		v, err := strconv.Atoi(s)
-		if err == nil {
+func FuzzTryForEach(f *testing.F) {
+	err := errors.New("")
+
+	f.Add(5, true)
+	f.Add(5, false)
+	f.Add(18, true)
+	f.Add(18, false)
+	f.Add(318, true)
+	f.Add(318, false)
+
+	f.Fuzz(func(t *testing.T, n int, b bool) {
+		expected := 0
+		for i := 0; i < n; i++ {
+			expected += i
+		}
+
+		actual := 0
+		actualErr := Ints[int]().Take(n).TryForEach(func(v int) error {
+			if b {
+				return err
+			}
+
 			actual += v
 			return nil
+		})
+
+		if b {
+			assert.Same(t, err, actualErr)
 		} else {
-			return err
+			if assert.NoError(t, actualErr) {
+				assert.Equal(t, expected, actual)
+			}
 		}
 	})
-
-	assert.NoError(t, err)
-	assert.Equal(t, 10, actual)
-
-	actual = 0
-	err = Elems([]string{"1", "2", "not a number", "4"}).TryForEach(func(s string) error {
-		v, err := strconv.Atoi(s)
-		if err == nil {
-			actual += v
-			return nil
-		} else {
-			return err
-		}
-	})
-
-	assert.Error(t, err)
-	assert.Equal(t, 3, actual)
 }
 
 func BenchmarkTryForEach(b *testing.B) {
 	Ints[int]().Take(b.N).TryForEach(func(i int) error { return nil })
 }
 
-func TestReduce(t *testing.T) {
-	actual, ok := Ints[int]().Take(5).Reduce(func(curr, next int) int {
-		if next > curr {
-			return next
+func FuzzReduce(f *testing.F) {
+	testutils.AddUints(f)
+
+	f.Fuzz(func(t *testing.T, n uint) {
+		expected := 1
+		for i := 0; i < int(n); i++ {
+			expected *= i
+		}
+
+		actual, ok := Ints[int]().Take(int(n)).Reduce(func(prod, v int) int {
+			return prod * v
+		})
+
+		if n == 0 {
+			assert.False(t, ok)
 		} else {
-			return curr
+			assert.Equal(t, expected, actual)
 		}
 	})
-
-	assert.True(t, ok)
-	assert.Equal(t, 4, actual)
 }
 
 func BenchmarkReduce(b *testing.B) {
@@ -309,18 +381,39 @@ func BenchmarkReduce(b *testing.B) {
 	})
 }
 
-func TestPosition(t *testing.T) {
-	assert.Equal(t, 3, Position(Ints[int](), func(i int) bool { return i == 3 }))
-	assert.Equal(t, -1, Position(Ints[int]().Take(0), func(i int) bool { return i == 3 }))
+func FuzzPosition(f *testing.F) {
+	testutils.AddByteSlices(f)
+
+	f.Fuzz(func(t *testing.T, b []byte) {
+		iter := Elems(b)
+		for _, v1 := range b {
+			if !assert.Zero(t, Position(iter, func(v2 byte) bool {
+				return v1 == v2
+			})) {
+				break
+			}
+		}
+		assert.Equal(t, -1, Position(iter, func(byte) bool { return true }))
+	})
 }
 
 func BenchmarkPosition(b *testing.B) {
 	Position(Ints[int](), func(i int) bool { return i == b.N })
 }
 
-func TestRev(t *testing.T) {
-	assert.Equal(t, []int{4, 3, 2, 1, 0}, Ints[int]().Take(5).Rev().Collect())
+func FuzzRev(f *testing.F) {
+	testutils.AddByteSlices(f)
+
+	f.Fuzz(func(t *testing.T, b []byte) {
+		expected := make([]byte, len(b))
+		for i, v := range b {
+			expected[len(b)-1-i] = v
+		}
+
+		assert.Equal(t, expected, Elems(b).Rev().Collect())
+	})
 }
+
 func BenchmarkRev(b *testing.B) {
 	Ints[int]().Take(b.N).Rev()
 }

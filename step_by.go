@@ -2,6 +2,8 @@ package iter
 
 import "fmt"
 
+// TODO: rework this so it doesn't panic
+
 // StepBy returns a new iterator that returns every nth value of the input
 // iterator. The provided step value must be positive, otherwise the method
 // will panic.

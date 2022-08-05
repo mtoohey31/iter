@@ -2,29 +2,28 @@ package iter
 
 import (
 	"errors"
-	"strings"
 	"testing"
 
 	"github.com/barweiss/go-tuple"
 	"github.com/stretchr/testify/assert"
+
+	"mtoohey.com/iter/testutils"
 )
 
-func TestKVZip(t *testing.T) {
-	expected := []tuple.T2[string, int]{
-		tuple.New2("1", 1),
-		tuple.New2("2", 2),
-		tuple.New2("3", 3),
-		tuple.New2("4", 4),
-	}
+func FuzzKVZip(f *testing.F) {
+	testutils.AddByteSlices(f)
 
-	m := make(map[string]int)
-	for _, v := range expected {
-		m[v.V1] = v.V2
-	}
+	f.Fuzz(func(t *testing.T, b []byte) {
+		expected := make([]tuple.T2[int, byte], len(b))
+		m := make(map[int]byte)
+		for i, v := range b {
+			m[i] = v
+			expected[i] = tuple.New2(i, v)
+		}
 
-	iter := KVZip(m)
-
-	assert.ElementsMatch(t, expected, iter.Collect())
+		assert.ElementsMatch(t, expected, KVZip(m).Collect())
+		assert.ElementsMatch(t, expected, KVZipChannelled(m).Collect())
+	})
 }
 
 func BenchmarkKVZip(b *testing.B) {
@@ -35,24 +34,6 @@ func BenchmarkKVZip(b *testing.B) {
 	KVZip(m).Consume()
 }
 
-func TestKVZipChannelled(t *testing.T) {
-	expected := []tuple.T2[string, int]{
-		tuple.New2("1", 1),
-		tuple.New2("2", 2),
-		tuple.New2("3", 3),
-		tuple.New2("4", 4),
-	}
-
-	m := make(map[string]int)
-	for _, v := range expected {
-		m[v.V1] = v.V2
-	}
-
-	iter := KVZipChannelled(m)
-
-	assert.ElementsMatch(t, expected, iter.Collect())
-}
-
 func BenchmarkKVZipChannelled(b *testing.B) {
 	m := make(map[int]int)
 	for i := 0; i < b.N; i++ {
@@ -61,10 +42,22 @@ func BenchmarkKVZipChannelled(b *testing.B) {
 	KVZipChannelled(m).Consume()
 }
 
-func TestMapEndoFunc(t *testing.T) {
-	iter := Elems([]string{"item1", "item2"}).MapEndo(func(s string) string { return strings.ToUpper(s) })
+func FuzzMap(f *testing.F) {
+	testutils.AddByteSliceUintPairs(f)
 
-	assert.Equal(t, []string{"ITEM1", "ITEM2"}, iter.Collect())
+	f.Fuzz(func(t *testing.T, b []byte, n uint) {
+		expected := make([]byte, len(b))
+		for i, v := range b {
+			expected[i] = v + byte(n)
+		}
+
+		assert.Equal(t, expected, Elems(b).MapEndo(func(v byte) byte {
+			return v + byte(n)
+		}).Collect())
+		assert.Equal(t, expected, Map(Elems(b), func(v byte) byte {
+			return v + byte(n)
+		}).Collect())
+	})
 }
 
 func BenchmarkMapEndoFunc(b *testing.B) {
@@ -73,34 +66,44 @@ func BenchmarkMapEndoFunc(b *testing.B) {
 	}).Consume()
 }
 
-func TestMapFunc(t *testing.T) {
-	iter := Map(Elems([]string{"item1", "item2"}), func(s string) int { return len(s) })
-
-	assert.Equal(t, []int{5, 5}, iter.Collect())
-}
-
 func BenchmarkMapFunc(b *testing.B) {
 	Map(Ints[int]().Take(b.N), func(i int) int {
 		return i
 	}).Consume()
 }
 
-func TestMapWhileEndo(t *testing.T) {
-	initialIter := Elems([]string{"good", "bad", "good", "good"})
-	mappedWhileIter := initialIter.MapWhileEndo(func(s string) (string, error) {
-		if s == "bad" {
-			return "", errors.New("")
-		} else {
-			return strings.ToUpper(s), nil
+func FuzzMapWhile(f *testing.F) {
+	testutils.AddByteSlices(f)
+
+	f.Fuzz(func(t *testing.T, b []byte) {
+		var v byte
+		var i int
+		for i, v = range b {
+			if v%2 == 0 {
+				break
+			}
 		}
+
+		iter := Elems(b).MapWhileEndo(func(v byte) (byte, error) {
+			if v%2 == 0 {
+				return 0, errors.New("")
+			}
+			return v, nil
+		})
+		assert.Equal(t, b[:i], iter.Collect())
+		_, ok := iter()
+		assert.False(t, ok)
+
+		iter = MapWhile(Elems(b), func(v byte) (byte, error) {
+			if v%2 == 0 {
+				return 0, errors.New("")
+			}
+			return v, nil
+		})
+		assert.Equal(t, b[:i], iter.Collect())
+		_, ok = iter()
+		assert.False(t, ok)
 	})
-
-	assert.Equal(t, []string{"GOOD"}, mappedWhileIter.Collect())
-	assert.Equal(t, []string{"good", "good"}, initialIter.Collect())
-
-	Ints[int]().Take(5).MapWhileEndo(func(i int) (int, error) {
-		return i, nil
-	}).Consume()
 }
 
 func BenchmarkMapWhileEndo(b *testing.B) {
@@ -109,53 +112,37 @@ func BenchmarkMapWhileEndo(b *testing.B) {
 	}).Consume()
 }
 
-func TestMapWhile(t *testing.T) {
-	initialIter := Elems([]string{"long string", "longer string", "short", "long string again"})
-	mappedWhileIter := MapWhile(initialIter, func(s string) (int, error) {
-		l := len(s)
-		if l < 10 {
-			return 0, errors.New("")
-		} else {
-			return l, nil
-		}
-	})
-
-	assert.Equal(t, []int{11, 13}, mappedWhileIter.Collect())
-
-	_, ok := mappedWhileIter()
-
-	assert.False(t, ok)
-	assert.Equal(t, []string{"long string again"}, initialIter.Collect())
-}
-
 func BenchmarkMapWhile(b *testing.B) {
 	MapWhile(Ints[int]().Take(b.N), func(i int) (int, error) {
 		return 0, nil
 	}).Consume()
 }
 
-func TestFlatMapEndo(t *testing.T) {
-	initial := []int{1, 2, 3}
-	iter := Elems(initial).FlatMapEndo(func(i int) Iter[int] {
-		return IntsFrom(i).Take(2)
+func FuzzFlatMap(f *testing.F) {
+	testutils.AddByteSlices(f)
+
+	f.Fuzz(func(t *testing.T, b []byte) {
+		sum := byte(0)
+		for _, v := range b {
+			sum += v
+		}
+
+		expected := make([]byte, sum)
+		i := 0
+		for _, v := range b {
+			p := i
+			for ; i < p+int(v); i++ {
+				expected[i] = v
+			}
+		}
+
+		assert.Equal(t, expected, Elems(b).FlatMapEndo(func(v byte) Iter[byte] {
+			return IntsFromBy(v, 0).Take(int(v))
+		}).Collect())
+		assert.Equal(t, expected, FlatMap(Elems(b), func(v byte) Iter[byte] {
+			return IntsFromBy(v, 0).Take(int(v))
+		}).Collect())
 	})
-
-	actual := iter.Collect()
-	expected := []int{1, 2, 2, 3, 3, 4}
-
-	assert.Equal(t, expected, actual)
-}
-
-func TestFlatMap(t *testing.T) {
-	initial := []string{"alpha", "beta", "gamma"}
-	iter := FlatMap(Elems(initial), func(s string) Iter[rune] {
-		return Runes(s)
-	})
-
-	actualStart := iter.Take(5).Collect()
-	expected := strings.Join(initial, "")
-
-	assert.Equal(t, expected, string(append(actualStart, iter.Collect()...)))
 }
 
 func BenchmarkFlatMapEndo1(b *testing.B) {

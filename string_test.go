@@ -1,13 +1,20 @@
 package iter
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"mtoohey.com/iter/testutils"
 )
 
-func TestRunes(t *testing.T) {
-	assert.Equal(t, []rune{'a', 's', 'd', 'f'}, Runes("asdf").Collect())
+func FuzzRunes(f *testing.F) {
+	testutils.AddStrings(f)
+
+	f.Fuzz(func(t *testing.T, s string) {
+		assert.Equal(t, []rune(s), Runes(s).Collect())
+	})
 }
 
 func BenchmarkRunes(b *testing.B) {
@@ -22,9 +29,18 @@ func BenchmarkRunes(b *testing.B) {
 	Runes(str).Consume()
 }
 
-func TestSplitByRune(t *testing.T) {
-	assert.Equal(t, []string{"", "usr", "bin", "ls"},
-		SplitByRune("/usr/bin/ls", '/').Collect())
+func FuzzSplitByRune(f *testing.F) {
+	f.Add("", ' ')
+	f.Add("        ", ' ')
+	f.Add("/abs/path", '/')
+	f.Add("rel/path", '/')
+	f.Add("สวัสดีส", 'ส')
+	f.Add("なつ", 'つ')
+	f.Add("きたない", 'な')
+
+	f.Fuzz(func(t *testing.T, s string, r rune) {
+		assert.Equal(t, strings.Split(s, string(r)), SplitByRune(s, r).Collect())
+	})
 }
 
 func BenchmarkSplitByRune(b *testing.B) {
@@ -39,13 +55,14 @@ func BenchmarkSplitByRune(b *testing.B) {
 	SplitByRune(str, 'a').Consume()
 }
 
-func TestSplitByString(t *testing.T) {
-	iter := SplitByString("the quick brown fox jumped over the lazy dogs", "the ")
+func FuzzSplitByString(f *testing.F) {
+	f.Add("", "")
+	f.Add("[5, 9, 1, 9, 6]", ", ")
+	f.Add("the quick brown fox jumped over the lazy dogs", "the ")
 
-	actual := iter.Collect()
-	expected := []string{"", "quick brown fox jumped over ", "lazy dogs"}
-
-	assert.Equal(t, expected, actual)
+	f.Fuzz(func(t *testing.T, s1, s2 string) {
+		assert.Equal(t, strings.Split(s1, s2), SplitByString(s1, s2).Collect())
+	})
 }
 
 func BenchmarkSplitByString(b *testing.B) {

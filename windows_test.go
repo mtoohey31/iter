@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
 	"mtoohey.com/iter/testutils"
 )
 
@@ -29,6 +30,16 @@ func FuzzWindows(f *testing.F) {
 			assert.Empty(t, actual)
 		}
 	})
+}
+
+func TestWindows_Panic(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatalf("Windows should've panicked")
+		}
+	}()
+
+	Windows(Elems([]bool{}), 0)
 }
 
 func BenchmarkWindows1(b *testing.B) {

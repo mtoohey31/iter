@@ -4,18 +4,34 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"mtoohey.com/iter/testutils"
 )
 
-func TestPartition(t *testing.T) {
-	actualA, actualB := Ints[int]().Take(4).Partition(func(i int) bool { return i%2 == 0 })
+func FuzzPartition(f *testing.F) {
+	testutils.AddByteSlices(f)
 
-	assert.Equal(t, []int{0, 2}, actualA.Collect())
-	assert.Equal(t, []int{1, 3}, actualB.Collect())
+	f.Fuzz(func(t *testing.T, b []byte) {
+		l, r := Elems(b).Partition(func(v byte) bool { return v%2 == 0 })
 
-	actualA, actualB = Ints[int]().Take(4).Partition(func(i int) bool { return i%2 == 0 })
+		even := []byte{}
+		odd := []byte{}
+		for _, v := range b {
+			if v%2 == 0 {
+				even = append(even, v)
+			} else {
+				odd = append(odd, v)
+			}
+		}
 
-	assert.Equal(t, []int{1, 3}, actualB.Collect())
-	assert.Equal(t, []int{0, 2}, actualA.Collect())
+		assert.Equal(t, even, l.Collect())
+		assert.Equal(t, odd, r.Collect())
+
+		l, r = Elems(b).Partition(func(v byte) bool { return v%2 == 0 })
+
+		assert.Equal(t, odd, r.Collect())
+		assert.Equal(t, even, l.Collect())
+	})
 }
 
 func BenchmarkPartition(b *testing.B) {

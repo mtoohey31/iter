@@ -71,6 +71,12 @@ func FuzzUnzip(f *testing.F) {
 
 		assert.Equal(t, b, l.Collect())
 		assert.Equal(t, bRev, r.Collect())
+
+		i = 0
+		l, r = Unzip(iter)
+
+		assert.Equal(t, bRev, r.Collect())
+		assert.Equal(t, b, l.Collect())
 	})
 }
 

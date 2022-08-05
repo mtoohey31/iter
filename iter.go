@@ -51,7 +51,7 @@ func (i Iter[T]) Consume() {
 // multiple times during the collection process. This can result in poor
 // performance, so CollectInto should be used when possible.
 func (i Iter[T]) Collect() []T {
-	var res []T
+	res := []T{}
 	for {
 		next, ok := i()
 
@@ -295,7 +295,7 @@ func (i Iter[T]) Last() (T, bool) {
 // Nth returns the nth value in the iterator, and a boolean indicating whether
 // the iterator was too short. The provided value of n should be non-negative.
 func (i Iter[T]) Nth(n int) (T, bool) {
-	for j := 0; j < n-1; j++ {
+	for j := 0; j < n; j++ {
 		_, ok := i()
 
 		if !ok {

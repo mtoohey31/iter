@@ -4,11 +4,16 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"mtoohey.com/iter/testutils"
 )
 
-func TestElems(t *testing.T) {
-	expected := []string{"item1", "item2"}
-	assert.Equal(t, expected, Elems(expected).Collect())
+func FuzzElems(f *testing.F) {
+	testutils.AddByteSlices(f)
+
+	f.Fuzz(func(t *testing.T, b []byte) {
+		assert.Equal(t, b, Elems(b).Collect())
+	})
 }
 
 func BenchmarkElems(b *testing.B) {

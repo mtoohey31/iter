@@ -18,12 +18,12 @@ func FuzzCycle(f *testing.F) {
 		if len(b) == 0 {
 			assert.False(t, ok)
 		} else {
-			assert.True(t, ok)
-
-			expected := b
-			expected = append(expected, b...)
-			expected = append(expected, b...)
-			assert.Equal(t, expected, i.Take(len(b)*3).Collect())
+			if assert.True(t, ok) {
+				expected := b
+				expected = append(expected, b...)
+				expected = append(expected, b...)
+				assert.Equal(t, expected, i.Take(len(b)*3).Collect())
+			}
 		}
 	})
 }
