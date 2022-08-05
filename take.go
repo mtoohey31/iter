@@ -12,10 +12,10 @@ func (i Iter[T]) Take(n int) Iter[T] {
 		if curr < n {
 			curr++
 			return i()
-		} else {
-			var z T
-			return z, false
 		}
+
+		var z T
+		return z, false
 	}
 }
 

@@ -27,12 +27,14 @@ func SplitByRune(s string, r rune) Iter[string] {
 			res := runes[index:newIndex]
 			index = newIndex + 1
 			return string(res), true
-		} else if index == len(runes) {
-			index += 1
-			return "", true
-		} else {
-			return "", false
 		}
+
+		if index == len(runes) {
+			index++
+			return "", true
+		}
+
+		return "", false
 	}
 }
 
@@ -49,13 +51,13 @@ func SplitByString(s string, sep string) Iter[string] {
 				res := s[index:]
 				index = len(s)
 				return res, true
-			} else {
-				res := s[index : index+sepIndex]
-				index += sepIndex + len(sep)
-				return res, true
 			}
-		} else {
-			return "", false
+
+			res := s[index : index+sepIndex]
+			index += sepIndex + len(sep)
+			return res, true
 		}
+
+		return "", false
 	}
 }

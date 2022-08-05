@@ -1,8 +1,8 @@
-.PHONY: default ci test test-cov-check test-watch fmt fmt-check godoc-check mdsh mdsh-check
+.PHONY: default ci test test-cov-check test-watch fmt fmt-check revive-check mdsh mdsh-check
 
 default: test-watch
 
-ci: fmt-check godoc-check mdsh-check test-cov-check
+ci: fmt-check revive-check mdsh-check test-cov-check
 
 fmt:
 	gofmt -w .
@@ -10,8 +10,8 @@ fmt:
 fmt-check:
 	test -z "$$(gofmt -l .)"
 
-godoc-check:
-	godoc-coverage .
+revive-check:
+	revive -formatter friendly -set_exit_status
 
 mdsh:
 	mdsh

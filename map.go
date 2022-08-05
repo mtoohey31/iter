@@ -19,10 +19,10 @@ func KVZip[T comparable, U any](m map[T]U) Iter[tuple.T2[T, U]] {
 			next := keys[0]
 			keys = keys[1:]
 			return tuple.New2(next, m[next]), true
-		} else {
-			var z tuple.T2[T, U]
-			return z, false
 		}
+
+		var z tuple.T2[T, U]
+		return z, false
 	}
 }
 
@@ -45,10 +45,10 @@ func KVZipChannelled[T comparable, U any](m map[T]U) Iter[tuple.T2[T, U]] {
 		next, ok := <-keyChan
 		if ok {
 			return next, true
-		} else {
-			var z tuple.T2[T, U]
-			return z, false
 		}
+
+		var z tuple.T2[T, U]
+		return z, false
 	}
 }
 
@@ -65,10 +65,10 @@ func Map[T, U any](i Iter[T], f func(T) U) Iter[U] {
 		next, ok := i()
 		if ok {
 			return f(next), true
-		} else {
-			var z U
-			return z, false
 		}
+
+		var z U
+		return z, false
 	}
 }
 
@@ -88,21 +88,21 @@ func MapWhile[T, U any](i Iter[T], f func(T) (U, error)) Iter[U] {
 		if failed {
 			var z U
 			return z, false
-		} else {
-			next, ok := i()
-			if ok {
-				if mappedNext, err := f(next); err == nil {
-					return mappedNext, true
-				} else {
-					failed = true
-					var z U
-					return z, false
-				}
-			} else {
-				var z U
-				return z, false
-			}
 		}
+
+		next, ok := i()
+		if ok {
+			if mappedNext, err := f(next); err == nil {
+				return mappedNext, true
+			}
+
+			failed = true
+			var z U
+			return z, false
+		}
+
+		var z U
+		return z, false
 	}
 }
 
@@ -128,16 +128,16 @@ func FlatMap[T, U any](i Iter[T], f func(T) Iter[U]) Iter[U] {
 
 		if ok {
 			return next, true
-		} else {
-			nextCurr, ok := i()
-			if ok {
-				curr = f(nextCurr)
-				return self()
-			} else {
-				var z U
-				return z, false
-			}
 		}
+
+		nextCurr, ok := i()
+		if ok {
+			curr = f(nextCurr)
+			return self()
+		}
+
+		var z U
+		return z, false
 	}
 	return self
 }

@@ -10,15 +10,15 @@ func GenWhile[T any](f func() (T, error)) Iter[T] {
 		if failed {
 			var z T
 			return z, false
-		} else {
-			next, err := f()
-			if err == nil {
-				return next, true
-			} else {
-				failed = true
-				return self()
-			}
 		}
+
+		next, err := f()
+		if err == nil {
+			return next, true
+		}
+
+		failed = true
+		return self()
 	}
 	return self
 }

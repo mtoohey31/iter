@@ -158,7 +158,7 @@ func FuzzFold(f *testing.F) {
 	testutils.AddByteSlices(f)
 
 	f.Fuzz(func(t *testing.T, b []byte) {
-		var expected byte = 0
+		expected := byte(0)
 		for _, v := range b {
 			expected += v
 		}

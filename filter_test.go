@@ -47,9 +47,9 @@ func FuzzFilterMap(f *testing.F) {
 		predicate := func(v byte) (byte, error) {
 			if v%2 != 0 {
 				return 0, err
-			} else {
-				return v * 2, nil
 			}
+
+			return v * 2, nil
 		}
 
 		assert.Equal(t, expected, Elems(b).FilterMapEndo(predicate).Collect())
@@ -63,9 +63,9 @@ func BenchmarkFilterMapEndo(b *testing.B) {
 	Ints[int]().FilterMapEndo(func(i int) (int, error) {
 		if i%2 == 0 {
 			return i * 2, nil
-		} else {
-			return 0, err
 		}
+
+		return 0, err
 	}).Take(b.N).Consume()
 }
 
@@ -75,8 +75,8 @@ func BenchmarkFilterMap(b *testing.B) {
 	FilterMap(Ints[int](), func(i int) (int, error) {
 		if i%2 == 0 {
 			return i * 2, nil
-		} else {
-			return 0, err
 		}
+
+		return 0, err
 	}).Take(b.N).Consume()
 }

@@ -10,9 +10,9 @@ func (i Iter[T]) Inspect(f func(T)) Iter[T] {
 		if ok {
 			f(next)
 			return next, true
-		} else {
-			var z T
-			return z, false
 		}
+
+		var z T
+		return z, false
 	}
 }

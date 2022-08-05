@@ -10,9 +10,9 @@ func Min[T constraints.Ordered](oi Iter[T]) (T, bool) {
 	return oi.Reduce(func(curr T, next T) T {
 		if curr < next {
 			return curr
-		} else {
-			return next
 		}
+
+		return next
 	})
 }
 
@@ -30,9 +30,9 @@ func MinByKey[T any, U constraints.Ordered](i Iter[T], key func(T) U) (T, bool) 
 		keyNext := key(next)
 		if curr.V2 < keyNext {
 			return curr
-		} else {
-			return tuple.New2(next, keyNext)
 		}
+
+		return tuple.New2(next, keyNext)
 	}).V1, true
 }
 
@@ -41,9 +41,9 @@ func Max[T constraints.Ordered](oi Iter[T]) (T, bool) {
 	return oi.Reduce(func(curr T, next T) T {
 		if curr > next {
 			return curr
-		} else {
-			return next
 		}
+
+		return next
 	})
 }
 
@@ -61,9 +61,9 @@ func MaxByKey[T any, U constraints.Ordered](i Iter[T], key func(T) U) (T, bool) 
 		keyNext := key(next)
 		if curr.V2 > keyNext {
 			return curr
-		} else {
-			return tuple.New2(next, keyNext)
 		}
+
+		return tuple.New2(next, keyNext)
 	}).V1, true
 }
 

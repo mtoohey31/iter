@@ -56,10 +56,10 @@ func FuzzUnzip(f *testing.F) {
 				res := tuple.New2(b[i], b[len(b)-1-i])
 				i++
 				return res, true
-			} else {
-				var z tuple.T2[byte, byte]
-				return z, false
 			}
+
+			var z tuple.T2[byte, byte]
+			return z, false
 		}
 
 		l, r := Unzip(iter)

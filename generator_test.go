@@ -22,9 +22,9 @@ func FuzzGenWhile(f *testing.F) {
 			u++
 			if u-1 < n {
 				return u - 1, nil
-			} else {
-				return 0, errors.New("")
 			}
+
+			return 0, errors.New("")
 		}).Collect())
 	})
 }

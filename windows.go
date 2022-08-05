@@ -18,19 +18,20 @@ func Windows[T any](i Iter[T], n int) Iter[[]T] {
 		return func() ([]T, bool) {
 			return z, false
 		}
-	} else {
-		return func() ([]T, bool) {
-			next, ok := i()
-			if !ok {
-				var z []T
-				return z, false
-			}
-			window[index] = next
-			index = (index + 1) % n
-			res := make([]T, n)
-			copy(res[0:n-index], window[index:])
-			copy(res[n-index:], window[:index])
-			return res, true
-		}
 	}
+
+	return func() ([]T, bool) {
+		next, ok := i()
+		if !ok {
+			var z []T
+			return z, false
+		}
+		window[index] = next
+		index = (index + 1) % n
+		res := make([]T, n)
+		copy(res[0:n-index], window[index:])
+		copy(res[n-index:], window[:index])
+		return res, true
+	}
+
 }

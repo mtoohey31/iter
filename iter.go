@@ -308,10 +308,10 @@ func (i Iter[T]) Nth(n int) (T, bool) {
 
 	if ok {
 		return res, true
-	} else {
-		var z T
-		return z, false
 	}
+
+	var z T
+	return z, false
 }
 
 // TryFoldEndo applies the provided fallible function to the current value
@@ -409,9 +409,9 @@ func Position[T any](i Iter[T], f func(T) bool) int {
 	tup, ok := Enumerate(i).Find(func(tup tuple.T2[int, T]) bool { return f(tup.V2) })
 	if ok {
 		return tup.V1
-	} else {
-		return -1
 	}
+
+	return -1
 }
 
 // Rev produces a new iterator whose values are reversed from those of the

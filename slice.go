@@ -7,9 +7,9 @@ func Elems[T any](s []T) Iter[T] {
 		index++
 		if len(s) > index {
 			return s[index], true
-		} else {
-			var z T
-			return z, false
 		}
+
+		var z T
+		return z, false
 	}
 }

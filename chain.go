@@ -7,8 +7,8 @@ func (i Iter[T]) Chain(o Iter[T]) Iter[T] {
 		next, ok := i()
 		if ok {
 			return next, true
-		} else {
-			return o()
 		}
+
+		return o()
 	}
 }

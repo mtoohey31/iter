@@ -27,15 +27,16 @@ func (i Iter[T]) Cycle() (Iter[T], bool) {
 			if ok {
 				memory = append(memory, next)
 				return next, true
-			} else {
-				index = 0
-				return self()
 			}
-		} else {
-			res := memory[index]
-			index = (index + 1) % len(memory)
-			return res, true
+
+			index = 0
+			return self()
 		}
+
+		res := memory[index]
+		index = (index + 1) % len(memory)
+		return res, true
+
 	}
 	return self, true
 }

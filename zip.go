@@ -10,10 +10,10 @@ func Zip[T, U any](a Iter[T], b Iter[U]) Iter[tuple.T2[T, U]] {
 		nextB, okB := b()
 		if okA && okB {
 			return tuple.New2(nextA, nextB), true
-		} else {
-			var z tuple.T2[T, U]
-			return z, false
 		}
+
+		var z tuple.T2[T, U]
+		return z, false
 	})
 }
 
@@ -42,11 +42,11 @@ func Unzip[T, U any](i Iter[tuple.T2[T, U]]) (Iter[T], Iter[U]) {
 
 				bCache = append(bCache, next.V2)
 				return next.V1, true
-			} else {
-				res := aCache[0]
-				aCache = aCache[1:]
-				return res, true
 			}
+
+			res := aCache[0]
+			aCache = aCache[1:]
+			return res, true
 		}, func() (U, bool) {
 			if len(bCache) == 0 {
 				next, ok := i()
@@ -57,10 +57,10 @@ func Unzip[T, U any](i Iter[tuple.T2[T, U]]) (Iter[T], Iter[U]) {
 
 				aCache = append(aCache, next.V1)
 				return next.V2, true
-			} else {
-				res := bCache[0]
-				bCache = bCache[1:]
-				return res, true
 			}
+
+			res := bCache[0]
+			bCache = bCache[1:]
+			return res, true
 		}
 }
