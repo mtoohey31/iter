@@ -11,7 +11,7 @@ fmt-check:
 	test -z "$$(gofmt -l .)"
 
 revive-check:
-	revive -formatter friendly -set_exit_status
+	revive -formatter friendly -set_exit_status -exclude ./testutils ./...
 
 mdsh:
 	mdsh
