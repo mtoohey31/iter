@@ -12,7 +12,7 @@ import (
 	"fmt"
 	"strings"
 
-	"mtoohey.com/iter"
+	"mtoohey.com/iter/v2"
 )
 
 func main() {

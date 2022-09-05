@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"mtoohey.com/iter/testutils"
+	"mtoohey.com/iter/v2/testutils"
 )
 
 func FuzzGenWhile(f *testing.F) {
