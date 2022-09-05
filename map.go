@@ -2,12 +2,11 @@ package iter
 
 import "github.com/barweiss/go-tuple"
 
-// KVZip returns an iterator that yields tuples of the input map's keys and
-// values. While the value lookup occurs lazily, the keys must be accumulated
-// immediately when the iterator is created, so this operation can be
-// expensive, both in terms of time as well as memory, especially if your keys
-// are large. If this is a problem, see KVZip.
-func KVZip[T comparable, U any](m map[T]U) Iter[tuple.T2[T, U]] {
+// KVZipStrict returns an iterator that yields tuples of the input map's
+// keys and values. While the value lookup occurs lazily, the keys must be
+// accumulated immediately when the iterator is created, so this operation can
+// be expensive for large maps. If this is a problem, see KVZipLazy.
+func KVZipStrict[T comparable, U any](m map[T]U) Iter[tuple.T2[T, U]] {
 	var keys []T
 
 	for key := range m {
@@ -26,12 +25,14 @@ func KVZip[T comparable, U any](m map[T]U) Iter[tuple.T2[T, U]] {
 	}
 }
 
-// KVZipChannelled returns an iterator that yields tuples of the input map's
-// keys and values. This function uses a channel and a goroutine to channel
-// the key values, so you must consume the whole iterator, otherwise garbage
-// goroutines will be left sitting around. Unless you're tight on memory, you
-// should use KVZip.
-func KVZipChannelled[T comparable, U any](m map[T]U) Iter[tuple.T2[T, U]] {
+// KVZipLazy returns an iterator that yields tuples of the input map's
+// keys and values. This function uses a channel and a goroutine to manage key
+// values lazily. Warning: if you don't consume the whole iterator, you will end
+// up leaking a goroutine:
+// https://www.ardanlabs.com/blog/2018/11/goroutine-leaks-the-forgotten-sender.html.
+// Unless you're dealing with large maps where strict evaluation of keys may be
+// problematic, KVZipStrict is recommended.
+func KVZipLazy[T comparable, U any](m map[T]U) Iter[tuple.T2[T, U]] {
 	keyChan := make(chan tuple.T2[T, U])
 
 	go func() {

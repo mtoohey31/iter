@@ -21,25 +21,25 @@ func FuzzKVZip(f *testing.F) {
 			expected[i] = tuple.New2(i, v)
 		}
 
-		assert.ElementsMatch(t, expected, KVZip(m).Collect())
-		assert.ElementsMatch(t, expected, KVZipChannelled(m).Collect())
+		assert.ElementsMatch(t, expected, KVZipStrict(m).Collect())
+		assert.ElementsMatch(t, expected, KVZipLazy(m).Collect())
 	})
 }
 
-func BenchmarkKVZip(b *testing.B) {
+func BenchmarkKVZipStrict(b *testing.B) {
 	m := make(map[int]int)
 	for i := 0; i < b.N; i++ {
 		m[i] = i
 	}
-	KVZip(m).Consume()
+	KVZipStrict(m).Consume()
 }
 
-func BenchmarkKVZipChannelled(b *testing.B) {
+func BenchmarkKVZipLazy(b *testing.B) {
 	m := make(map[int]int)
 	for i := 0; i < b.N; i++ {
 		m[i] = i
 	}
-	KVZipChannelled(m).Consume()
+	KVZipLazy(m).Consume()
 }
 
 func FuzzMap(f *testing.F) {
