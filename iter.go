@@ -8,15 +8,16 @@ should assume that any function which accepts an iterator, but does not return
 one, consumes it unless otherwise stated, meaning that the values contained
 within cannot be used again.
 
-Methods with names suffixed by Endo indicate that the method transforms
-iterators of generic type T to some type in terms of T, such as T or Iter[T].
-Transformation between types is possible, but only through the corresponding
-function whose name is identical to the method, without the Endo prefix.
-Functions are required for these operations because Go does not support the
-definition of type parameters on methods. The nomenclature comes from the term
-endomorphism, though it is a bit of a misuse of the term in that some *Endo
-methods take extra parameters or return types derived from T other than
-Iter[T].
+It might seem as though this package's API contains some duplicate
+functionality, since there are many functions that appear to do the same thing
+as methods of the same names defined on Iter[T]. However, there is an important
+difference between these functions and their method counterparts. Since Go
+does not support type parameters on methods, (Iter[T]).Map can only return
+Iter[T] (an iterator of the same type as the input iterator). Map does not have
+this limitation; it can map from an Iter[T] to an Iter[U] (an iterator with a
+different type than the input iterator). The method versions are still provided
+even though their functionality is a strict subset of that of the function
+versions because using methods when possible results in more readable code.
 */
 package iter
 
@@ -27,8 +28,8 @@ import (
 )
 
 // Iter is a generic iterator function, the basis of this whole package. Note
-// that the typical iter.Next() method is replaced with iter(), since Iter
-// is simply defined as func() (T, bool).
+// that the typical iter.Next() method is replaced with iter(), since Iter is
+// simply defined as func() (T, bool).
 type Iter[T any] func() (T, bool)
 
 // Consume fetches the next value of the iterator until no more values are
@@ -47,8 +48,8 @@ func (i Iter[T]) Consume() {
 
 // Collect fetches the next value of the iterator until no more values are
 // found, places these values in a slice, and returns it. Note that since
-// Collect does not know how many values it will find, it must resize the slice
-// multiple times during the collection process. This can result in poor
+// Collect does not know how many values it will find, it must resize the
+// slice multiple times during the collection process. This can result in poor
 // performance, so CollectInto should be used when possible.
 func (i Iter[T]) Collect() []T {
 	res := []T{}
@@ -151,10 +152,10 @@ func (i Iter[T]) Find(f func(T) bool) (T, bool) {
 	return z, false
 }
 
-// FindMapEndo returns the first transformed value in the iterator for which
-// the provided function does not return an error. As with Find, it consumes
-// all values up to the first passing one.
-func (i Iter[T]) FindMapEndo(f func(T) (T, error)) (T, bool) {
+// FindMap returns the first transformed value in the iterator for which the
+// provided function does not return an error. As with Find, it consumes all
+// values up to the first passing one.
+func (i Iter[T]) FindMap(f func(T) (T, error)) (T, bool) {
 	for {
 		next, ok := i()
 
@@ -191,10 +192,10 @@ func FindMap[T, U any](i Iter[T], f func(T) (U, error)) (U, bool) {
 	return z, false
 }
 
-// FoldEndo repeatedly applies the provided function to the current value
-// (starting with init) and the next value of the iterator, until the whole
-// iterator is consumed.
-func (i Iter[T]) FoldEndo(init T, f func(curr T, next T) T) T {
+// Fold repeatedly applies the provided function to the current value (starting
+// with init) and the next value of the iterator, until the whole iterator
+// is consumed.
+func (i Iter[T]) Fold(init T, f func(curr T, next T) T) T {
 	curr := init
 
 	for {
@@ -211,8 +212,8 @@ func (i Iter[T]) FoldEndo(init T, f func(curr T, next T) T) T {
 }
 
 // Fold repeatedly applies the provided function to the current value (starting
-// with init) and the next value of the iterator, until the whole iterator is
-// consumed.
+// with init) and the next value of the iterator, until the whole iterator
+// is consumed.
 func Fold[T, U any](i Iter[T], init U, f func(curr U, next T) U) U {
 	curr := init
 
@@ -243,10 +244,10 @@ func (i Iter[T]) ForEach(f func(T)) {
 	}
 }
 
-// ForEachParallel applies the provided function to all remaining values in the
-// current iterator. It differs from ForEach in that, where ForEach runs on a
-// single thread and waits for each execution of the function to complete
-// before fetching the next value and calling the function again,
+// ForEachParallel applies the provided function to all remaining values
+// in the current iterator. It differs from ForEach in that, where ForEach
+// runs on a single thread and waits for each execution of the function to
+// complete before fetching the next value and calling the function again,
 // ForEachParallel performs executions of the function on different threads and
 // only waits for all executions at the end. When the function to be executed
 // is expensive and the order in which values of the iterator are operated upon
@@ -314,11 +315,11 @@ func (i Iter[T]) Nth(n int) (T, bool) {
 	return z, false
 }
 
-// TryFoldEndo applies the provided fallible function to the current value
+// TryFold applies the provided fallible function to the current value
 // (starting with init) and the next value of the iterator, until the whole
 // iterator is consumed. If at any point an error is returned, the operation
 // stops and that error is returned.
-func (i Iter[T]) TryFoldEndo(init T, f func(curr T, next T) (T, error)) (T, error) {
+func (i Iter[T]) TryFold(init T, f func(curr T, next T) (T, error)) (T, error) {
 	curr := init
 
 	for {
@@ -398,7 +399,7 @@ func (i Iter[T]) Reduce(f func(curr T, next T) T) (T, bool) {
 		return z, false
 	}
 
-	return i.FoldEndo(curr, f), true
+	return i.Fold(curr, f), true
 }
 
 // Position returns the index of the first element satisfying the provided

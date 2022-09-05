@@ -128,7 +128,7 @@ func FuzzFindMap(f *testing.F) {
 	testutils.AddByteSliceUintPairs(f)
 
 	f.Fuzz(func(t *testing.T, b []byte, n uint) {
-		actual, ok := Zip(Elems(b), Ints[uint]()).FindMapEndo(
+		actual, ok := Zip(Elems(b), Ints[uint]()).FindMap(
 			func(t tuple.T2[byte, uint]) (tuple.T2[byte, uint], error) {
 				if t.V2 == n {
 					return tuple.New2(t.V1+1, t.V2+1), nil
@@ -163,7 +163,7 @@ func FuzzFold(f *testing.F) {
 			expected += v
 		}
 
-		assert.Equal(t, expected, Elems(b).FoldEndo(0, func(sum, v byte) byte {
+		assert.Equal(t, expected, Elems(b).Fold(0, func(sum, v byte) byte {
 			return sum + v
 		}))
 		assert.Equal(t, expected, Fold(Elems(b), 0, func(sum, v byte) byte {
@@ -172,8 +172,8 @@ func FuzzFold(f *testing.F) {
 	})
 }
 
-func BenchmarkIter_FoldEndo(b *testing.B) {
-	Ints[int]().Take(uint(b.N)).FoldEndo(0, func(p, n int) int {
+func BenchmarkIter_Fold(b *testing.B) {
+	Ints[int]().Take(uint(b.N)).Fold(0, func(p, n int) int {
 		return p + n
 	})
 }
@@ -268,7 +268,7 @@ func FuzzTryFold(f *testing.F) {
 			expected += i
 		}
 
-		actual, actualErr := Ints[int]().Take(uint(n)).TryFoldEndo(0, func(sum, v int) (int, error) {
+		actual, actualErr := Ints[int]().Take(uint(n)).TryFold(0, func(sum, v int) (int, error) {
 			if b {
 				return 0, err
 			}
@@ -302,8 +302,8 @@ func FuzzTryFold(f *testing.F) {
 	})
 }
 
-func BenchmarkIter_TryFoldEndo(b *testing.B) {
-	Ints[int]().Take(uint(b.N)).TryFoldEndo(0, func(curr, next int) (int, error) {
+func BenchmarkIter_TryFold(b *testing.B) {
+	Ints[int]().Take(uint(b.N)).TryFold(0, func(curr, next int) (int, error) {
 		return 0, nil
 	})
 }

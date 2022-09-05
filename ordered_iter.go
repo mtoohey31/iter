@@ -70,5 +70,5 @@ func MaxByKey[T any, U constraints.Ordered](i Iter[T], key func(T) U) (T, bool) 
 // Sum returns the sum of all the values in the provided iterator.
 func Sum[T constraints.Ordered](oi Iter[T]) T {
 	var z T
-	return oi.FoldEndo(z, func(curr, next T) T { return curr + next })
+	return oi.Fold(z, func(curr, next T) T { return curr + next })
 }

@@ -27,8 +27,8 @@ func KVZip[T comparable, U any](m map[T]U) Iter[tuple.T2[T, U]] {
 }
 
 // KVZipChannelled returns an iterator that yields tuples of the input map's
-// keys and values. This function uses a channel and a goroutine to channel the
-// key values, so you must consume the whole iterator, otherwise garbage
+// keys and values. This function uses a channel and a goroutine to channel
+// the key values, so you must consume the whole iterator, otherwise garbage
 // goroutines will be left sitting around. Unless you're tight on memory, you
 // should use KVZip.
 func KVZipChannelled[T comparable, U any](m map[T]U) Iter[tuple.T2[T, U]] {
@@ -52,9 +52,9 @@ func KVZipChannelled[T comparable, U any](m map[T]U) Iter[tuple.T2[T, U]] {
 	}
 }
 
-// MapEndo returns a new iterator that yields the results of applying the
-// provided function to the input iterator.
-func (i Iter[T]) MapEndo(f func(T) T) Iter[T] {
+// Map returns a new iterator that yields the results of applying the provided
+// function to the input iterator.
+func (i Iter[T]) Map(f func(T) T) Iter[T] {
 	return Map(i, f)
 }
 
@@ -72,10 +72,10 @@ func Map[T, U any](i Iter[T], f func(T) U) Iter[U] {
 	}
 }
 
-// MapWhileEndo returns a new iterator that yields the values produced by
-// applying the provided function to the values of the input iterator, until
-// the first error occurs. At that point, no further values are returned.
-func (i Iter[T]) MapWhileEndo(f func(T) (T, error)) Iter[T] {
+// MapWhile returns a new iterator that yields the values produced by applying
+// the provided function to the values of the input iterator, until the first
+// error occurs. At that point, no further values are returned.
+func (i Iter[T]) MapWhile(f func(T) (T, error)) Iter[T] {
 	return MapWhile(i, f)
 }
 
@@ -106,10 +106,10 @@ func MapWhile[T, U any](i Iter[T], f func(T) (U, error)) Iter[U] {
 	}
 }
 
-// FlatMapEndo returns a new iterator that yields the values produced by
-// iterators returned by the provided function when it is applied to values
-// from the input iterator.
-func (i Iter[T]) FlatMapEndo(f func(T) Iter[T]) Iter[T] {
+// FlatMap returns a new iterator that yields the values produced by iterators
+// returned by the provided function when it is applied to values from the
+// input iterator.
+func (i Iter[T]) FlatMap(f func(T) Iter[T]) Iter[T] {
 	return FlatMap(i, f)
 }
 

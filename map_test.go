@@ -51,7 +51,7 @@ func FuzzMap(f *testing.F) {
 			expected[i] = v + byte(n)
 		}
 
-		assert.Equal(t, expected, Elems(b).MapEndo(func(v byte) byte {
+		assert.Equal(t, expected, Elems(b).Map(func(v byte) byte {
 			return v + byte(n)
 		}).Collect())
 		assert.Equal(t, expected, Map(Elems(b), func(v byte) byte {
@@ -60,8 +60,8 @@ func FuzzMap(f *testing.F) {
 	})
 }
 
-func BenchmarkIter_MapEndo(b *testing.B) {
-	Ints[int]().Take(uint(b.N)).MapEndo(func(i int) int {
+func BenchmarkIter_Map(b *testing.B) {
+	Ints[int]().Take(uint(b.N)).Map(func(i int) int {
 		return i
 	}).Consume()
 }
@@ -84,7 +84,7 @@ func FuzzMapWhile(f *testing.F) {
 			}
 		}
 
-		iter := Elems(b).MapWhileEndo(func(v byte) (byte, error) {
+		iter := Elems(b).MapWhile(func(v byte) (byte, error) {
 			if v%2 == 0 {
 				return 0, errors.New("")
 			}
@@ -106,8 +106,8 @@ func FuzzMapWhile(f *testing.F) {
 	})
 }
 
-func BenchmarkIter_MapWhileEndo(b *testing.B) {
-	Ints[int]().Take(uint(b.N)).MapWhileEndo(func(i int) (int, error) {
+func BenchmarkIter_MapWhile(b *testing.B) {
+	Ints[int]().Take(uint(b.N)).MapWhile(func(i int) (int, error) {
 		return 0, nil
 	}).Consume()
 }
@@ -136,7 +136,7 @@ func FuzzFlatMap(f *testing.F) {
 			}
 		}
 
-		assert.Equal(t, expected, Elems(b).FlatMapEndo(func(v byte) Iter[byte] {
+		assert.Equal(t, expected, Elems(b).FlatMap(func(v byte) Iter[byte] {
 			return IntsFromBy(v, 0).Take(uint(v))
 		}).Collect())
 		assert.Equal(t, expected, FlatMap(Elems(b), func(v byte) Iter[byte] {
@@ -145,32 +145,32 @@ func FuzzFlatMap(f *testing.F) {
 	})
 }
 
-func BenchmarkIter_FlatMapEndo_1(b *testing.B) {
-	Ints[int]().FlatMapEndo(func(i int) Iter[int] {
+func BenchmarkIter_FlatMap_1(b *testing.B) {
+	Ints[int]().FlatMap(func(i int) Iter[int] {
 		return IntsFrom(i).Take(1)
 	}).Take(uint(b.N)).Consume()
 }
 
-func BenchmarkIter_FlatMapEndo_100(b *testing.B) {
-	Ints[int]().FlatMapEndo(func(i int) Iter[int] {
+func BenchmarkIter_FlatMap_100(b *testing.B) {
+	Ints[int]().FlatMap(func(i int) Iter[int] {
 		return IntsFrom(i).Take(100)
 	}).Take(uint(b.N)).Consume()
 }
 
-func BenchmarkIter_FlatMapEndo_quarter(b *testing.B) {
-	Ints[int]().FlatMapEndo(func(i int) Iter[int] {
+func BenchmarkIter_FlatMap_quarter(b *testing.B) {
+	Ints[int]().FlatMap(func(i int) Iter[int] {
 		return IntsFrom(i).Take(1 + uint(b.N)/4)
 	}).Take(uint(b.N)).Consume()
 }
 
-func BenchmarkIter_FlatMapEndo_half(b *testing.B) {
-	Ints[int]().FlatMapEndo(func(i int) Iter[int] {
+func BenchmarkIter_FlatMap_half(b *testing.B) {
+	Ints[int]().FlatMap(func(i int) Iter[int] {
 		return IntsFrom(i).Take(1 + uint(b.N)/2)
 	}).Take(uint(b.N)).Consume()
 }
 
-func BenchmarkIter_FlatMapEndo_full(b *testing.B) {
-	Ints[int]().FlatMapEndo(func(i int) Iter[int] {
+func BenchmarkIter_FlatMap_full(b *testing.B) {
+	Ints[int]().FlatMap(func(i int) Iter[int] {
 		return IntsFrom(i).Take(1 + uint(b.N))
 	}).Take(uint(b.N)).Consume()
 }

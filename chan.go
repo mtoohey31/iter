@@ -1,9 +1,9 @@
 package iter
 
-// Receive returns an iterator that reads values from the provided channel, and is
-// exhausted when the channel is closed. Note that since this iterator reads
-// from a channel, every time the next value is requested the program may end
-// up deadlocking if values have not been written: the same rules apply as
+// Receive returns an iterator that reads values from the provided channel,
+// and is exhausted when the channel is closed. Note that since this iterator
+// reads from a channel, every time the next value is requested the program may
+// end up deadlocking if values have not been written: the same rules apply as
 // those for reading from a channel in the usual manner.
 func Receive[T any](ch *chan T) Iter[T] {
 	return func() (T, bool) {

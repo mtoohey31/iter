@@ -52,15 +52,15 @@ func FuzzFilterMap(f *testing.F) {
 			return v * 2, nil
 		}
 
-		assert.Equal(t, expected, Elems(b).FilterMapEndo(predicate).Collect())
+		assert.Equal(t, expected, Elems(b).FilterMap(predicate).Collect())
 		assert.Equal(t, expected, FilterMap(Elems(b), predicate).Collect())
 	})
 }
 
-func BenchmarkIter_FilterMapEndo(b *testing.B) {
+func BenchmarkIter_FilterMap(b *testing.B) {
 	err := errors.New("")
 
-	Ints[int]().FilterMapEndo(func(i int) (int, error) {
+	Ints[int]().FilterMap(func(i int) (int, error) {
 		if i%2 == 0 {
 			return i * 2, nil
 		}

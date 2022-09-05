@@ -24,8 +24,8 @@ func Enumerate[T any](i Iter[T]) Iter[tuple.T2[int, T]] {
 }
 
 // Unzip returns two iterators, one yielding the left values of the tuples
-// yielded by the input iterator, the other yielding the right values of the
-// tuples. Note that, while the input iterator is evaluated lazily,
+// yielded by the input iterator, the other yielding the right values of
+// the tuples. Note that, while the input iterator is evaluated lazily,
 // exceptionally inequal consumption of the left vs the right iterator can lead
 // to high memory consumption by values cached for the other iterator.
 func Unzip[T, U any](i Iter[tuple.T2[T, U]]) (Iter[T], Iter[U]) {
