@@ -21,11 +21,7 @@ versions because using methods when possible results in more readable code.
 */
 package iter
 
-import (
-	"sync"
-
-	"github.com/barweiss/go-tuple"
-)
+import "sync"
 
 // Iter is a generic iterator function, the basis of this whole package. Note
 // that the typical iter.Next() method is replaced with iter(), since Iter is
@@ -402,17 +398,22 @@ func (i Iter[T]) Reduce(f func(curr T, next T) T) (T, bool) {
 	return i.Fold(curr, f), true
 }
 
-// Position returns the index of the first element satisfying the provided
-// function, or -1 if one is not found. It consumes every element up to and
-// including the element that satisfies the function, or the whole iterator if
-// no no satisfactory element is found.
-func Position[T any](i Iter[T], f func(T) bool) int {
-	tup, ok := Enumerate(i).Find(func(tup tuple.T2[int, T]) bool { return f(tup.V2) })
-	if ok {
-		return tup.V1
-	}
+// Pos returns the index of the first element satisfying the provided function,
+// or -1 if one is not found. It consumes every element up to and including
+// the element that satisfies the function, or the whole iterator if no no
+// satisfactory element is found.
+func (i Iter[T]) Pos(f func(T) bool) int {
+	for j := 0; ; j++ {
+		next, ok := i()
 
-	return -1
+		if !ok {
+			return -1
+		}
+
+		if f(next) {
+			return j
+		}
+	}
 }
 
 // Rev produces a new iterator whose values are reversed from those of the

@@ -381,24 +381,24 @@ func BenchmarkIter_Reduce(b *testing.B) {
 	})
 }
 
-func FuzzPosition(f *testing.F) {
+func FuzzIter_Pos(f *testing.F) {
 	testutils.AddByteSlices(f)
 
 	f.Fuzz(func(t *testing.T, b []byte) {
 		iter := Elems(b)
 		for _, v1 := range b {
-			if !assert.Zero(t, Position(iter, func(v2 byte) bool {
+			if !assert.Zero(t, iter.Pos(func(v2 byte) bool {
 				return v1 == v2
 			})) {
 				break
 			}
 		}
-		assert.Equal(t, -1, Position(iter, func(byte) bool { return true }))
+		assert.Equal(t, -1, iter.Pos(func(byte) bool { return true }))
 	})
 }
 
-func BenchmarkPosition(b *testing.B) {
-	Position(Ints[int](), func(i int) bool { return i == b.N })
+func BenchmarkIter_Pos(b *testing.B) {
+	Ints[int]().Pos(func(i int) bool { return i == b.N })
 }
 
 func FuzzIter_Rev(f *testing.F) {
