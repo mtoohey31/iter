@@ -118,10 +118,7 @@ func (i Iter[T]) FlatMap(f func(T) Iter[T]) Iter[T] {
 // returned by the provided function when it is applied to values from the
 // input iterator.
 func FlatMap[T, U any](i Iter[T], f func(T) Iter[U]) Iter[U] {
-	curr := func() (U, bool) {
-		var z U
-		return z, false
-	}
+	curr := Empty[U]()
 
 	var self Iter[U]
 	self = func() (U, bool) {

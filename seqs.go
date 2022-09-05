@@ -8,10 +8,7 @@ func Seqs[T any](i Iter[T], n uint) Iter[[]T] {
 	index := int(n)
 
 	if i.CollectInto(buf[0:index]) < m-1 {
-		return func() ([]T, bool) {
-			var z []T
-			return z, false
-		}
+		return Empty[[]T]()
 	}
 
 	return func() ([]T, bool) {
