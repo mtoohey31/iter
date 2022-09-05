@@ -29,7 +29,7 @@ func FuzzIter_Filter(f *testing.F) {
 func BenchmarkIter_Filter(b *testing.B) {
 	Ints[int]().Filter(func(i int) bool {
 		return i%2 == 0
-	}).Take(b.N).Consume()
+	}).Take(uint(b.N)).Consume()
 }
 
 func FuzzFilterMap(f *testing.F) {
@@ -66,7 +66,7 @@ func BenchmarkIter_FilterMapEndo(b *testing.B) {
 		}
 
 		return 0, err
-	}).Take(b.N).Consume()
+	}).Take(uint(b.N)).Consume()
 }
 
 func BenchmarkFilterMap(b *testing.B) {
@@ -78,5 +78,5 @@ func BenchmarkFilterMap(b *testing.B) {
 		}
 
 		return 0, err
-	}).Take(b.N).Consume()
+	}).Take(uint(b.N)).Consume()
 }

@@ -62,7 +62,7 @@ func BenchmarkIter_Send(b *testing.B) {
 	ch := make(chan int)
 
 	go func() {
-		Ints[int]().Take(b.N).Send(&ch)
+		Ints[int]().Take(uint(b.N)).Send(&ch)
 		close(ch)
 	}()
 

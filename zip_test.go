@@ -25,7 +25,7 @@ func FuzzZip(f *testing.F) {
 }
 
 func BenchmarkZip(b *testing.B) {
-	Zip(Ints[int](), Ints[int]()).Take(b.N).Consume()
+	Zip(Ints[int](), Ints[int]()).Take(uint(b.N)).Consume()
 }
 
 func FuzzEnumerate(f *testing.F) {
@@ -43,7 +43,7 @@ func FuzzEnumerate(f *testing.F) {
 }
 
 func BenchmarkEnumerate(b *testing.B) {
-	Enumerate(Ints[int]()).Take(b.N).Consume()
+	Enumerate(Ints[int]()).Take(uint(b.N)).Consume()
 }
 
 func FuzzUnzip(f *testing.F) {
@@ -83,6 +83,6 @@ func FuzzUnzip(f *testing.F) {
 func BenchmarkUnzip(b *testing.B) {
 	v1, v2 := Unzip(Zip(Ints[int](), Ints[int]()))
 
-	v1.Take(b.N).Consume()
-	v2.Take(b.N).Consume()
+	v1.Take(uint(b.N)).Consume()
+	v2.Take(uint(b.N)).Consume()
 }

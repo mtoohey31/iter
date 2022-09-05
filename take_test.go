@@ -18,12 +18,12 @@ func FuzzIter_Take(f *testing.F) {
 		} else {
 			expected = b
 		}
-		assert.Equal(t, expected, Elems(b).Take(int(n)).Collect())
+		assert.Equal(t, expected, Elems(b).Take(n).Collect())
 	})
 }
 
 func BenchmarkIter_Take(b *testing.B) {
-	Ints[int]().Take(b.N).Consume()
+	Ints[int]().Take(uint(b.N)).Consume()
 }
 
 func FuzzIter_TakeWhile(f *testing.F) {

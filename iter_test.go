@@ -20,7 +20,7 @@ func FuzzIter_Collect(f *testing.F) {
 }
 
 func BenchmarkIter_Collect(b *testing.B) {
-	Ints[int]().Take(b.N).Collect()
+	Ints[int]().Take(uint(b.N)).Collect()
 }
 
 func FuzzIter_CollectInto(f *testing.F) {
@@ -68,7 +68,7 @@ func FuzzIter_All(f *testing.F) {
 }
 
 func BenchmarkIter_All(b *testing.B) {
-	Ints[int]().Take(b.N).All(func(i int) bool {
+	Ints[int]().Take(uint(b.N)).All(func(i int) bool {
 		return i >= 0
 	})
 }
@@ -93,7 +93,7 @@ func FuzzIter_Any(f *testing.F) {
 }
 
 func BenchmarkIter_Any(b *testing.B) {
-	Ints[int]().Take(b.N).Any(func(i int) bool {
+	Ints[int]().Take(uint(b.N)).Any(func(i int) bool {
 		return i < 0
 	})
 }
@@ -102,12 +102,12 @@ func FuzzIter_Count(f *testing.F) {
 	testutils.AddUints(f)
 
 	f.Fuzz(func(t *testing.T, n uint) {
-		assert.Equal(t, int(n), Ints[int]().Take(int(n)).Count())
+		assert.Equal(t, int(n), Ints[int]().Take(n).Count())
 	})
 }
 
 func BenchmarkIter_Count(b *testing.B) {
-	Ints[int]().Take(b.N).Count()
+	Ints[int]().Take(uint(b.N)).Count()
 }
 
 func FuzzIter_Find(f *testing.F) {
@@ -173,13 +173,13 @@ func FuzzFold(f *testing.F) {
 }
 
 func BenchmarkIter_FoldEndo(b *testing.B) {
-	Ints[int]().Take(b.N).FoldEndo(0, func(p, n int) int {
+	Ints[int]().Take(uint(b.N)).FoldEndo(0, func(p, n int) int {
 		return p + n
 	})
 }
 
 func BenchmarkFold(b *testing.B) {
-	Fold(Ints[int]().Take(b.N), 0, func(p, n int) int {
+	Fold(Ints[int]().Take(uint(b.N)), 0, func(p, n int) int {
 		return p + n
 	})
 }
@@ -209,11 +209,11 @@ func FuzzIter_ForEach(f *testing.F) {
 }
 
 func BenchmarkIter_ForEach(b *testing.B) {
-	Ints[int]().Take(b.N).ForEach(func(i int) {})
+	Ints[int]().Take(uint(b.N)).ForEach(func(i int) {})
 }
 
 func BenchmarkIter_ForEachParallel(b *testing.B) {
-	Ints[int]().Take(b.N).ForEachParallel(func(i int) {})
+	Ints[int]().Take(uint(b.N)).ForEachParallel(func(i int) {})
 }
 
 func FuzzIter_Last(f *testing.F) {
@@ -231,7 +231,7 @@ func FuzzIter_Last(f *testing.F) {
 }
 
 func BenchmarkIter_Last(b *testing.B) {
-	Ints[int]().Take(b.N).Last()
+	Ints[int]().Take(uint(b.N)).Last()
 }
 
 func FuzzIter_Nth(f *testing.F) {
@@ -268,7 +268,7 @@ func FuzzTryFold(f *testing.F) {
 			expected += i
 		}
 
-		actual, actualErr := Ints[int]().Take(n).TryFoldEndo(0, func(sum, v int) (int, error) {
+		actual, actualErr := Ints[int]().Take(uint(n)).TryFoldEndo(0, func(sum, v int) (int, error) {
 			if b {
 				return 0, err
 			}
@@ -284,7 +284,7 @@ func FuzzTryFold(f *testing.F) {
 			}
 		}
 
-		actual, actualErr = TryFold(Ints[int]().Take(n), 0, func(sum, v int) (int, error) {
+		actual, actualErr = TryFold(Ints[int]().Take(uint(n)), 0, func(sum, v int) (int, error) {
 			if b {
 				return 0, err
 			}
@@ -303,13 +303,13 @@ func FuzzTryFold(f *testing.F) {
 }
 
 func BenchmarkIter_TryFoldEndo(b *testing.B) {
-	Ints[int]().Take(b.N).TryFoldEndo(0, func(curr, next int) (int, error) {
+	Ints[int]().Take(uint(b.N)).TryFoldEndo(0, func(curr, next int) (int, error) {
 		return 0, nil
 	})
 }
 
 func BenchmarkTryFold(b *testing.B) {
-	TryFold(Ints[int]().Take(b.N), 0, func(curr, next int) (int, error) {
+	TryFold(Ints[int]().Take(uint(b.N)), 0, func(curr, next int) (int, error) {
 		return 0, nil
 	})
 }
@@ -331,7 +331,7 @@ func FuzzIter_TryForEach(f *testing.F) {
 		}
 
 		actual := 0
-		actualErr := Ints[int]().Take(n).TryForEach(func(v int) error {
+		actualErr := Ints[int]().Take(uint(n)).TryForEach(func(v int) error {
 			if b {
 				return err
 			}
@@ -351,7 +351,7 @@ func FuzzIter_TryForEach(f *testing.F) {
 }
 
 func BenchmarkIter_TryForEach(b *testing.B) {
-	Ints[int]().Take(b.N).TryForEach(func(i int) error { return nil })
+	Ints[int]().Take(uint(b.N)).TryForEach(func(i int) error { return nil })
 }
 
 func FuzzIter_Reduce(f *testing.F) {
@@ -363,7 +363,7 @@ func FuzzIter_Reduce(f *testing.F) {
 			expected *= i
 		}
 
-		actual, ok := Ints[int]().Take(int(n)).Reduce(func(prod, v int) int {
+		actual, ok := Ints[int]().Take(n).Reduce(func(prod, v int) int {
 			return prod * v
 		})
 
@@ -376,7 +376,7 @@ func FuzzIter_Reduce(f *testing.F) {
 }
 
 func BenchmarkIter_Reduce(b *testing.B) {
-	Ints[int]().Take(b.N).Reduce(func(p, n int) int {
+	Ints[int]().Take(uint(b.N)).Reduce(func(p, n int) int {
 		return 0
 	})
 }
@@ -415,5 +415,5 @@ func FuzzIter_Rev(f *testing.F) {
 }
 
 func BenchmarkIter_Rev(b *testing.B) {
-	Ints[int]().Take(b.N).Rev()
+	Ints[int]().Take(uint(b.N)).Rev()
 }

@@ -1,12 +1,9 @@
 package iter
 
-// TODO: refactor n to type uint in the next breaking change to enforce its
-// positivity at a type level.
-
 // Take returns an iterator that limits that yields up to (but no more than) n
 // values from the input iterator.
-func (i Iter[T]) Take(n int) Iter[T] {
-	curr := 0
+func (i Iter[T]) Take(n uint) Iter[T] {
+	curr := uint(0)
 
 	return func() (T, bool) {
 		if curr < n {

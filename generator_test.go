@@ -32,5 +32,5 @@ func FuzzGenWhile(f *testing.F) {
 func BenchmarkGenWhile(b *testing.B) {
 	GenWhile(func() (int, error) {
 		return 0, nil
-	}).Take(b.N).Consume()
+	}).Take(uint(b.N)).Consume()
 }

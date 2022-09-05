@@ -32,7 +32,7 @@ func FuzzMin(f *testing.F) {
 }
 
 func BenchmarkMin(b *testing.B) {
-	Min(Ints[int]().Take(b.N))
+	Min(Ints[int]().Take(uint(b.N)))
 }
 
 func FuzzMinByKey(f *testing.F) {
@@ -61,7 +61,7 @@ func FuzzMinByKey(f *testing.F) {
 }
 
 func BenchmarkMinByKey(b *testing.B) {
-	MinByKey(Ints[int]().Take(b.N), func(n int) int {
+	MinByKey(Ints[int]().Take(uint(b.N)), func(n int) int {
 		return n
 	})
 }
@@ -90,7 +90,7 @@ func FuzzMax(f *testing.F) {
 }
 
 func BenchmarkMax(b *testing.B) {
-	Max(Ints[int]().Take(b.N))
+	Max(Ints[int]().Take(uint(b.N)))
 }
 
 func FuzzMaxByKey(f *testing.F) {
@@ -119,7 +119,7 @@ func FuzzMaxByKey(f *testing.F) {
 }
 
 func BenchmarkMaxByKey(b *testing.B) {
-	MaxByKey(Ints[int]().Take(b.N), func(n int) int {
+	MaxByKey(Ints[int]().Take(uint(b.N)), func(n int) int {
 		return n
 	})
 }
@@ -133,10 +133,10 @@ func FuzzSum(f *testing.F) {
 			expected += i
 		}
 
-		assert.Equal(t, expected, Sum(Ints[uint]().Take(int(n))))
+		assert.Equal(t, expected, Sum(Ints[uint]().Take(n)))
 	})
 }
 
 func BenchmarkSum(b *testing.B) {
-	Sum(Ints[int]().Take(b.N))
+	Sum(Ints[int]().Take(uint(b.N)))
 }

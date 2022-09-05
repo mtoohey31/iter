@@ -21,5 +21,5 @@ func FuzzIter_Inspect(f *testing.F) {
 }
 
 func BenchmarkIter_Inspect(b *testing.B) {
-	Ints[int]().Inspect(func(i int) {}).Take(b.N).Consume()
+	Ints[int]().Inspect(func(i int) {}).Take(uint(b.N)).Consume()
 }

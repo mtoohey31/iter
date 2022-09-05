@@ -22,7 +22,7 @@ func FuzzIter_Cycle(f *testing.F) {
 				expected := b
 				expected = append(expected, b...)
 				expected = append(expected, b...)
-				assert.Equal(t, expected, i.Take(len(b)*3).Collect())
+				assert.Equal(t, expected, i.Take(uint(len(b))*3).Collect())
 			}
 		}
 	})
@@ -30,25 +30,25 @@ func FuzzIter_Cycle(f *testing.F) {
 
 func BenchmarkIter_Cycle_1(b *testing.B) {
 	iter, _ := Ints[int]().Take(1).Cycle()
-	iter.Take(b.N).Consume()
+	iter.Take(uint(b.N)).Consume()
 }
 
 func BenchmarkIter_Cycle_100(b *testing.B) {
 	iter, _ := Ints[int]().Take(100).Cycle()
-	iter.Take(b.N).Consume()
+	iter.Take(uint(b.N)).Consume()
 }
 
 func BenchmarkIter_Cycle_quarter(b *testing.B) {
-	iter, _ := Ints[int]().Take(1 + (b.N / 4)).Cycle()
-	iter.Take(b.N).Consume()
+	iter, _ := Ints[int]().Take(1 + uint(b.N)/4).Cycle()
+	iter.Take(uint(b.N)).Consume()
 }
 
 func BenchmarkIter_Cycle_half(b *testing.B) {
-	iter, _ := Ints[int]().Take(1 + (b.N / 2)).Cycle()
-	iter.Take(b.N).Consume()
+	iter, _ := Ints[int]().Take(1 + uint(b.N)/2).Cycle()
+	iter.Take(uint(b.N)).Consume()
 }
 
 func BenchmarkIter_Cycle_full(b *testing.B) {
-	iter, _ := Ints[int]().Take(1 + b.N).Cycle()
-	iter.Take(b.N).Consume()
+	iter, _ := Ints[int]().Take(1 + uint(b.N)).Cycle()
+	iter.Take(uint(b.N)).Consume()
 }

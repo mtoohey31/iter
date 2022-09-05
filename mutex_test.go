@@ -15,7 +15,7 @@ func FuzzIter_Mutex(f *testing.F) {
 		actual := uint(0)
 		iter := Ints[uint]().Inspect(func(v uint) {
 			actual += v
-		}).Take(int(n)).Mutex()
+		}).Take(n).Mutex()
 
 		done := false
 		for !done {
@@ -32,5 +32,5 @@ func FuzzIter_Mutex(f *testing.F) {
 }
 
 func BenchmarkIter_Mutex(b *testing.B) {
-	Ints[int]().Take(b.N).Mutex().Consume()
+	Ints[int]().Take(uint(b.N)).Mutex().Consume()
 }

@@ -38,6 +38,6 @@ func BenchmarkIter_Partition(b *testing.B) {
 	iterA, iterB := Ints[int]().Partition(func(i int) bool {
 		return i%2 == 0
 	})
-	iterA.Take(b.N).Consume()
-	iterB.Take(b.N).Consume()
+	iterA.Take(uint(b.N)).Consume()
+	iterB.Take(uint(b.N)).Consume()
 }

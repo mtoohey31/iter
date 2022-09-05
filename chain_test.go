@@ -20,5 +20,5 @@ func FuzzIter_Chain(f *testing.F) {
 
 // operations should not take much longer than that of the range iterator
 func BenchmarkIter_Chain(b *testing.B) {
-	Ints[int]().Take(b.N / 2).Chain(IntsFrom(b.N / 2).Take(b.N / 2)).Consume()
+	Ints[int]().Take(uint(b.N) / 2).Chain(IntsFrom(b.N / 2).Take(uint(b.N) / 2)).Consume()
 }
