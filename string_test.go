@@ -3,6 +3,7 @@ package iter
 import (
 	"strings"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
 
@@ -32,6 +33,7 @@ func BenchmarkRunes(b *testing.B) {
 func FuzzSplitByRune(f *testing.F) {
 	f.Add("", ' ')
 	f.Add("        ", ' ')
+	f.Add("water", '.')
 	f.Add("/abs/path", '/')
 	f.Add("rel/path", '/')
 	f.Add("สวัสดีส", 'ส')
@@ -39,6 +41,10 @@ func FuzzSplitByRune(f *testing.F) {
 	f.Add("きたない", 'な')
 
 	f.Fuzz(func(t *testing.T, s string, r rune) {
+		if !utf8.ValidRune(r) {
+			return
+		}
+
 		assert.Equal(t, strings.Split(s, string(r)), SplitByRune(s, r).Collect())
 	})
 }
@@ -57,7 +63,13 @@ func BenchmarkSplitByRune(b *testing.B) {
 
 func FuzzSplitByString(f *testing.F) {
 	f.Add("", "")
+	f.Add("", " ")
+	f.Add("            ", " ")
+	f.Add("\xb0", "")
+	f.Add(string(utf8.RuneError), "")
+	f.Add("water", ".")
 	f.Add("[5, 9, 1, 9, 6]", ", ")
+	f.Add("the quick brown fox jumped over the lazy dogs", "")
 	f.Add("the quick brown fox jumped over the lazy dogs", "the ")
 
 	f.Fuzz(func(t *testing.T, s1, s2 string) {

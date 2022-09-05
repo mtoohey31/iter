@@ -1,6 +1,9 @@
 package testutils
 
-import "testing"
+import (
+	"testing"
+	"unicode/utf8"
+)
 
 func AddByteSlicePairs(f *testing.F) {
 	f.Add([]byte{}, []byte{})
@@ -29,6 +32,8 @@ func AddStrings(f *testing.F) {
 	f.Add("よる")
 	f.Add("こんにちは")
 	f.Add("สวัสดีส")
+	f.Add("\xb0")
+	f.Add(string(utf8.RuneError))
 	f.Add("/")
 	f.Add("/absolute/path")
 	f.Add("relative/path")

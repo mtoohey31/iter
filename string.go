@@ -1,35 +1,48 @@
 package iter
 
-import "strings"
+import (
+	"strings"
+	"unicode/utf8"
+)
 
 // Runes returns an iterator over the runes of the input string.
+// Runes(s).Collect() should be equivalent to []rune(s).
 func Runes(s string) Iter[rune] {
-	return Elems([]rune(s))
+	b := []byte(s)
+	i := 0
+
+	return func() (rune, bool) {
+		if len(b) <= i {
+			var r rune
+			return r, false
+		}
+
+		r, size := utf8.DecodeRune(b[i:])
+		i += size
+		return r, true
+	}
 }
 
 // SplitByRune returns an iterator over the substrings of the input string
-// between occurences of the provided rune.
+// between occurences of the provided rune. SplitByRune(s, r).Collect() should
+// be equivalent to strings.Split(s, string(r)) for valid runes.
 func SplitByRune(s string, r rune) Iter[string] {
-	// TODO: this isn't lazy!
-	runes := []rune(s)
 	index := 0
 
 	return func() (string, bool) {
-		newIndex := index
-		if index < len(runes) {
-			for newIndex < len(runes) {
-				if runes[newIndex] == r {
-					break
-				}
-				newIndex++
+		if index < len(s) {
+			sepIndex := strings.IndexRune(s[index:], r)
+
+			if sepIndex == -1 {
+				res := s[index:]
+				index = len(s) + 1
+				return res, true
 			}
 
-			res := runes[index:newIndex]
-			index = newIndex + 1
-			return string(res), true
-		}
-
-		if index == len(runes) {
+			res := s[index : index+sepIndex]
+			index += sepIndex + utf8.RuneLen(r)
+			return res, true
+		} else if index == len(s) {
 			index++
 			return "", true
 		}
@@ -40,8 +53,31 @@ func SplitByRune(s string, r rune) Iter[string] {
 
 // SplitByString returns an iterator over the substrings of the input string
 // between occurences of the provided separator string.
+// SplitByString(s, sep).Collect() should be equivalent to
+// strings.Split(s, sep).
 func SplitByString(s string, sep string) Iter[string] {
 	index := 0
+
+	if sep == "" {
+		return func() (string, bool) {
+			if index < len(s)-1 {
+				r, size := utf8.DecodeRuneInString(s[index:])
+				prevIndex := index
+				index += size
+
+				if r == utf8.RuneError {
+					return string(utf8.RuneError), true
+				}
+
+				return s[prevIndex:index], true
+			} else if index == len(s)-1 {
+				index++
+				return s[len(s)-1:], true
+			}
+
+			return "", false
+		}
+	}
 
 	return func() (string, bool) {
 		if index < len(s) {
@@ -49,13 +85,16 @@ func SplitByString(s string, sep string) Iter[string] {
 
 			if sepIndex == -1 {
 				res := s[index:]
-				index = len(s)
+				index = len(s) + 1
 				return res, true
 			}
 
 			res := s[index : index+sepIndex]
 			index += sepIndex + len(sep)
 			return res, true
+		} else if index == len(s) {
+			index++
+			return "", true
 		}
 
 		return "", false
