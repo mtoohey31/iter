@@ -8,7 +8,7 @@ import (
 	"mtoohey.com/iter/testutils"
 )
 
-func FuzzChain(f *testing.F) {
+func FuzzIter_Chain(f *testing.F) {
 	testutils.AddByteSlicePairs(f)
 
 	f.Fuzz(func(t *testing.T, b1 []byte, b2 []byte) {
@@ -19,6 +19,6 @@ func FuzzChain(f *testing.F) {
 }
 
 // operations should not take much longer than that of the range iterator
-func BenchmarkChain(b *testing.B) {
+func BenchmarkIter_Chain(b *testing.B) {
 	Ints[int]().Take(b.N / 2).Chain(IntsFrom(b.N / 2).Take(b.N / 2)).Consume()
 }

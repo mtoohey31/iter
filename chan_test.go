@@ -38,7 +38,7 @@ func BenchmarkReceive(b *testing.B) {
 	Receive(&ch).Consume()
 }
 
-func FuzzSend(f *testing.F) {
+func FuzzIter_Send(f *testing.F) {
 	testutils.AddByteSlices(f)
 
 	f.Fuzz(func(t *testing.T, b []byte) {
@@ -58,7 +58,7 @@ func FuzzSend(f *testing.F) {
 	})
 }
 
-func BenchmarkSend(b *testing.B) {
+func BenchmarkIter_Send(b *testing.B) {
 	ch := make(chan int)
 
 	go func() {

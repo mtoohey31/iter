@@ -60,13 +60,13 @@ func FuzzMap(f *testing.F) {
 	})
 }
 
-func BenchmarkMapEndoFunc(b *testing.B) {
+func BenchmarkIter_MapEndo(b *testing.B) {
 	Ints[int]().Take(b.N).MapEndo(func(i int) int {
 		return i
 	}).Consume()
 }
 
-func BenchmarkMapFunc(b *testing.B) {
+func BenchmarkMap(b *testing.B) {
 	Map(Ints[int]().Take(b.N), func(i int) int {
 		return i
 	}).Consume()
@@ -106,7 +106,7 @@ func FuzzMapWhile(f *testing.F) {
 	})
 }
 
-func BenchmarkMapWhileEndo(b *testing.B) {
+func BenchmarkIter_MapWhileEndo(b *testing.B) {
 	Ints[int]().Take(b.N).MapWhileEndo(func(i int) (int, error) {
 		return 0, nil
 	}).Consume()
@@ -145,31 +145,31 @@ func FuzzFlatMap(f *testing.F) {
 	})
 }
 
-func BenchmarkFlatMapEndo1(b *testing.B) {
+func BenchmarkIter_FlatMapEndo_1(b *testing.B) {
 	Ints[int]().FlatMapEndo(func(i int) Iter[int] {
 		return IntsFrom(i).Take(1)
 	}).Take(b.N).Consume()
 }
 
-func BenchmarkFlatMapEndo100(b *testing.B) {
+func BenchmarkIter_FlatMapEndo_100(b *testing.B) {
 	Ints[int]().FlatMapEndo(func(i int) Iter[int] {
 		return IntsFrom(i).Take(100)
 	}).Take(b.N).Consume()
 }
 
-func BenchmarkFlatMapEndoQuarter(b *testing.B) {
+func BenchmarkIter_FlatMapEndo_quarter(b *testing.B) {
 	Ints[int]().FlatMapEndo(func(i int) Iter[int] {
 		return IntsFrom(i).Take(1 + b.N/4)
 	}).Take(b.N).Consume()
 }
 
-func BenchmarkFlatMapEndoHalf(b *testing.B) {
+func BenchmarkIter_FlatMapEndo_half(b *testing.B) {
 	Ints[int]().FlatMapEndo(func(i int) Iter[int] {
 		return IntsFrom(i).Take(1 + b.N/2)
 	}).Take(b.N).Consume()
 }
 
-func BenchmarkFlatMapEndoFull(b *testing.B) {
+func BenchmarkIter_FlatMapEndo_full(b *testing.B) {
 	Ints[int]().FlatMapEndo(func(i int) Iter[int] {
 		return IntsFrom(i).Take(1 + b.N)
 	}).Take(b.N).Consume()

@@ -8,7 +8,7 @@ import (
 	"mtoohey.com/iter/testutils"
 )
 
-func FuzzTake(f *testing.F) {
+func FuzzIter_Take(f *testing.F) {
 	testutils.AddByteSliceUintPairs(f)
 
 	f.Fuzz(func(t *testing.T, b []byte, n uint) {
@@ -22,11 +22,11 @@ func FuzzTake(f *testing.F) {
 	})
 }
 
-func BenchmarkTake(b *testing.B) {
+func BenchmarkIter_Take(b *testing.B) {
 	Ints[int]().Take(b.N).Consume()
 }
 
-func FuzzTakeWhile(f *testing.F) {
+func FuzzIter_TakeWhile(f *testing.F) {
 	testutils.AddUints(f)
 
 	f.Fuzz(func(t *testing.T, n uint) {
@@ -40,7 +40,7 @@ func FuzzTakeWhile(f *testing.F) {
 	})
 }
 
-func BenchmarkTakeWhile(b *testing.B) {
+func BenchmarkIter_TakeWhile(b *testing.B) {
 	Ints[int]().TakeWhile(func(i int) bool {
 		return i < b.N
 	}).Consume()

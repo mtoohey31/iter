@@ -8,7 +8,7 @@ import (
 	"mtoohey.com/iter/testutils"
 )
 
-func FuzzCycle(f *testing.F) {
+func FuzzIter_Cycle(f *testing.F) {
 	testutils.AddByteSlices(f)
 
 	f.Fuzz(func(t *testing.T, b []byte) {
@@ -28,27 +28,27 @@ func FuzzCycle(f *testing.F) {
 	})
 }
 
-func BenchmarkCycle1(b *testing.B) {
+func BenchmarkIter_Cycle_1(b *testing.B) {
 	iter, _ := Ints[int]().Take(1).Cycle()
 	iter.Take(b.N).Consume()
 }
 
-func BenchmarkCycle100(b *testing.B) {
+func BenchmarkIter_Cycle_100(b *testing.B) {
 	iter, _ := Ints[int]().Take(100).Cycle()
 	iter.Take(b.N).Consume()
 }
 
-func BenchmarkCycleQuarter(b *testing.B) {
+func BenchmarkIter_Cycle_quarter(b *testing.B) {
 	iter, _ := Ints[int]().Take(1 + (b.N / 4)).Cycle()
 	iter.Take(b.N).Consume()
 }
 
-func BenchmarkCycleHalf(b *testing.B) {
+func BenchmarkIter_Cycle_half(b *testing.B) {
 	iter, _ := Ints[int]().Take(1 + (b.N / 2)).Cycle()
 	iter.Take(b.N).Consume()
 }
 
-func BenchmarkCycleFull(b *testing.B) {
+func BenchmarkIter_Cycle_full(b *testing.B) {
 	iter, _ := Ints[int]().Take(1 + b.N).Cycle()
 	iter.Take(b.N).Consume()
 }

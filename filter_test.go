@@ -9,7 +9,7 @@ import (
 	"mtoohey.com/iter/testutils"
 )
 
-func FuzzFilter(f *testing.F) {
+func FuzzIter_Filter(f *testing.F) {
 	testutils.AddByteSlices(f)
 
 	f.Fuzz(func(t *testing.T, b []byte) {
@@ -26,7 +26,7 @@ func FuzzFilter(f *testing.F) {
 	})
 }
 
-func BenchmarkFilter(b *testing.B) {
+func BenchmarkIter_Filter(b *testing.B) {
 	Ints[int]().Filter(func(i int) bool {
 		return i%2 == 0
 	}).Take(b.N).Consume()
@@ -57,7 +57,7 @@ func FuzzFilterMap(f *testing.F) {
 	})
 }
 
-func BenchmarkFilterMapEndo(b *testing.B) {
+func BenchmarkIter_FilterMapEndo(b *testing.B) {
 	err := errors.New("")
 
 	Ints[int]().FilterMapEndo(func(i int) (int, error) {

@@ -8,7 +8,7 @@ import (
 	"mtoohey.com/iter/testutils"
 )
 
-func FuzzPartition(f *testing.F) {
+func FuzzIter_Partition(f *testing.F) {
 	testutils.AddByteSlices(f)
 
 	f.Fuzz(func(t *testing.T, b []byte) {
@@ -34,7 +34,7 @@ func FuzzPartition(f *testing.F) {
 	})
 }
 
-func BenchmarkPartition(b *testing.B) {
+func BenchmarkIter_Partition(b *testing.B) {
 	iterA, iterB := Ints[int]().Partition(func(i int) bool {
 		return i%2 == 0
 	})

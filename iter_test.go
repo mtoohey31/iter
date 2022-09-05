@@ -11,7 +11,7 @@ import (
 	"mtoohey.com/iter/testutils"
 )
 
-func FuzzCollect(f *testing.F) {
+func FuzzIter_Collect(f *testing.F) {
 	testutils.AddByteSlices(f)
 
 	f.Fuzz(func(t *testing.T, b []byte) {
@@ -19,11 +19,11 @@ func FuzzCollect(f *testing.F) {
 	})
 }
 
-func BenchmarkCollect(b *testing.B) {
+func BenchmarkIter_Collect(b *testing.B) {
 	Ints[int]().Take(b.N).Collect()
 }
 
-func FuzzCollectInto(f *testing.F) {
+func FuzzIter_CollectInto(f *testing.F) {
 	testutils.AddByteSliceUintPairs(f)
 
 	f.Fuzz(func(t *testing.T, b []byte, n uint) {
@@ -43,12 +43,12 @@ func FuzzCollectInto(f *testing.F) {
 	})
 }
 
-func BenchmarkCollectInto(b *testing.B) {
+func BenchmarkIter_CollectInto(b *testing.B) {
 	slice := make([]int, b.N)
 	Ints[int]().CollectInto(slice)
 }
 
-func FuzzAll(f *testing.F) {
+func FuzzIter_All(f *testing.F) {
 	f.Add([]byte{})
 	f.Add([]byte{1})
 	f.Add([]byte{1, 2, 3, 4})
@@ -67,13 +67,13 @@ func FuzzAll(f *testing.F) {
 	})
 }
 
-func BenchmarkAll(b *testing.B) {
+func BenchmarkIter_All(b *testing.B) {
 	Ints[int]().Take(b.N).All(func(i int) bool {
 		return i >= 0
 	})
 }
 
-func FuzzAny(f *testing.F) {
+func FuzzIter_Any(f *testing.F) {
 	f.Add([]byte{})
 	f.Add([]byte{1})
 	f.Add([]byte{1, 2, 3, 4})
@@ -92,13 +92,13 @@ func FuzzAny(f *testing.F) {
 	})
 }
 
-func BenchmarkAny(b *testing.B) {
+func BenchmarkIter_Any(b *testing.B) {
 	Ints[int]().Take(b.N).Any(func(i int) bool {
 		return i < 0
 	})
 }
 
-func FuzzCount(f *testing.F) {
+func FuzzIter_Count(f *testing.F) {
 	testutils.AddUints(f)
 
 	f.Fuzz(func(t *testing.T, n uint) {
@@ -106,11 +106,11 @@ func FuzzCount(f *testing.F) {
 	})
 }
 
-func BenchmarkCount(b *testing.B) {
+func BenchmarkIter_Count(b *testing.B) {
 	Ints[int]().Take(b.N).Count()
 }
 
-func FuzzFind(f *testing.F) {
+func FuzzIter_Find(f *testing.F) {
 	testutils.AddByteSliceUintPairs(f)
 
 	f.Fuzz(func(t *testing.T, b []byte, n uint) {
@@ -172,7 +172,7 @@ func FuzzFold(f *testing.F) {
 	})
 }
 
-func BenchmarkFoldEndo(b *testing.B) {
+func BenchmarkIter_FoldEndo(b *testing.B) {
 	Ints[int]().Take(b.N).FoldEndo(0, func(p, n int) int {
 		return p + n
 	})
@@ -184,7 +184,7 @@ func BenchmarkFold(b *testing.B) {
 	})
 }
 
-func FuzzForEach(f *testing.F) {
+func FuzzIter_ForEach(f *testing.F) {
 	testutils.AddByteSlices(f)
 
 	f.Fuzz(func(t *testing.T, b []byte) {
@@ -208,15 +208,15 @@ func FuzzForEach(f *testing.F) {
 	})
 }
 
-func BenchmarkForEach(b *testing.B) {
+func BenchmarkIter_ForEach(b *testing.B) {
 	Ints[int]().Take(b.N).ForEach(func(i int) {})
 }
 
-func BenchmarkForEachParallel(b *testing.B) {
+func BenchmarkIter_ForEachParallel(b *testing.B) {
 	Ints[int]().Take(b.N).ForEachParallel(func(i int) {})
 }
 
-func FuzzLast(f *testing.F) {
+func FuzzIter_Last(f *testing.F) {
 	testutils.AddByteSlices(f)
 
 	f.Fuzz(func(t *testing.T, b []byte) {
@@ -230,11 +230,11 @@ func FuzzLast(f *testing.F) {
 	})
 }
 
-func BenchmarkLast(b *testing.B) {
+func BenchmarkIter_Last(b *testing.B) {
 	Ints[int]().Take(b.N).Last()
 }
 
-func FuzzNth(f *testing.F) {
+func FuzzIter_Nth(f *testing.F) {
 	testutils.AddByteSliceUintPairs(f)
 
 	f.Fuzz(func(t *testing.T, b []byte, n uint) {
@@ -248,7 +248,7 @@ func FuzzNth(f *testing.F) {
 	})
 }
 
-func BenchmarkNth(b *testing.B) {
+func BenchmarkIter_Nth(b *testing.B) {
 	Ints[int]().Nth(b.N)
 }
 
@@ -302,7 +302,7 @@ func FuzzTryFold(f *testing.F) {
 	})
 }
 
-func BenchmarkTryFoldEndo(b *testing.B) {
+func BenchmarkIter_TryFoldEndo(b *testing.B) {
 	Ints[int]().Take(b.N).TryFoldEndo(0, func(curr, next int) (int, error) {
 		return 0, nil
 	})
@@ -314,7 +314,7 @@ func BenchmarkTryFold(b *testing.B) {
 	})
 }
 
-func FuzzTryForEach(f *testing.F) {
+func FuzzIter_TryForEach(f *testing.F) {
 	err := errors.New("")
 
 	f.Add(5, true)
@@ -350,11 +350,11 @@ func FuzzTryForEach(f *testing.F) {
 	})
 }
 
-func BenchmarkTryForEach(b *testing.B) {
+func BenchmarkIter_TryForEach(b *testing.B) {
 	Ints[int]().Take(b.N).TryForEach(func(i int) error { return nil })
 }
 
-func FuzzReduce(f *testing.F) {
+func FuzzIter_Reduce(f *testing.F) {
 	testutils.AddUints(f)
 
 	f.Fuzz(func(t *testing.T, n uint) {
@@ -375,7 +375,7 @@ func FuzzReduce(f *testing.F) {
 	})
 }
 
-func BenchmarkReduce(b *testing.B) {
+func BenchmarkIter_Reduce(b *testing.B) {
 	Ints[int]().Take(b.N).Reduce(func(p, n int) int {
 		return 0
 	})
@@ -401,7 +401,7 @@ func BenchmarkPosition(b *testing.B) {
 	Position(Ints[int](), func(i int) bool { return i == b.N })
 }
 
-func FuzzRev(f *testing.F) {
+func FuzzIter_Rev(f *testing.F) {
 	testutils.AddByteSlices(f)
 
 	f.Fuzz(func(t *testing.T, b []byte) {
@@ -414,6 +414,6 @@ func FuzzRev(f *testing.F) {
 	})
 }
 
-func BenchmarkRev(b *testing.B) {
+func BenchmarkIter_Rev(b *testing.B) {
 	Ints[int]().Take(b.N).Rev()
 }

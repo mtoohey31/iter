@@ -8,7 +8,7 @@ import (
 	"mtoohey.com/iter/testutils"
 )
 
-func FuzzInspect(f *testing.F) {
+func FuzzIter_Inspect(f *testing.F) {
 	testutils.AddByteSlices(f)
 
 	f.Fuzz(func(t *testing.T, b []byte) {
@@ -20,6 +20,6 @@ func FuzzInspect(f *testing.F) {
 	})
 }
 
-func BenchmarkInspect(b *testing.B) {
+func BenchmarkIter_Inspect(b *testing.B) {
 	Ints[int]().Inspect(func(i int) {}).Take(b.N).Consume()
 }

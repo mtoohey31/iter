@@ -8,7 +8,7 @@ import (
 	"mtoohey.com/iter/testutils"
 )
 
-func FuzzMutex(f *testing.F) {
+func FuzzIter_Mutex(f *testing.F) {
 	testutils.AddUints(f)
 
 	f.Fuzz(func(t *testing.T, n uint) {
@@ -31,6 +31,6 @@ func FuzzMutex(f *testing.F) {
 	})
 }
 
-func BenchmarkMutex(b *testing.B) {
+func BenchmarkIter_Mutex(b *testing.B) {
 	Ints[int]().Take(b.N).Mutex().Consume()
 }

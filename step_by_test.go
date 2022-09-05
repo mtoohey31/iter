@@ -8,7 +8,7 @@ import (
 	"mtoohey.com/iter/testutils"
 )
 
-func FuzzStepBy(f *testing.F) {
+func FuzzIter_StepBy(f *testing.F) {
 	testutils.AddByteSliceUintPairs(f)
 
 	f.Fuzz(func(t *testing.T, b []byte, n uint) {
@@ -22,7 +22,7 @@ func FuzzStepBy(f *testing.F) {
 	})
 }
 
-func TestStepBy_Panic(t *testing.T) {
+func TestIter_StepBy_panic(t *testing.T) {
 	defer func() {
 		if r := recover(); r == nil {
 			t.Fatalf("StepBy should've panicked")
@@ -32,10 +32,10 @@ func TestStepBy_Panic(t *testing.T) {
 	Elems([]bool{}).StepBy(0)
 }
 
-func BenchmarkStepBy1(b *testing.B) {
+func BenchmarkIter_StepBy_1(b *testing.B) {
 	Ints[int]().StepBy(1).Take(b.N).Consume()
 }
 
-func BenchmarkStepBy100(b *testing.B) {
+func BenchmarkIter_StepBy_100(b *testing.B) {
 	Ints[int]().StepBy(100).Take(b.N).Consume()
 }

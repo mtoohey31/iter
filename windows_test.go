@@ -8,7 +8,7 @@ import (
 	"mtoohey.com/iter/testutils"
 )
 
-func FuzzWindows(f *testing.F) {
+func FuzzIter_Windows(f *testing.F) {
 	testutils.AddByteSliceUintPairs(f)
 
 	f.Fuzz(func(t *testing.T, b []byte, m uint) {
@@ -32,7 +32,7 @@ func FuzzWindows(f *testing.F) {
 	})
 }
 
-func TestWindows_Panic(t *testing.T) {
+func TestIter_Windows_panic(t *testing.T) {
 	defer func() {
 		if r := recover(); r == nil {
 			t.Fatalf("Windows should've panicked")
@@ -42,18 +42,18 @@ func TestWindows_Panic(t *testing.T) {
 	Windows(Elems([]bool{}), 0)
 }
 
-func BenchmarkWindows1(b *testing.B) {
+func BenchmarkIter_Windows_1(b *testing.B) {
 	Windows(Ints[int](), 1).Take(b.N).Consume()
 }
 
-func BenchmarkWindows3(b *testing.B) {
+func BenchmarkIter_Windows_3(b *testing.B) {
 	Windows(Ints[int](), 1).Take(b.N).Consume()
 }
 
-func BenchmarkWindows10(b *testing.B) {
+func BenchmarkIter_Windows_10(b *testing.B) {
 	Windows(Ints[int](), 10).Take(b.N).Consume()
 }
 
-func BenchmarkWindows100(b *testing.B) {
+func BenchmarkIter_Windows_100(b *testing.B) {
 	Windows(Ints[int](), 100).Take(b.N).Consume()
 }

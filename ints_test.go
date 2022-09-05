@@ -65,92 +65,92 @@ func BenchmarkInts(b *testing.B) {
 	Ints[int]().Take(b.N).Consume()
 }
 
-func BenchmarkIntsFromNegative(b *testing.B) {
+func BenchmarkIntsFrom_negative(b *testing.B) {
 	IntsFrom(0).Take(b.N).Consume()
 }
 
-func BenchmarkIntsFromZero(b *testing.B) {
+func BenchmarkIntsFrom_zero(b *testing.B) {
 	IntsFrom(0).Take(b.N).Consume()
 }
 
-func BenchmarkIntsFromPositive(b *testing.B) {
+func BenchmarkIntsFrom_positive(b *testing.B) {
 	IntsFrom(10000000).Take(b.N).Consume()
 }
 
-func BenchmarkIntsByZero(b *testing.B) {
+func BenchmarkIntsBy_zero(b *testing.B) {
 	IntsBy(0).Take(b.N).Consume()
 }
 
-func BenchmarkIntsBySmallIncreasing(b *testing.B) {
+func BenchmarkIntsBy_smallIncreasing(b *testing.B) {
 	IntsBy(1).Take(b.N).Consume()
 }
 
-func BenchmarkIntsFromBigIncreasing(b *testing.B) {
+func BenchmarkIntsBy_bigIncreasing(b *testing.B) {
 	IntsBy(10000000).Take(b.N).Consume()
 }
 
-func BenchmarkIntsBySmallDecreasing(b *testing.B) {
+func BenchmarkIntsBy_smallDecreasing(b *testing.B) {
 	IntsBy(-1).Take(b.N).Consume()
 }
 
-func BenchmarkIntsFromBigDecreasing(b *testing.B) {
+func BenchmarkIntsBy_bigDecreasing(b *testing.B) {
 	IntsBy(-10000000).Take(b.N).Consume()
 }
 
-func BenchmarkIntsFromNegativeByZero(b *testing.B) {
+func BenchmarkIntsFromBy_negativeByZero(b *testing.B) {
 	IntsFromBy(-10000000, 0).Take(b.N).Consume()
 }
 
-func BenchmarkIntsFromNegativeBySmallIncreasing(b *testing.B) {
+func BenchmarkIntsFromBy_negativeBySmallIncreasing(b *testing.B) {
 	IntsFromBy(-10000000, 1).Take(b.N).Consume()
 }
-func BenchmarkIntsFromNegativeByLargeIncreasing(b *testing.B) {
+func BenchmarkIntsFromBy_negativeByLargeIncreasing(b *testing.B) {
 	IntsFromBy(-10000000, 10000000).Take(b.N).Consume()
 }
 
-func BenchmarkIntsFromNegativeBySmallDecreasing(b *testing.B) {
+func BenchmarkIntsFromBy_negativeBySmallDecreasing(b *testing.B) {
 	IntsFromBy(-10000000, -1).Take(b.N).Consume()
 }
 
-func BenchmarkIntsFromNegativeByLargeDecreasing(b *testing.B) {
+func BenchmarkIntsFromBy_negativeByLargeDecreasing(b *testing.B) {
 	IntsFromBy(-10000000, -10000000).Take(b.N).Consume()
 }
 
-func BenchmarkIntsFromZeroByZero(b *testing.B) {
+func BenchmarkIntsFromBy_zeroByZero(b *testing.B) {
 	IntsFromBy(0, 0).Take(b.N).Consume()
 }
 
-func BenchmarkIntsFromZeroBySmallIncreasing(b *testing.B) {
+func BenchmarkIntsFromBy_zeroBySmallIncreasing(b *testing.B) {
 	IntsFromBy(0, 1).Take(b.N).Consume()
 }
 
-func BenchmarkIntsFromZeroByLargeIncreasing(b *testing.B) {
+func BenchmarkIntsFromBy_zeroByLargeIncreasing(b *testing.B) {
 	IntsFromBy(0, 10000000).Take(b.N).Consume()
 }
 
-func BenchmarkIntsFromZeroBySmallDecreasing(b *testing.B) {
+func BenchmarkIntsFromBy_zeroBySmallDecreasing(b *testing.B) {
 	IntsFromBy(0, -1).Take(b.N).Consume()
 }
 
-func BenchmarkIntsFromZeroByLargeDecreasing(b *testing.B) {
+func BenchmarkIntsFromBy_zeroByLargeDecreasing(b *testing.B) {
 	IntsFromBy(0, -10000000).Take(b.N).Consume()
 }
 
-func BenchmarkIntsFromPositiveByZero(b *testing.B) {
+func BenchmarkIntsFromBy_positiveByZero(b *testing.B) {
 	IntsFromBy(10000000, 0).Take(b.N).Consume()
 }
 
-func BenchmarkIntsFromPositiveBySmallIncreasing(b *testing.B) {
+func BenchmarkIntsFromBy_positiveBySmallIncreasing(b *testing.B) {
 	IntsFromBy(10000000, 1).Take(b.N).Consume()
 }
-func BenchmarkIntsFromPositiveByLargeIncreasing(b *testing.B) {
+func BenchmarkIntsFromBy_positiveByLargeIncreasing(b *testing.B) {
 	IntsFromBy(10000000, 10000000).Take(b.N).Consume()
 }
 
-func BenchmarkIntsFromPositiveBySmallDecreasing(b *testing.B) {
+func BenchmarkIntsFromBy_positiveBySmallDecreasing(b *testing.B) {
 	IntsFromBy(10000000, -1).Take(b.N).Consume()
 }
 
-func BenchmarkIntsFromPositiveByLargeDecreasing(b *testing.B) {
+func BenchmarkIntsFromBy_positiveByLargeDecreasing(b *testing.B) {
 	IntsFromBy(10000000, -10000000).Take(b.N).Consume()
 }

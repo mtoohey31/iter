@@ -23,5 +23,5 @@ func BenchmarkElems(b *testing.B) {
 		slice[i] = i
 	}
 
-	Elems(slice)
+	Elems(slice).Consume()
 }
