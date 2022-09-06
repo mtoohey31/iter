@@ -26,7 +26,7 @@ func main() {
 
 ## Regarding Performance
 
-There is some overhead to using the iterators in this package, since each evaluation requires a function call, so if the performance of your application is a top priority, this package _might_ not be the best choice. Don't guess about performance though: I would recommend benchmarking to determine what impact of using iterators, because in some cases lazy iterators may be faster than the equivalent loop.
+There is some overhead to using the iterators in this package, since each evaluation requires a function call, so if the performance of your application is a top priority, this package _might_ not be the best choice. Don't guess about performance though: I would recommend benchmarking to determine the impact of using iterators, because in some cases, lazy iterators may be faster than the equivalent strict loop.
 
 ## Acknowledgements
 
