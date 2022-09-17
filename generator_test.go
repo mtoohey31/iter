@@ -1,7 +1,6 @@
 package iter
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -24,7 +23,7 @@ func FuzzGenWhile(f *testing.F) {
 				return u - 1, nil
 			}
 
-			return 0, errors.New("")
+			return 0, assert.AnError
 		}).Collect())
 	})
 }

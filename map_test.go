@@ -1,7 +1,6 @@
 package iter
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/barweiss/go-tuple"
@@ -86,7 +85,7 @@ func FuzzMapWhile(f *testing.F) {
 
 		iter := Elems(b).MapWhile(func(v byte) (byte, error) {
 			if v%2 == 0 {
-				return 0, errors.New("")
+				return 0, assert.AnError
 			}
 			return v, nil
 		})
@@ -96,7 +95,7 @@ func FuzzMapWhile(f *testing.F) {
 
 		iter = MapWhile(Elems(b), func(v byte) (byte, error) {
 			if v%2 == 0 {
-				return 0, errors.New("")
+				return 0, assert.AnError
 			}
 			return v, nil
 		})

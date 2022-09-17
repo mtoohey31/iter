@@ -1,7 +1,6 @@
 package iter
 
 import (
-	"errors"
 	"sync"
 	"testing"
 
@@ -134,7 +133,7 @@ func FuzzFindMap(f *testing.F) {
 					return tuple.New2(t.V1+1, t.V2+1), nil
 				}
 
-				return tuple.New2(byte(0), uint(0)), errors.New("")
+				return tuple.New2(byte(0), uint(0)), assert.AnError
 			})
 		if assert.Equal(t, uint(len(b)) > n, ok) && ok {
 			assert.Equal(t, n+1, actual.V2)
@@ -146,7 +145,7 @@ func FuzzFindMap(f *testing.F) {
 					return tuple.New2(t.V1+1, t.V2+1), nil
 				}
 
-				return tuple.New2(byte(0), uint(0)), errors.New("")
+				return tuple.New2(byte(0), uint(0)), assert.AnError
 			})
 		if assert.Equal(t, uint(len(b)) > n, ok) && ok {
 			assert.Equal(t, n+1, actual.V2)
@@ -253,8 +252,6 @@ func BenchmarkIter_Nth(b *testing.B) {
 }
 
 func FuzzTryFold(f *testing.F) {
-	err := errors.New("")
-
 	f.Add(5, true)
 	f.Add(5, false)
 	f.Add(18, true)
@@ -270,14 +267,14 @@ func FuzzTryFold(f *testing.F) {
 
 		actual, actualErr := Ints[int]().Take(uint(n)).TryFold(0, func(sum, v int) (int, error) {
 			if b {
-				return 0, err
+				return 0, assert.AnError
 			}
 
 			return sum + v, nil
 		})
 
 		if b {
-			assert.Same(t, err, actualErr)
+			assert.Same(t, assert.AnError, actualErr)
 		} else {
 			if assert.NoError(t, actualErr) {
 				assert.Equal(t, expected, actual)
@@ -286,14 +283,14 @@ func FuzzTryFold(f *testing.F) {
 
 		actual, actualErr = TryFold(Ints[int]().Take(uint(n)), 0, func(sum, v int) (int, error) {
 			if b {
-				return 0, err
+				return 0, assert.AnError
 			}
 
 			return sum + v, nil
 		})
 
 		if b {
-			assert.True(t, err == actualErr)
+			assert.Same(t, assert.AnError, actualErr)
 		} else {
 			if assert.NoError(t, actualErr) {
 				assert.Equal(t, expected, actual)
@@ -315,8 +312,6 @@ func BenchmarkTryFold(b *testing.B) {
 }
 
 func FuzzIter_TryForEach(f *testing.F) {
-	err := errors.New("")
-
 	f.Add(5, true)
 	f.Add(5, false)
 	f.Add(18, true)
@@ -333,7 +328,7 @@ func FuzzIter_TryForEach(f *testing.F) {
 		actual := 0
 		actualErr := Ints[int]().Take(uint(n)).TryForEach(func(v int) error {
 			if b {
-				return err
+				return assert.AnError
 			}
 
 			actual += v
@@ -341,7 +336,7 @@ func FuzzIter_TryForEach(f *testing.F) {
 		})
 
 		if b {
-			assert.Same(t, err, actualErr)
+			assert.Same(t, assert.AnError, actualErr)
 		} else {
 			if assert.NoError(t, actualErr) {
 				assert.Equal(t, expected, actual)
