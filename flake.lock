@@ -3,11 +3,11 @@
     "gow-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1658922358,
-        "narHash": "sha256-nKKvPeLGOG9W4G1/SxDjzbukO+yl46YlHW9DJ21/7Zo=",
+        "lastModified": 1665748458,
+        "narHash": "sha256-vlIbVoAxeeQ1SB8FmSAfQ35fX6f+/VGZmrPDdA3HTvs=",
         "owner": "mitranim",
         "repo": "gow",
-        "rev": "9c7b31992631b27b1a0f31b819a0345deadc60f8",
+        "rev": "a5bfab26a0e42ee646f0969ac3397e80e5e3b1df",
         "type": "github"
       },
       "original": {
@@ -18,11 +18,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1659102345,
-        "narHash": "sha256-Vbzlz254EMZvn28BhpN8JOi5EuKqnHZ3ujFYgFcSGvk=",
+        "lastModified": 1668086072,
+        "narHash": "sha256-msFoXI5ThCmhTTqgl27hpCXWhaeqxphBaleJAgD8JYM=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "11b60e4f80d87794a2a4a8a256391b37c59a1ea7",
+        "rev": "72d8853228c9758820c39b8659415b6d89279493",
         "type": "github"
       },
       "original": {
@@ -31,42 +31,42 @@
         "type": "indirect"
       }
     },
+    "perf-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1663640881,
+        "narHash": "sha256-UuP528n5uAWMJCakc8MP8wlmA6SwMO/IaIqR88pqL7c=",
+        "ref": "refs/heads/master",
+        "rev": "e8d778a60d07b209c499efb221f76d51f63c6042",
+        "revCount": 154,
+        "type": "git",
+        "url": "https://go.googlesource.com/perf"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://go.googlesource.com/perf"
+      }
+    },
     "root": {
       "inputs": {
         "gow-src": "gow-src",
         "nixpkgs": "nixpkgs",
-        "utils": "utils",
-        "yaegi-src": "yaegi-src"
+        "perf-src": "perf-src",
+        "utils": "utils"
       }
     },
     "utils": {
       "locked": {
-        "lastModified": 1656928814,
-        "narHash": "sha256-RIFfgBuKz6Hp89yRr7+NR5tzIAbn52h8vT6vXkYjZoM=",
+        "lastModified": 1667395993,
+        "narHash": "sha256-nuEHfE/LcWyuSWnS8t12N1wc105Qtau+/OdUAjtQ0rA=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "7e2a3b3dfd9af950a856d66b0a7d01e3c18aa249",
+        "rev": "5aed5285a952e0b949eb3ba02c12fa4fcfef535f",
         "type": "github"
       },
       "original": {
         "owner": "numtide",
         "repo": "flake-utils",
-        "type": "github"
-      }
-    },
-    "yaegi-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1658329808,
-        "narHash": "sha256-CC35jTCyFuXhD5jNm9WT70hfA/DxCU+sUbF1EcqhP24=",
-        "owner": "traefik",
-        "repo": "yaegi",
-        "rev": "dc082b5deddba7a7820c4b4143d8a5415aae628e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "traefik",
-        "repo": "yaegi",
         "type": "github"
       }
     }
