@@ -5,13 +5,13 @@ default: test-watch
 ci: fmt-check revive-check mdsh-check test-cov-check
 
 fmt:
-	gofmt -w .
+	go fmt ./...
 
 fmt-check:
-	test -z "$$(gofmt -l .)"
+	test -z "$$(gofmt -l $$(find . -name vendor -prune -false -o -name '*.go'))"
 
 revive-check:
-	revive -formatter friendly -set_exit_status -exclude ./testutils ./...
+	revive -formatter friendly -set_exit_status -exclude ./testutils -exclude ./vendor/... ./...
 
 mdsh:
 	mdsh
