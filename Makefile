@@ -1,17 +1,14 @@
-.PHONY: default ci test test-cov-check test-watch fmt fmt-check revive-check mdsh mdsh-check
+.PHONY: default ci test test-cov-check test-watch fmt fmt-check mdsh mdsh-check
 
 default: test-watch
 
-ci: fmt-check revive-check mdsh-check test-cov-check
+ci: fmt-check mdsh-check test-cov-check
 
 fmt:
 	go fmt ./...
 
 fmt-check:
 	test -z "$$(gofmt -l $$(find . -name vendor -prune -false -o -name '*.go'))"
-
-revive-check:
-	revive -formatter friendly -set_exit_status -exclude ./testutils -exclude ./vendor/... ./...
 
 mdsh:
 	mdsh

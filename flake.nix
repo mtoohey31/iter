@@ -36,7 +36,7 @@
         ]; inherit system;
       }; {
       devShells = rec {
-        ci = mkShell { packages = [ benchstat go mdsh revive ]; };
+        ci = mkShell { packages = [ benchstat go mdsh ]; };
 
         default = mkShell {
           packages = ci.nativeBuildInputs ++ [ gopls gow ];
