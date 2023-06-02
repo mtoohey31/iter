@@ -16,9 +16,9 @@ import (
 )
 
 func eratosthenes(n int) iter.Iter[int] {
-	// spots for 0 and 1 are allocated but not read to improve readability,
-	// performance could be improved at the cost of clarity by making index 0
-	// refer to 2
+	// Spots for 0 and 1 are allocated but not read to improve readability.
+	// Performance could be improved at the cost of clarity by making index 0
+	// refer to 2.
 	isntPrime := make([]bool, n)
 
 	initial := iter.Enumerate(iter.Elems(isntPrime))

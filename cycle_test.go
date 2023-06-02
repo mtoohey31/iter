@@ -14,8 +14,8 @@ func FuzzIter_Cycle(f *testing.F) {
 	f.Fuzz(func(t *testing.T, b []byte) {
 		i, ok := Elems(b).Cycle()
 
-		// when the input iterator is already empty, Cycle fails
 		if len(b) == 0 {
+			// When the input iterator is already empty, Cycle fails.
 			assert.False(t, ok)
 		} else {
 			if assert.True(t, ok) {
