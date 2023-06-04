@@ -23,6 +23,7 @@ func AddByteSliceUintPairs(f *testing.F) {
 func AddByteSlices(f *testing.F) {
 	f.Add([]byte{})
 	f.Add([]byte{1, 2, 3, 4})
+	f.Add([]byte{1, 1, 2, 3, 5, 8, 13, 21, 34, 55})
 }
 
 func AddStrings(f *testing.F) {
