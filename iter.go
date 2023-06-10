@@ -385,8 +385,11 @@ func (i Iter[T]) TryForEach(f func(T) error) error {
 
 // Reduce repeatedly applies the provided function to the current value
 // (starting with iterator's first value) and the next value of the iterator,
-// until the whole iterator is consumed. The boolean indicates whether the
-// iterator was already empty, meaning that it could not be reduced.
+// until the whole iterator is consumed. The second return value is true if the
+// input iterator was non-empty, in which case the first return value is the
+// result of the final application of f (or just the first element of the input
+// if there was only one element). Otherwise, if the input iterator is empty,
+// the second return value is false and the first is the zero value.
 func (i Iter[T]) Reduce(f func(curr T, next T) T) (T, bool) {
 	curr, ok := i()
 
