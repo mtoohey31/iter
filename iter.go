@@ -269,7 +269,7 @@ func (i Iter[T]) ForEachParallel(f func(T)) {
 
 // Last returns the final value of the iterator, along with a boolean
 // indicating whether the operation was successful, in other words, whether the
-// iterator was already empty.
+// input iterator was non-empty.
 func (i Iter[T]) Last() (T, bool) {
 	curr, ok := i()
 
