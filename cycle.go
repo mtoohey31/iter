@@ -1,9 +1,10 @@
 package iter
 
-// Cycle returns an iterator that first consumes the provided input iterator,
-// then repeatedly returns the previous values. It also returns a boolean that
-// indicates whether the creation of this iterator was successful: it will fail
-// if the provided iterator is already empty.
+// Cycle creates an iterator that first consumes the provided input iterator,
+// then repeatedly returns the prior values. The second return value is true
+// if the input iterator was non-empty (meaning the first return value is an
+// infinite iterator) or false otherwise (meaning the first return value is
+// nil).
 func (i Iter[T]) Cycle() (Iter[T], bool) {
 	next, ok := i()
 	if !ok {
