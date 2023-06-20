@@ -24,7 +24,7 @@ func Runes(s string) Iter[rune] {
 }
 
 // SplitByRune returns an iterator over the substrings of the input string
-// between occurences of the provided rune. SplitByRune(s, r).Collect() should
+// between occurrences of the provided rune. SplitByRune(s, r).Collect() should
 // be equivalent to strings.Split(s, string(r)) for valid runes.
 func SplitByRune(s string, r rune) Iter[string] {
 	index := 0
@@ -52,7 +52,7 @@ func SplitByRune(s string, r rune) Iter[string] {
 }
 
 // SplitByString returns an iterator over the substrings of the input string
-// between occurences of the provided separator string.
+// between occurrences of the provided separator string.
 // SplitByString(s, sep).Collect() should be equivalent to
 // strings.Split(s, sep).
 func SplitByString(s string, sep string) Iter[string] {
