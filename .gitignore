@@ -1,5 +1,7 @@
+/result
+/.direnv
+
 **.test
 **.out
 
-/result
 /testdata/
