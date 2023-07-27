@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"mtoohey.com/iter/v3/testutils"
+	"mtoohey.com/iter/v3/internal/testutils"
 )
 
 func FuzzElems(f *testing.F) {

@@ -6,7 +6,7 @@ import (
 	"github.com/barweiss/go-tuple"
 	"github.com/stretchr/testify/assert"
 
-	"mtoohey.com/iter/v3/testutils"
+	"mtoohey.com/iter/v3/internal/testutils"
 )
 
 func FuzzZip(f *testing.F) {
