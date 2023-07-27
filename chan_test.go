@@ -21,7 +21,7 @@ func FuzzReceive(f *testing.F) {
 			close(ch)
 		}()
 
-		assert.Equal(t, b, Receive(&ch).Collect())
+		assert.Equal(t, b, Receive(ch).Collect())
 	})
 }
 
@@ -35,7 +35,7 @@ func BenchmarkReceive(b *testing.B) {
 		close(ch)
 	}()
 
-	Receive(&ch).Consume()
+	Receive(ch).Consume()
 }
 
 func FuzzIter_Send(f *testing.F) {
@@ -45,7 +45,7 @@ func FuzzIter_Send(f *testing.F) {
 		ch := make(chan byte)
 
 		go func() {
-			Elems(b).Send(&ch)
+			Elems(b).Send(ch)
 			close(ch)
 		}()
 
@@ -62,7 +62,7 @@ func BenchmarkIter_Send(b *testing.B) {
 	ch := make(chan int)
 
 	go func() {
-		Ints[int]().Take(uint(b.N)).Send(&ch)
+		Ints[int]().Take(uint(b.N)).Send(ch)
 		close(ch)
 	}()
 

@@ -5,9 +5,9 @@ package iter
 // reads from a channel, every time the next value is requested the program may
 // end up deadlocking if values have not been written: the same rules apply as
 // those for reading from a channel in the usual manner.
-func Receive[T any](ch *chan T) Iter[T] {
+func Receive[T any](ch <-chan T) Iter[T] {
 	return func() (T, bool) {
-		next, ok := <-*ch
+		next, ok := <-ch
 		return next, ok
 	}
 }
@@ -17,7 +17,7 @@ func Receive[T any](ch *chan T) Iter[T] {
 // improperly: if nobody is reading from the channel. Also note that this
 // method does not close the value after the values have been written, if you
 // want that to happen, you should do so yourself.
-func (i Iter[T]) Send(ch *chan T) {
+func (i Iter[T]) Send(ch chan<- T) {
 	for {
 		next, ok := i()
 
@@ -25,6 +25,6 @@ func (i Iter[T]) Send(ch *chan T) {
 			return
 		}
 
-		*ch <- next
+		ch <- next
 	}
 }
