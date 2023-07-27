@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"mtoohey.com/iter/v2"
+	"mtoohey.com/iter/v3"
 )
 
 func main() {

@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/barweiss/go-tuple"
-	"mtoohey.com/iter/v2"
+	"mtoohey.com/iter/v3"
 )
 
 // This differs from iter.Elems in that it accepts a pointer to the slice,

@@ -15,7 +15,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"mtoohey.com/iter/v2"
+	"mtoohey.com/iter/v3"
 )
 
 func iterDir(dir string) iter.Iter[os.DirEntry] {

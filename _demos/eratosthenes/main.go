@@ -12,7 +12,7 @@ import (
 	"strconv"
 
 	"github.com/barweiss/go-tuple"
-	"mtoohey.com/iter/v2"
+	"mtoohey.com/iter/v3"
 )
 
 func eratosthenes(n int) iter.Iter[int] {

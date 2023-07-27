@@ -1,6 +1,6 @@
 package main
 
-import "mtoohey.com/iter/v2"
+import "mtoohey.com/iter/v3"
 
 func IterAlphabet() iter.Iter[rune] {
 	c := 'a'

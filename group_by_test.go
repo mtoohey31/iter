@@ -7,7 +7,7 @@ import (
 	"github.com/barweiss/go-tuple"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"mtoohey.com/iter/v2/testutils"
+	"mtoohey.com/iter/v3/testutils"
 )
 
 func groupBySlice[K comparable, V any](s []V, f func(V) K) []tuple.T2[K, []V] {

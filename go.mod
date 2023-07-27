@@ -1,4 +1,4 @@
-module mtoohey.com/iter/v2
+module mtoohey.com/iter/v3
 
 go 1.18
 

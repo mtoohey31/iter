@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"mtoohey.com/iter/v2/testutils"
+	"mtoohey.com/iter/v3/testutils"
 )
 
 func FuzzRunes(f *testing.F) {
