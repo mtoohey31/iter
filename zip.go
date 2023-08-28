@@ -6,14 +6,19 @@ import "github.com/barweiss/go-tuple"
 // iterators.
 func Zip[T, U any](a Iter[T], b Iter[U]) Iter[tuple.T2[T, U]] {
 	return Iter[tuple.T2[T, U]](func() (tuple.T2[T, U], bool) {
-		nextA, okA := a()
-		nextB, okB := b()
-		if okA && okB {
-			return tuple.New2(nextA, nextB), true
+		nextA, ok := a()
+		if !ok {
+			var z tuple.T2[T, U]
+			return z, false
 		}
 
-		var z tuple.T2[T, U]
-		return z, false
+		nextB, ok := b()
+		if !ok {
+			var z tuple.T2[T, U]
+			return z, false
+		}
+
+		return tuple.New2(nextA, nextB), true
 	})
 }
 
