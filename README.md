@@ -1,3 +1,5 @@
+> The experimental [range over func](https://github.com/golang/go/issues/61405) feature, along with the proposed [`x/exp/xiter` package](https://github.com/golang/go/issues/61898) will hopefully soon provide a more convenient alternative to this package. The one downside is that they don't appear to be making any effort to support chaining with method calls, meaning iterators will have be read from right to left, instead of left to right. Once range over func is stable, I will likely archive this package.
+
 # iter
 
 Package iter provides generic, lazy iterators, functions for producing them from primitive types, as well as functions and methods for transforming and consuming them.
