@@ -1,4 +1,4 @@
-> The experimental [range over func](https://github.com/golang/go/issues/61405) feature, along with the proposed [`x/exp/xiter` package](https://github.com/golang/go/issues/61898) will hopefully soon provide a more convenient alternative to this package. The one downside is that they don't appear to be making any effort to support chaining with method calls, meaning iterators will have be read from right to left, instead of left to right. Once range over func is stable, I will likely archive this package.
+> As of Go 1.23, the [`for ... := range ...` syntax](https://go.dev/ref/spec#For_range) can now be used with "push-style" iterator functions. Since this package implements a different "pull-style" of iterators which are incompatible with the `for ... := range ...` syntax, I've decided to archive it. If you're looking for pull-style equivalents of some of the functions in this package, I'd recommend checking out the [`x/exp/iter` package proposal](https://github.com/golang/go/issues/61898).
 
 # iter
 
